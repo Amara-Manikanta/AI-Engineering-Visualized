@@ -392,7 +392,7 @@ export const FAMILY_NAMES = {
   mistral: "Mistral", grok: "Grok", gemma: "Gemma", phi: "Phi", commandr: "Cohere Command",
 };
 export const FAMILY_PATHS = {
-  claude: "/models/claude", gpt: "/models/gpt", gemini: "/models/gemini", llama: "/models/llama", qwen: "/models/qwen",
+  claude: "/models/anthropic", gpt: "/models/gpt", gemini: "/models/gemini", llama: "/models/llama", qwen: "/models/qwen",
   deepseek: "/models/deepseek", mistral: "/models/mistral", grok: "/models/grok", gemma: "/models/gemma",
   phi: "/models/phi", commandr: "/models/command-r",
 };

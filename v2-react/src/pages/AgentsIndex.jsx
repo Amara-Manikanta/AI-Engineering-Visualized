@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 import GuideLayout from "../components/GuideLayout";
 import { motion } from "framer-motion";
+import CodeBlock from "../components/CodeBlock";
+
+export const SEARCH_KEYWORDS = [
+  "AI agents", "agent architecture", "agent loop", "ReAct", "tool use", "tool_use", "tool_result", "stop_reason",
+  "workflow vs agent", "agent harness", "tool design", "context window", "compaction", "context engineering",
+  "agent memory", "skills", "progressive disclosure", "SKILL.md", "subagents", "orchestrator", "hooks",
+  "PreToolUse", "PostToolUse", "guardrails", "prompt injection", "agent evaluation", "plan-and-execute", "Reflexion",
+  "Tree of Thoughts",
+];
 
 const toc = [
-  { label: "Overview", hash: "overview" },
+  { label: "What Makes an Agent", hash: "overview" },
   { label: "Evolution of Agents", hash: "evolution" },
   { label: "Core Agent Loop", hash: "core-loop" },
+  { label: "Tools", hash: "tools" },
+  { label: "Memory & Context", hash: "memory" },
   { label: "Reasoning Strategies", hash: "reasoning" },
   { label: "Skills", hash: "skills" },
   { label: "Subagents", hash: "subagents" },
   { label: "Hooks", hash: "hooks" },
-  { label: "Extension Stack", hash: "stack" },
+  { label: "How the Pieces Stack", hash: "stack" },
   { label: "Guardrails", hash: "guardrails" },
   { label: "Evaluating Agents", hash: "evaluation" },
-  { label: "Real-World Example", hash: "realworld" },
+  { label: "Worked Example", hash: "realworld" },
   { label: "Where to Next", hash: "next" }
 ];
 
@@ -78,6 +89,58 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
 };
 
+/* One real run of a two-tool support agent, as the message list the model sees. */
+const TRACE = [
+  { role: 'user', kind: 'text', body: 'Where is my order 1042?', note: 'The run starts with a single user message. Along with it, the model receives the system prompt and the two tool definitions on every call.' },
+  { role: 'assistant', kind: 'tool_use', body: 'lookup_order({ "order_id": "1042" })', note: 'The model cannot know the answer, so it asks for a tool. The response ends with stop_reason "tool_use" — the signal for your code to act.' },
+  { role: 'user', kind: 'tool_result', body: '{ "status": "shipped", "carrier": "UPS", "tracking": "1Z999AA1" }', note: 'Your code ran lookup_order and sends the result back, tagged with the tool call\'s ID. Tool results travel in a user-role message.' },
+  { role: 'assistant', kind: 'tool_use', body: 'get_tracking({ "tracking": "1Z999AA1" })', note: 'Nobody told it to check tracking. It read the previous result and decided that "shipped" does not answer "where is it" — this is the agentic part.' },
+  { role: 'user', kind: 'tool_result', body: '{ "location": "Leeds depot", "eta": "Thursday" }', note: 'Second tool result appended. The model now has everything it needs, spread across four earlier messages.' },
+  { role: 'assistant', kind: 'text', body: 'Your order shipped with UPS and is at the Leeds depot. It should arrive on Thursday.', note: 'A plain text answer with stop_reason "end_turn". No tool call means the loop ends and this text goes to the user.' },
+];
+
+const TRACE_TONE = {
+  text: 'border-white/15 bg-white/5',
+  tool_use: 'border-purple-500/40 bg-purple-500/10',
+  tool_result: 'border-emerald-500/40 bg-emerald-500/10',
+};
+
+function LoopTrace() {
+  const [n, setN] = useState(1);
+  const cur = TRACE[n - 1];
+  const calls = TRACE.slice(0, n).filter((m) => m.role === 'assistant').length;
+  return (
+    <div className="rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.06] p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="text-sm text-gray-400">
+          Message {n} of {TRACE.length} · model calls so far: <span className="text-white font-semibold">{calls}</span>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => setN((x) => Math.max(1, x - 1))} disabled={n === 1} className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/15 bg-white/5 text-gray-300 disabled:opacity-40">← Back</button>
+          <button onClick={() => setN((x) => (x >= TRACE.length ? 1 : x + 1))} className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500/50 bg-indigo-500/20 text-indigo-100">{n >= TRACE.length ? 'Restart' : 'Next step →'}</button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_18rem] gap-5">
+        <div className="space-y-2 font-mono text-xs min-w-0">
+          <div className="text-[0.625rem] text-gray-500 uppercase tracking-wide">messages = [</div>
+          {TRACE.slice(0, n).map((m, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} className={`p-2.5 rounded-lg border ${TRACE_TONE[m.kind]} ${i === n - 1 ? 'ring-1 ring-white/40' : ''}`}>
+              <span className={m.role === 'user' ? 'text-sky-300' : 'text-amber-300'}>{m.role}</span>
+              <span className="text-gray-500"> · {m.kind}</span>
+              <div className="text-gray-200 mt-1 break-words">{m.body}</div>
+            </motion.div>
+          ))}
+          <div className="text-[0.625rem] text-gray-500 uppercase tracking-wide">]</div>
+        </div>
+        <div className="p-4 rounded-xl border border-white/10 bg-black/30 self-start">
+          <div className="text-[0.625rem] uppercase tracking-wide text-indigo-300 mb-1.5">What is happening</div>
+          <p className="text-sm text-gray-300 leading-relaxed m-0">{cur.note}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const AgentsIndex = () => {
   const [strategy, setStrategy] = useState(STRATEGIES[0]);
 
@@ -87,29 +150,89 @@ const AgentsIndex = () => {
       intro="Agents are AI systems that can perceive, reason, act, and observe in a loop — using tools, memory, and sub-agents to complete complex tasks autonomously."
       toc={toc}
     >
-      <section id="overview" className="mb-20">
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"
+      <section id="overview" className="mb-20 scroll-mt-24">
+        <h2 className="text-3xl font-bold mb-4">What Makes Something an Agent</h2>
+        <p className="text-gray-300 text-lg leading-relaxed mb-4 max-w-3xl">
+          An agent is a model running in a loop where <strong className="text-white">the model decides the next step</strong>.
+          It looks at the goal and everything that has happened so far, picks an action — call a tool, ask a question,
+          or finish — and sees the result before deciding again. The control flow lives in the model's choices, not in
+          your code.
+        </p>
+        <p className="text-gray-400 leading-relaxed mb-8 max-w-3xl">
+          That single property is what makes agents powerful (they handle tasks you could not script in advance) and
+          what makes them risky (you cannot know in advance what they will do). Everything else on this page — skills,
+          subagents, hooks, guardrails — exists to get the first benefit while containing the second.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+          <div className="p-5 rounded-xl border border-sky-500/25 bg-sky-500/10">
+            <h3 className="text-sky-300 font-semibold mb-2">Workflow</h3>
+            <p className="text-sm text-gray-300 leading-relaxed mb-3">
+              Your code fixes the steps; the model fills in each one. "Classify the ticket, then retrieve matching
+              articles, then draft a reply."
+            </p>
+            <ul className="text-xs text-gray-400 space-y-1 list-disc pl-4">
+              <li>Predictable, cheap, easy to test.</li>
+              <li>Breaks when a task needs a step you did not anticipate.</li>
+            </ul>
+          </div>
+          <div className="p-5 rounded-xl border border-purple-500/25 bg-purple-500/10">
+            <h3 className="text-purple-300 font-semibold mb-2">Agent</h3>
+            <p className="text-sm text-gray-300 leading-relaxed mb-3">
+              The model chooses the steps. "Resolve this ticket" — it decides whether to search, look up the order,
+              ask the customer, or issue a refund, and in what order.
+            </p>
+            <ul className="text-xs text-gray-400 space-y-1 list-disc pl-4">
+              <li>Handles open-ended, multi-step tasks.</li>
+              <li>Costs more, varies run to run, needs guardrails and evaluation.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="p-5 rounded-xl border border-white/10 bg-white/5 mb-8">
+          <h3 className="text-white font-semibold mb-3">Reach for an agent when…</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-300">
+            {[
+              'the steps depend on what earlier steps discover',
+              'the number of steps is not known in advance',
+              'the model can check its own progress (tests, a verifier)',
+              'mistakes are recoverable or can be gated behind approval',
+            ].map((t) => (
+              <div key={t} className="flex gap-2"><span className="text-emerald-400">✓</span><span>{t}</span></div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-4 mb-0">
+            If you can draw the flowchart, build the workflow. Many good "agents" are mostly workflow with one
+            agentic step inside.
+          </p>
+        </div>
+
+        <h3 className="text-lg font-semibold text-white mb-4">The parts of an agent harness this page covers</h3>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
         >
           {[
-            { icon: "📘", label: "Skills", value: "= KNOWLEDGE (what to do)", color: "from-blue-500/20 to-blue-600/10", border: "border-blue-500/30" },
-            { icon: "🔌", label: "MCP", value: "= ABILITY (connect to world)", color: "from-purple-500/20 to-purple-600/10", border: "border-purple-500/30" },
-            { icon: "👥", label: "Subagents", value: "= DELEGATION (parallel work)", color: "from-green-500/20 to-green-600/10", border: "border-green-500/30" },
-            { icon: "⚡", label: "Hooks", value: "= AUTOMATION (runs outside loop)", color: "from-yellow-500/20 to-yellow-600/10", border: "border-yellow-500/30" }
-          ].map((item, i) => (
-            <motion.div 
-              key={i} 
+            { icon: "🔄", label: "The loop", value: "Decide → act → observe, until done or stopped.", href: "core-loop" },
+            { icon: "🛠️", label: "Tools", value: "The actions the agent can take in the world.", href: "tools" },
+            { icon: "🧠", label: "Memory & context", value: "What the agent knows at each step, and how that is kept small.", href: "memory" },
+            { icon: "📘", label: "Skills", value: "Procedures and know-how loaded only when relevant.", href: "skills" },
+            { icon: "👥", label: "Subagents", value: "Delegating a sub-task to a worker with its own context.", href: "subagents" },
+            { icon: "⚡", label: "Hooks & guardrails", value: "Deterministic code around the probabilistic core.", href: "hooks" },
+          ].map((item) => (
+            <motion.a
+              key={item.label}
               variants={fadeUp}
-              className={`p-6 rounded-xl bg-gradient-to-br ${item.color} border ${item.border} backdrop-blur-sm flex flex-col items-center text-center group hover:-translate-y-1 transition-transform`}
+              href={`#/agents#${item.href}`}
+              className="p-5 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500/50 transition-colors no-underline block"
             >
-              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{item.icon}</div>
-              <h3 className="text-xl font-bold text-gray-100 mb-2">{item.label}</h3>
-              <p className="text-sm text-gray-400 font-mono">{item.value}</p>
-            </motion.div>
+              <div className="text-2xl mb-2">{item.icon}</div>
+              <h4 className="text-base font-bold text-gray-100 mb-1">{item.label}</h4>
+              <p className="text-xs text-gray-400 m-0">{item.value}</p>
+            </motion.a>
           ))}
         </motion.div>
       </section>
@@ -494,7 +617,7 @@ const AgentsIndex = () => {
 
       <section id="core-loop" className="mb-20 scroll-mt-24">
         <div className="mb-8">
-          <div className="text-indigo-400 font-bold text-sm tracking-widest uppercase mb-2">Step 1</div>
+          <div className="text-indigo-400 font-bold text-sm tracking-widest uppercase mb-2">The foundation</div>
           <h2 className="text-3xl font-bold mb-4">🔄 The Core Agent Loop</h2>
           <p className="text-gray-400 text-lg">The heart of every AI agent is an infinite loop that cycles between four phases. This is also known as the <strong className="text-gray-200">ReAct pattern</strong> (Reason + Act).</p>
         </div>
@@ -535,11 +658,192 @@ const AgentsIndex = () => {
             </div>
           </div>
         </div>
+
+        <div className="mt-10">
+          <h3 className="text-xl font-bold text-white mb-2">What the loop actually looks like</h3>
+          <p className="text-gray-400 leading-relaxed mb-5 max-w-3xl">
+            There is no hidden machinery: the "memory" of the loop is a list of messages that grows by two entries per
+            step — the model's action, then the result your code sends back. Step through a real run below and watch
+            the list the model sees on each call.
+          </p>
+          <LoopTrace />
+        </div>
+
+        <div className="mt-10">
+          <h3 className="text-xl font-bold text-white mb-2">The same loop in code</h3>
+          <p className="text-gray-400 leading-relaxed mb-4 max-w-3xl">
+            About twenty lines with the Anthropic Python SDK. Frameworks add retries, streaming, tracing and state
+            persistence, but they all run this loop underneath.
+          </p>
+          <CodeBlock
+            language="python"
+            code={`import anthropic
+
+client = anthropic.Anthropic()
+TOOLS = [
+    {"name": "lookup_order", "description": "Get an order's status and tracking number by order ID.",
+     "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_tracking", "description": "Get the current location and ETA for a tracking number.",
+     "input_schema": {"type": "object", "properties": {"tracking": {"type": "string"}}, "required": ["tracking"]}},
+]
+
+def run_agent(task: str, max_steps: int = 10) -> str:
+    messages = [{"role": "user", "content": task}]
+    for _ in range(max_steps):                       # hard cap: never loop forever
+        response = client.messages.create(
+            model="claude-opus-5-5", max_tokens=4096, tools=TOOLS, messages=messages,
+        )
+        messages.append({"role": "assistant", "content": response.content})
+
+        if response.stop_reason != "tool_use":       # the model chose to finish
+            return "".join(b.text for b in response.content if b.type == "text")
+
+        results = []
+        for block in response.content:              # may contain several tool calls
+            if block.type == "tool_use":
+                output = run_tool(block.name, block.input)   # your code, your permissions
+                results.append({"type": "tool_result", "tool_use_id": block.id, "content": output})
+        messages.append({"role": "user", "content": results})
+
+    raise RuntimeError("Agent hit the step limit without finishing")`}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+            {[
+              { t: 'Who decides to stop?', d: 'The model, by answering without a tool call (stop_reason "end_turn"). Your code only enforces the outer limit: the step cap, a token or cost budget, or a timeout.' },
+              { t: 'Who runs the tool?', d: 'Your code. The model only asks for a call; run_tool is where you check permissions, validate the arguments, and catch errors. This is the security boundary.' },
+              { t: 'What if a tool fails?', d: 'Send the error back as the tool_result (with is_error set). Models recover well from a clear error message — much better than from a crash or a silent empty result.' },
+            ].map((c) => (
+              <div key={c.t} className="p-4 rounded-xl border border-white/10 bg-white/5">
+                <h4 className="font-semibold text-white text-sm mb-1.5">{c.t}</h4>
+                <p className="text-xs text-gray-400 leading-relaxed m-0">{c.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="tools" className="mb-20 scroll-mt-24">
+        <div className="mb-8">
+          <div className="text-purple-400 font-bold text-sm tracking-widest uppercase mb-2">Component 1</div>
+          <h2 className="text-3xl font-bold mb-4">🛠️ Tools — How the Agent Acts</h2>
+          <p className="text-gray-400 text-lg">
+            A tool is a function you expose to the model: a name, a description, and a JSON schema for its arguments.
+            The model never runs anything itself — it writes a request, and your code decides whether and how to
+            carry it out.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div>
+            <CodeBlock
+              language="json"
+              code={`{
+  "name": "search_orders",
+  "description": "Find a customer's orders. Use when the user asks about an order but does not give its ID. Returns at most 10 orders, newest first.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "email":  { "type": "string", "description": "Customer email address" },
+      "status": { "type": "string", "enum": ["open", "shipped", "delivered", "cancelled"] }
+    },
+    "required": ["email"]
+  }
+}`}
+            />
+          </div>
+          <div className="space-y-3">
+            {[
+              ['Name', 'A verb and a noun (search_orders), unambiguous among all the tools the agent has.'],
+              ['Description', 'The most important field. Say what it does, when to use it (and when not), and what it returns. The model chooses tools almost entirely from this text.'],
+              ['Schema', 'Types, enums and required fields constrain the model\'s arguments. An enum prevents a whole class of made-up values.'],
+              ['Result', 'What you send back. Keep it short and relevant — a 5,000-line JSON dump fills the context and hides the answer.'],
+            ].map(([t, d]) => (
+              <div key={t} className="p-4 rounded-xl border border-white/10 bg-white/5">
+                <div className="text-sm font-semibold text-white mb-1">{t}</div>
+                <p className="text-xs text-gray-400 leading-relaxed m-0">{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <h3 className="text-lg font-semibold text-white mb-3">Designing tools an agent can use well</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { t: 'Fewer, higher-level tools', d: 'One create_refund(order_id, reason) beats five low-level calls the agent must chain correctly. Every extra step is another chance to go wrong.' },
+            { t: 'Errors that teach', d: '"order_id must look like ORD-12345; got 12345" lets the model fix its call. "Error 400" makes it guess.' },
+            { t: 'Read vs write', d: 'Separate tools that only read from tools that change things, so reads can be auto-approved and writes gated.' },
+            { t: 'Idempotent where possible', d: 'Agents retry. A tool that charges a card twice when called twice is a production incident waiting to happen; accept an idempotency key.' },
+          ].map((c) => (
+            <div key={c.t} className="p-4 rounded-xl border border-purple-500/20 bg-purple-500/[0.07]">
+              <h4 className="font-semibold text-purple-200 text-sm mb-1.5">{c.t}</h4>
+              <p className="text-xs text-gray-400 leading-relaxed m-0">{c.d}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-gray-400 mt-5">
+          Tools can be defined in your own code, or connected from outside through{' '}
+          <a href="#/mcp" className="text-blue-400 hover:underline">MCP</a> servers. More detail, including parallel
+          calls, in <a href="#/agents/tool-calling" className="text-blue-400 hover:underline">Tool Calling</a>.
+        </p>
+      </section>
+
+      <section id="memory" className="mb-20 scroll-mt-24">
+        <div className="mb-8">
+          <div className="text-sky-400 font-bold text-sm tracking-widest uppercase mb-2">Component 2</div>
+          <h2 className="text-3xl font-bold mb-4">🧠 Memory & Context — What the Agent Knows</h2>
+          <p className="text-gray-400 text-lg">
+            The model has no memory between calls. Each step, it sees only what is in its context window: the
+            instructions, the tool definitions, and the growing message list. Managing that window is most of the
+            engineering in a long-running agent.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 mb-6">
+          <div className="text-xs text-gray-500 mb-2">A context window partway through a long task</div>
+          <div className="flex h-10 rounded-lg overflow-hidden text-[0.625rem] font-semibold">
+            {[
+              ['System prompt', 6, 'bg-slate-600'],
+              ['Tools', 8, 'bg-purple-600'],
+              ['Instructions file', 4, 'bg-blue-600'],
+              ['Old tool results', 44, 'bg-rose-700'],
+              ['Recent steps', 22, 'bg-emerald-700'],
+              ['Free', 16, 'bg-white/10'],
+            ].map(([l, w, c]) => (
+              <div key={l} className={`${c} flex items-center justify-center text-white/90 px-1 text-center leading-tight`} style={{ width: `${w}%` }} title={l}>
+                {w >= 8 ? l : ''}
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 mt-3 mb-0">
+            Old tool output — files read an hour ago, search results already used — is usually the biggest consumer,
+            and the least useful. It also dilutes the model's attention on what matters now.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { t: 'Compaction', d: 'When the window fills, summarise the history so far into a short record of decisions and progress, and continue from that. Loses detail, so keep exact values elsewhere.' },
+            { t: 'Clear old tool results', d: 'Drop or shorten the raw output of tools whose results have already been used. The model keeps its conclusions without the bulk.' },
+            { t: 'Notes on disk', d: 'Let the agent write a progress file or to-do list and re-read it. It survives compaction and even a fresh session — the agent\'s own external memory.' },
+            { t: 'Just-in-time retrieval', d: 'Give the agent tools to look things up (grep, search, read file) instead of pasting everything up front. It loads only what the current step needs.' },
+            { t: 'Subagents', d: 'Send a noisy sub-task (a broad search, reading 40 files) to a worker with its own window; only the summary comes back.' },
+            { t: 'Long-term memory', d: 'Facts that should outlive a session — user preferences, past resolutions — go in a store the agent can search and update.' },
+          ].map((c) => (
+            <div key={c.t} className="p-4 rounded-xl border border-sky-500/20 bg-sky-500/[0.07]">
+              <h4 className="font-semibold text-sky-200 text-sm mb-1.5">{c.t}</h4>
+              <p className="text-xs text-gray-400 leading-relaxed m-0">{c.d}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-gray-400 mt-5">
+          Memory types and storage patterns are covered in{' '}
+          <a href="#/agents/memory" className="text-blue-400 hover:underline">Memory & State</a>.
+        </p>
       </section>
 
       <section id="reasoning" className="mb-20 scroll-mt-24">
         <div className="mb-8">
-          <div className="text-indigo-400 font-bold text-sm tracking-widest uppercase mb-2">Step 2</div>
+          <div className="text-indigo-400 font-bold text-sm tracking-widest uppercase mb-2">Deciding</div>
           <h2 className="text-3xl font-bold mb-4">🧭 Reasoning & Planning Strategies</h2>
           <p className="text-gray-400 text-lg">
             ReAct is the default loop, but it is one of several ways an agent can decide what to do next. The strategy
@@ -616,155 +920,245 @@ const AgentsIndex = () => {
 
       <section id="skills" className="mb-20 scroll-mt-24">
         <div className="mb-8">
-          <div className="text-blue-400 font-bold text-sm tracking-widest uppercase mb-2">Component 1</div>
-          <h2 className="text-3xl font-bold mb-4">📘 Skills — The Agent's Knowledge</h2>
-          <p className="text-gray-400 text-lg">Skills are reusable instruction modules that teach the agent <em>what to do</em> and <em>how to behave</em> in specific scenarios.</p>
+          <div className="text-blue-400 font-bold text-sm tracking-widest uppercase mb-2">Component 3</div>
+          <h2 className="text-3xl font-bold mb-4">📘 Skills — Know-How on Demand</h2>
+          <p className="text-gray-400 text-lg">
+            A skill is a packaged procedure: instructions, and optionally scripts and reference files, for one kind of
+            task. Tools give an agent new <em>actions</em>; skills teach it <em>how to do a job well</em> with the
+            actions it already has.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="bg-[#0f172a] rounded-2xl p-6 font-mono text-sm border border-slate-700/50"
-          >
-            <div className="text-blue-400 mb-4 font-bold">📁 .claude/skills/</div>
-            <div className="pl-4 text-gray-300 mb-2 border-l border-slate-700 ml-2">📄 deploy/SKILL.md</div>
-            <div className="pl-4 text-gray-300 mb-2 border-l border-slate-700 ml-2">📄 code-review/SKILL.md</div>
-            <div className="pl-4 text-gray-300 mb-2 border-l border-slate-700 ml-2">📄 testing/SKILL.md</div>
-            <div className="pl-4 text-gray-300 mb-6 border-l border-slate-700 ml-2">📄 security/SKILL.md</div>
-            
-            <div className="mt-8 space-y-2 text-green-400/80">
-              <div>✅ Reusable instruction modules</div>
-              <div>✅ Loaded on-demand (saves tokens)</div>
-              <div>✅ Scoped to a task or domain</div>
-            </div>
-          </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div>
+            <div className="text-xs text-gray-500 mb-2 font-mono">.claude/skills/quarterly-report/</div>
+            <CodeBlock
+              language="markdown"
+              code={`SKILL.md
+---
+name: quarterly-report
+description: Use when asked for a quarterly business report or QBR deck.
+  Covers data sources, required sections and the chart style.
+---
 
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              { num: "01", title: "Specificity", desc: "Each skill covers one domain (e.g. deploy rules)." },
-              { num: "02", title: "On-Demand", desc: "Skills aren't loaded until needed to save context." },
-              { num: "03", title: "Composable", desc: "Skills can reference other skills." }
-            ].map((s, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white/5 border border-white/10 rounded-xl p-5 flex gap-4"
-              >
-                <div className="text-blue-500/50 font-black text-2xl">{s.num}</div>
-                <div>
-                  <h4 className="font-bold text-gray-200 mb-1">{s.title}</h4>
-                  <p className="text-sm text-gray-400">{s.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+1. Pull revenue with scripts/fetch_revenue.py (never hand-copy numbers).
+2. Sections, in order: summary, metrics, wins, risks, next quarter.
+3. Charts follow reference/chart-style.md.
+4. Flag any metric that moved more than 20% with a one-line reason.
+
+scripts/fetch_revenue.py      ← run, not read into context
+reference/chart-style.md      ← read only when drawing charts`}
+            />
           </div>
+          <div>
+            <h3 className="text-white font-semibold mb-3">Progressive disclosure: three levels of loading</h3>
+            <div className="space-y-3">
+              {[
+                ['1', 'Always loaded', 'Just the name and description of every skill — a few dozen tokens each, so an agent can have many skills installed at little cost.', 'border-blue-500/40 bg-blue-500/10'],
+                ['2', 'Loaded when relevant', 'The full SKILL.md body, pulled in only when the task matches the description.', 'border-indigo-500/40 bg-indigo-500/10'],
+                ['3', 'Loaded if needed', 'Reference files are read, and scripts executed, only when the instructions call for them. A script\'s code never has to enter the context at all.', 'border-purple-500/40 bg-purple-500/10'],
+              ].map(([n, t, d, c]) => (
+                <div key={n} className={`flex gap-3 p-4 rounded-xl border ${c}`}>
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-black/40 text-white text-sm font-bold flex items-center justify-center">{n}</span>
+                  <div>
+                    <div className="text-sm font-semibold text-white">{t}</div>
+                    <p className="text-xs text-gray-300 leading-relaxed m-0 mt-0.5">{d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-white/10">
+          <table className="w-full text-sm min-w-[560px]">
+            <thead className="bg-white/5 text-left text-gray-400">
+              <tr><th className="p-3 font-medium">Mechanism</th><th className="p-3 font-medium">Gives the agent</th><th className="p-3 font-medium">Loaded</th><th className="p-3 font-medium">Use for</th></tr>
+            </thead>
+            <tbody className="text-gray-300 text-xs">
+              {[
+                ['System prompt / instructions file', 'Standing rules', 'Every call', 'Things true for every task: role, style, hard constraints'],
+                ['Skill', 'A procedure', 'When relevant', 'Repeatable jobs with a right way to do them'],
+                ['Tool', 'An action', 'Definition every call', 'Anything that touches the outside world'],
+                ['MCP server', 'A set of tools from another system', 'Definitions every call', 'Integrations shared across apps and agents'],
+              ].map((r) => (
+                <tr key={r[0]} className="border-t border-white/5">
+                  {r.map((c, i) => <td key={i} className={`p-3 ${i === 0 ? 'text-white font-medium' : ''}`}>{c}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
       <section id="subagents" className="mb-20 scroll-mt-24">
         <div className="mb-8">
-          <div className="text-green-400 font-bold text-sm tracking-widest uppercase mb-2">Component 2</div>
-          <h2 className="text-3xl font-bold mb-4">👥 Subagents — Delegation & Parallelism</h2>
-          <p className="text-gray-400 text-lg">Subagents are independent workers with their own context, model, and permissions.</p>
+          <div className="text-green-400 font-bold text-sm tracking-widest uppercase mb-2">Component 4</div>
+          <h2 className="text-3xl font-bold mb-4">👥 Subagents — Delegation</h2>
+          <p className="text-gray-400 text-lg">
+            A subagent is a separate agent loop the main agent starts for a sub-task. It gets its own instructions,
+            its own tools and a <strong className="text-gray-200">fresh context window</strong>; when it finishes,
+            only its final answer returns to the parent.
+          </p>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-b from-green-500/10 to-transparent border border-green-500/20 rounded-3xl p-8 flex flex-col items-center"
+          className="bg-gradient-to-b from-green-500/10 to-transparent border border-green-500/20 rounded-3xl p-6 sm:p-8 flex flex-col items-center mb-6"
         >
-          <div className="bg-green-500/20 border border-green-500/50 text-white rounded-2xl p-4 w-64 text-center mb-8 relative z-10 backdrop-blur-sm">
+          <div className="bg-green-500/20 border border-green-500/50 text-white rounded-2xl p-4 w-64 max-w-full text-center mb-8 relative z-10">
             <div className="text-3xl mb-2">🎯</div>
-            <div className="font-bold">Orchestrator Agent</div>
-            <div className="text-xs text-green-200/70 mt-1">Delegates & aggregates</div>
+            <div className="font-bold">Orchestrator</div>
+            <div className="text-xs text-green-200/70 mt-1">"Audit this service before launch"</div>
           </div>
-          
-          <div className="flex gap-4 md:gap-12 relative w-full justify-center">
-            {/* Connection lines */}
+          <div className="flex gap-3 md:gap-10 relative w-full justify-center">
             <div className="absolute top-[-32px] left-1/2 -translate-x-1/2 w-3/4 md:w-1/2 h-8 border-t border-l border-r border-green-500/30 rounded-t-xl" />
-            
             {[
-              { icon: "💻", title: "Code Reviewer", tools: "Read, Analyze" },
-              { icon: "🔍", title: "Researcher", tools: "Search, Fetch" },
-              { icon: "🚀", title: "Deployer", tools: "Bash, SSH" }
-            ].map((sa, i) => (
-              <motion.div 
-                key={i}
-                whileHover={{ y: -5 }}
-                className="bg-black/60 border border-white/10 rounded-xl p-4 w-1/3 max-w-[150px] text-center flex flex-col items-center"
-              >
+              { icon: "🔐", title: "Security reviewer", tools: "Read, Grep", ret: "3 findings" },
+              { icon: "🧪", title: "Test runner", tools: "Bash (tests only)", ret: "2 failures" },
+              { icon: "📚", title: "Docs checker", tools: "Read, Web fetch", ret: "1 stale page" },
+            ].map((sa) => (
+              <div key={sa.title} className="bg-black/60 border border-white/10 rounded-xl p-3 sm:p-4 w-1/3 max-w-[170px] text-center flex flex-col items-center">
                 <div className="text-2xl mb-2">{sa.icon}</div>
-                <div className="font-bold text-sm text-gray-200 mb-2">{sa.title}</div>
-                <div className="text-[0.625rem] text-gray-400 bg-white/5 px-2 py-1 rounded w-full">{sa.tools}</div>
-              </motion.div>
+                <div className="font-bold text-xs sm:text-sm text-gray-200 mb-2">{sa.title}</div>
+                <div className="text-[0.625rem] text-gray-400 bg-white/5 px-2 py-1 rounded w-full mb-1.5">{sa.tools}</div>
+                <div className="text-[0.625rem] text-green-300">↑ returns: {sa.ret}</div>
+              </div>
             ))}
           </div>
+          <p className="text-xs text-gray-400 mt-6 mb-0 text-center max-w-xl">
+            The three workers run in parallel, each reading dozens of files. The orchestrator's context receives three
+            short reports, not everything they read.
+          </p>
         </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="p-5 rounded-xl border border-emerald-500/25 bg-emerald-500/10">
+            <h3 className="text-emerald-300 font-semibold mb-3">Why delegate</h3>
+            <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
+              <li><strong className="text-white">Clean context:</strong> exploration noise stays in the worker; the parent keeps its focus.</li>
+              <li><strong className="text-white">Parallelism:</strong> independent sub-tasks run at the same time.</li>
+              <li><strong className="text-white">Specialisation:</strong> a focused prompt ("you are a security reviewer") does one job better than a general one.</li>
+              <li><strong className="text-white">Least privilege:</strong> the reviewer gets read-only tools even if the parent can write.</li>
+            </ul>
+          </div>
+          <div className="p-5 rounded-xl border border-rose-500/25 bg-rose-500/10">
+            <h3 className="text-rose-300 font-semibold mb-3">What it costs</h3>
+            <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
+              <li><strong className="text-white">Tokens:</strong> every worker starts cold and re-reads what it needs. Multi-agent runs can use several times the tokens of one agent.</li>
+              <li><strong className="text-white">Lost context:</strong> the worker knows only what the parent wrote in its brief — a vague brief gets a vague result.</li>
+              <li><strong className="text-white">Coordination:</strong> workers that must share decisions (editing the same files) step on each other.</li>
+            </ul>
+          </div>
+        </div>
+        <p className="text-sm text-gray-400 mt-5">
+          Coordination patterns — supervisor, pipeline, debate, swarm — are compared in{' '}
+          <a href="#/agents/multi-agent" className="text-blue-400 hover:underline">Multi-Agent Systems</a>.
+        </p>
       </section>
 
       <section id="hooks" className="mb-20 scroll-mt-24">
         <div className="mb-8">
-          <div className="text-yellow-400 font-bold text-sm tracking-widest uppercase mb-2">Component 3</div>
+          <div className="text-yellow-400 font-bold text-sm tracking-widest uppercase mb-2">Component 5</div>
           <h2 className="text-3xl font-bold mb-4">⚡ Hooks — Deterministic Automation</h2>
-          <p className="text-gray-400 text-lg">Hooks are event-driven scripts that run <em className="text-gray-300">outside</em> the agent's control.</p>
+          <p className="text-gray-400 text-lg">
+            Hooks are your code, run by the harness at fixed points in the loop. An instruction like "always run the
+            formatter" is a request the model may forget; a hook that runs the formatter after every edit always
+            happens.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {[
-            { type: "PRE-TOOL", title: "Before Execution", desc: "Runs before any tool call. Use for validation or security checks.", color: "text-red-400 bg-red-400/10 border-red-400/20" },
-            { type: "POST-TOOL", title: "After Execution", desc: "Runs after a tool completes. Use for post-processing.", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
-            { type: "ON-EDIT", title: "On File Change", desc: "Fires whenever a file is modified. Run linters automatically.", color: "text-green-400 bg-green-400/10 border-green-400/20" },
-            { type: "ON-NOTIFY", title: "Alerts & Logging", desc: "Fires when the agent sends a notification. (e.g. Slack).", color: "text-purple-400 bg-purple-400/10 border-purple-400/20" }
-          ].map((hook, i) => (
-            <motion.div 
-              key={i}
-              whileHover={{ scale: 1.02 }}
-              className="bg-white/5 border border-white/10 p-5 rounded-xl flex flex-col"
-            >
-              <div className={`text-xs font-bold px-2 py-1 rounded inline-block self-start border mb-3 ${hook.color}`}>
-                {hook.type}
-              </div>
-              <h4 className="font-bold text-lg mb-2 text-gray-200">{hook.title}</h4>
-              <p className="text-sm text-gray-400">{hook.desc}</p>
-            </motion.div>
+            { type: "PreToolUse", title: "Before a tool runs", desc: "Inspect the call and allow, block, or modify it. Block writes to protected paths or shell commands that match a deny list.", color: "text-red-400 bg-red-400/10 border-red-400/20" },
+            { type: "PostToolUse", title: "After a tool runs", desc: "React to the result: format an edited file, run the linter, log the call for audit.", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
+            { type: "UserPromptSubmit", title: "When the user sends a message", desc: "Add context (the current branch, today's on-call engineer) or reject prompts containing secrets.", color: "text-green-400 bg-green-400/10 border-green-400/20" },
+            { type: "Stop", title: "When the agent wants to finish", desc: "Check the work — are the tests passing? If not, block the stop and tell the agent what is still wrong.", color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
+            { type: "SessionStart", title: "When a session begins", desc: "Load project state: open issues, recent commits, environment checks.", color: "text-cyan-400 bg-cyan-400/10 border-cyan-400/20" },
+            { type: "Notification", title: "When the agent needs you", desc: "Send a desktop or Slack alert when it is waiting for approval.", color: "text-purple-400 bg-purple-400/10 border-purple-400/20" },
+          ].map((hook) => (
+            <div key={hook.type} className="bg-white/5 border border-white/10 p-5 rounded-xl flex flex-col">
+              <div className={`text-xs font-bold font-mono px-2 py-1 rounded inline-block self-start border mb-3 ${hook.color}`}>{hook.type}</div>
+              <h4 className="font-bold mb-1.5 text-gray-200">{hook.title}</h4>
+              <p className="text-sm text-gray-400 m-0">{hook.desc}</p>
+            </div>
           ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <CodeBlock
+            language="python"
+            code={`# guard.py — a PreToolUse hook. The harness sends the pending
+# tool call as JSON on stdin; exit code 2 blocks it and the
+# message on stderr is shown to the model.
+import json, sys
+
+call = json.load(sys.stdin)
+cmd = call.get("tool_input", {}).get("command", "")
+
+if any(bad in cmd for bad in ["rm -rf", "git push --force", "DROP TABLE"]):
+    print(f"Blocked: '{cmd}' is not allowed. Ask the user instead.", file=sys.stderr)
+    sys.exit(2)
+sys.exit(0)`}
+          />
+          <div className="space-y-3">
+            <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+              <h4 className="font-semibold text-white text-sm mb-1.5">Instructions vs hooks</h4>
+              <p className="text-xs text-gray-400 leading-relaxed m-0">
+                Use instructions for judgement ("prefer small functions"). Use hooks for rules that must hold every
+                time ("never push to main", "format on save"). If breaking the rule once would be a problem, it
+                belongs in a hook.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+              <h4 className="font-semibold text-white text-sm mb-1.5">Hooks talk back</h4>
+              <p className="text-xs text-gray-400 leading-relaxed m-0">
+                A blocking hook's message goes to the model, which then adjusts — so write it like an error message:
+                what was wrong and what to do instead.
+              </p>
+            </div>
+            <p className="text-xs text-gray-500 m-0">
+              Event names shown are Claude Code's; other harnesses offer similar callbacks (the Agent SDK, LangGraph
+              interrupts, OpenAI Agents SDK guardrails).
+            </p>
+          </div>
         </div>
       </section>
 
       <section id="stack" className="mb-20 scroll-mt-24">
         <div className="mb-8">
           <div className="text-indigo-400 font-bold text-sm tracking-widest uppercase mb-2">Architecture</div>
-          <h2 className="text-3xl font-bold mb-4">🏗️ The Agent Extension Stack</h2>
-          <p className="text-gray-400 text-lg">All the components stack together in a layered architecture.</p>
+          <h2 className="text-3xl font-bold mb-4">🏗️ How the Pieces Stack</h2>
+          <p className="text-gray-400 text-lg">
+            Read from the bottom up: each layer builds on the ones below it. Most agents need the bottom three;
+            the upper layers are for scale and reuse.
+          </p>
         </div>
 
-        <div className="flex flex-col gap-2 max-w-2xl mx-auto">
+        <div className="flex flex-col gap-2 max-w-3xl mx-auto">
           {[
-            { icon: "🧩", label: "PLUGINS", sub: "Extend platform capabilities", bg: "bg-indigo-900/40 border-indigo-500/30" },
-            { icon: "📘", label: "SKILLS", sub: "Teach the agent what to do", bg: "bg-blue-900/40 border-blue-500/30" },
-            { icon: "🔌", label: "MCP ↔ TOOLS", sub: "Connect to external world", bg: "bg-purple-900/40 border-purple-500/30" },
-            { icon: "👥", label: "SUBAGENTS", sub: "Delegate complex parallel work", bg: "bg-green-900/40 border-green-500/30" },
-            { icon: "⚡", label: "HOOKS", sub: "Automate responses to events", bg: "bg-yellow-900/40 border-yellow-500/30" },
-            { icon: "📝", label: "CLAUDE.md", sub: "Foundation & Context", bg: "bg-[#2d2d2d] border-gray-600" },
+            { icon: "🧩", label: "Plugins", sub: "Bundle skills, tools, subagents and hooks so a whole capability installs in one step and is shared across a team.", bg: "bg-indigo-900/40 border-indigo-500/30" },
+            { icon: "👥", label: "Subagents", sub: "Split big or noisy work across workers with their own context and permissions.", bg: "bg-green-900/40 border-green-500/30" },
+            { icon: "📘", label: "Skills", sub: "Procedures loaded when a task needs them, so know-how scales without bloating every prompt.", bg: "bg-blue-900/40 border-blue-500/30" },
+            { icon: "⚡", label: "Hooks & guardrails", sub: "Deterministic checks around every step: permissions, approvals, formatting, audit.", bg: "bg-yellow-900/40 border-yellow-500/30" },
+            { icon: "🔌", label: "Tools & MCP", sub: "The actions available: your own functions plus tools from MCP servers.", bg: "bg-purple-900/40 border-purple-500/30" },
+            { icon: "📝", label: "Instructions (system prompt, CLAUDE.md / AGENTS.md)", sub: "Who the agent is, the rules it always follows, and facts about the project.", bg: "bg-[#2d2d2d] border-gray-600" },
+            { icon: "🔄", label: "Model + loop", sub: "The foundation: a model that can call tools, and the loop that feeds results back.", bg: "bg-black/60 border-white/20" },
           ].map((layer, i) => (
-            <motion.div 
-              key={i}
+            <motion.div
+              key={layer.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.06 }}
               className={`p-4 rounded-lg border flex items-center gap-4 ${layer.bg}`}
             >
-              <div className="text-2xl">{layer.icon}</div>
+              <div className="text-2xl shrink-0">{layer.icon}</div>
               <div>
-                <div className="font-bold tracking-wide">{layer.label}</div>
-                <div className="text-xs opacity-70">{layer.sub}</div>
+                <div className="font-bold tracking-wide text-white">{layer.label}</div>
+                <div className="text-xs text-gray-300 opacity-80">{layer.sub}</div>
               </div>
             </motion.div>
           ))}
@@ -866,31 +1260,44 @@ const AgentsIndex = () => {
       <section id="realworld" className="mb-20 scroll-mt-24">
         <div className="mb-8">
           <div className="text-pink-400 font-bold text-sm tracking-widest uppercase mb-2">Example</div>
-          <h2 className="text-3xl font-bold mb-4">🌍 Real-World Example</h2>
-          <p className="text-gray-400 text-lg">How all the pieces come together in a competitive-analysis workflow.</p>
+          <h2 className="text-3xl font-bold mb-4">🌍 Worked Example</h2>
+          <p className="text-gray-400 text-lg">
+            One request — <em className="text-gray-200">"Write a competitive analysis of our product against the
+            top three rivals"</em> — traced through every component on this page.
+          </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-3">
           {[
-            "CLAUDE.md Loads Project Context",
-            "Skill Activates — Competitive Analysis Framework",
-            "MCP Searches Google Drive",
-            "Subagent: Market Researcher Gathers Web Data",
-            "Subagent: Technical Analyst Reviews Repos",
-            "Hook Auto-Formats Output & Runs Linter"
+            { t: 'Instructions load', part: 'Instructions', d: 'The system prompt and the project\'s instructions file are in context before the first step: the company name, the product line, and "cite a source for every claim".' },
+            { t: 'The matching skill loads', part: 'Skills', d: 'The request matches the description of a competitive-analysis skill, so its full instructions load: the framework to use, the sections, and a scoring rubric. Other installed skills stay unloaded.' },
+            { t: 'The plan', part: 'Loop + reasoning', d: 'Following the skill, the agent writes a short plan: find internal notes, research each rival, compare, draft. A plan-and-execute pattern keeps a long task on track.' },
+            { t: 'Internal documents via MCP', part: 'Tools / MCP', d: 'A Google Drive MCP server provides a search tool. The agent finds last quarter\'s win/loss notes and reads only the relevant pages.' },
+            { t: 'Research in parallel', part: 'Subagents', d: 'Three research subagents, one per rival, search the web and pricing pages at the same time. Each returns a one-page summary with links; the hundreds of pages they read never reach the main context.' },
+            { t: 'A risky action is gated', part: 'Guardrails', d: 'One subagent tries to fetch a page behind a login. The permission rules do not allow credentialed requests, so the call is refused and the agent notes the gap instead.' },
+            { t: 'Context stays small', part: 'Memory', d: 'Halfway through, the agent writes its findings so far to notes.md. When the conversation is later compacted, the notes survive intact.' },
+            { t: 'Draft and self-check', part: 'Reflexion', d: 'The agent drafts the report, scores it against the skill\'s rubric, and fixes the two sections that miss sources.' },
+            { t: 'Hooks finish the job', part: 'Hooks', d: 'A hook formats the document and checks every link resolves; a Stop hook refuses to finish while any claim lacks a citation.' },
+            { t: 'Measured afterwards', part: 'Evaluation', d: 'The full trajectory is logged. It becomes a test case: next time the skill changes, this run is replayed and the output compared.' },
           ].map((step, i) => (
-            <motion.div 
-              key={i}
+            <motion.div
+              key={step.t}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex gap-4 items-center bg-white/5 p-4 rounded-xl border border-white/10"
+              transition={{ delay: i * 0.04 }}
+              className="flex gap-4 bg-white/5 p-4 rounded-xl border border-white/10"
             >
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 flex items-center justify-center font-bold text-sm">
                 {i + 1}
               </div>
-              <div className="font-medium text-gray-200">{step}</div>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="font-semibold text-gray-100">{step.t}</span>
+                  <span className="text-[0.625rem] px-1.5 py-0.5 rounded border border-pink-500/30 text-pink-300">{step.part}</span>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed m-0">{step.d}</p>
+              </div>
             </motion.div>
           ))}
         </div>

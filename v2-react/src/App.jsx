@@ -30,7 +30,7 @@ const MlSupervised = lazy(() => import("./pages/MlSupervised"));
 const MlUnsupervised = lazy(() => import("./pages/MlUnsupervised"));
 const MlDeepLearning = lazy(() => import("./pages/MlDeepLearning"));
 const ModelsIndex = lazy(() => import("./pages/ModelsIndex"));
-const ModelsClaude = lazy(() => import("./pages/ModelsClaude"));
+const ModelsAnthropic = lazy(() => import("./pages/ModelsAnthropic"));
 const ModelsGemini = lazy(() => import("./pages/ModelsGemini"));
 const ModelsGpt = lazy(() => import("./pages/ModelsGpt"));
 const ModelsLlama = lazy(() => import("./pages/ModelsLlama"));
@@ -187,6 +187,12 @@ function RouteFallback() {
 // HashRouter keeps the window's scroll position across navigations, so a new
 // page would open wherever the previous one was scrolled to. Reset to the top
 // on every page change; links to "#/page#section" are scrolled by GuideLayout.
+// The Claude page became the Anthropic page; keep old links (and their section) working.
+function ClaudeRedirect() {
+  const { hash } = useLocation();
+  return <Navigate to={{ pathname: "/models/anthropic", hash }} replace />;
+}
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useLayoutEffect(() => {
@@ -324,7 +330,8 @@ function App() {
         <Route path="/ml/hypothesis-testing" element={<HypothesisTesting />} />
 
         <Route path="/models" element={<ModelsIndex />} />
-        <Route path="/models/claude" element={<ModelsClaude />} />
+        <Route path="/models/anthropic" element={<ModelsAnthropic />} />
+        <Route path="/models/claude" element={<ClaudeRedirect />} />
         <Route path="/models/gemini" element={<ModelsGemini />} />
         <Route path="/models/gpt" element={<ModelsGpt />} />
         <Route path="/models/llama" element={<ModelsLlama />} />

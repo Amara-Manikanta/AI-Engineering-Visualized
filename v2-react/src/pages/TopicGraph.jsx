@@ -102,7 +102,7 @@ const NODES = [
   // Build
   { id: "sysdesign", label: "System Design", group: "Build", path: "/system-design", size: 12 },
   { id: "projects", label: "Projects", group: "Build", path: "/projects", size: 10 },
-  { id: "models", label: "Model Families", group: "Build", path: "/models/claude", size: 11 },
+  { id: "models", label: "Model Families", group: "Build", path: "/models/anthropic", size: 11 },
 
   // Added guides
   { id: "evalmetrics", label: "Eval Metrics", group: "ML", path: "/ml/evaluation-metrics", size: 11 },

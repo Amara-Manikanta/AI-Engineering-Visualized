@@ -174,7 +174,7 @@ export const NAV_LINKS = [
     subLinks: [
       { name: "How Models Are Trained", path: "/models/training" },
       { name: "Mostly Closed", isHeader: true },
-      { name: "Claude", path: "/models/claude" },
+      { name: "Anthropic", path: "/models/anthropic" },
       { name: "GPT", path: "/models/gpt" },
       { name: "Gemini", path: "/models/gemini" },
       { name: "Grok", path: "/models/grok" },
@@ -186,8 +186,6 @@ export const NAV_LINKS = [
       { name: "Gemma", path: "/models/gemma" },
       { name: "Phi-4", path: "/models/phi" },
       { name: "Cohere Command", path: "/models/command-r" },
-      { name: "Tools", isHeader: true },
-      { name: "Claude Code Features", path: "/models/claude#claude-code" },
     ],
   },
   {
