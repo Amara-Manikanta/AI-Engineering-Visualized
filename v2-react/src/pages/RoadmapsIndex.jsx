@@ -10,7 +10,20 @@ import { useReadPages } from "../lib/progress";
    serves as the progress tracker.
 =========================================================================== */
 
-const STORE_KEY = "mani-notes:progress:v1";
+const STORE_KEY = "mani-notes:progress:v2";
+const V1_KEY = "mani-notes:progress:v1";
+
+// Step order when progress was stored by index (v1), used once to migrate it to title keys.
+const V1_STEPS = {
+  "beginner": ["Python foundations", "Data structures & functions", "Intro to Machine Learning", "Supervised learning", "What embeddings are", "Try the playgrounds", "RAG fundamentals", "Build it: chunking → retrieval"],
+  "data": ["Data sourcing", "Data cleaning", "Data analysis (EDA)", "Bivariate analysis", "Inferential statistics", "Central limit theorem", "Hypothesis testing", "Multiple linear regression", "Logistic regression", "Naive Bayes"],
+  "ai-engineer": ["Prompt engineering", "Tokenization & cost", "RAG from scratch", "Chunking strategies", "Advanced retrieval", "Contextual compression", "RAG vs fine-tuning", "RAG evaluation", "Agent architecture", "Tool calling", "MCP", "Multi-agent systems", "LangChain + LangGraph", "Framework choice", "Debugging agents", "Production deployment"],
+  "ml-engineer": ["Supervised learning", "Linear & logistic regression", "Multiple linear regression", "Naive Bayes", "Unsupervised learning", "Decision trees & KNN", "Support vector machines", "Random forests", "Gradient boosting & XGBoost", "Deep learning", "CNNs", "RNNs & LSTMs", "GANs", "NLP fundamentals", "Transformers", "Attention, hands-on", "Fine-tuning & LoRA", "Tokenization", "PEFT & LoRA", "Quantization", "Distillation", "Reinforcement learning", "RLHF & alignment", "DPO", "GRPO & verifiable rewards"],
+  "cloud": ["Python tooling & async", "Azure basics", "AWS basics", "Vector databases", "Indexing at scale", "Cost modelling", "Production checklist"],
+};
+
+// Progress is keyed by step title so adding or reordering steps keeps ticks on the right step.
+const stepKey = (pathId, step) => `${pathId}:${step.t}`;
 
 const PATHS = [
   {
@@ -64,6 +77,8 @@ const PATHS = [
     steps: [
       { t: "Prompt engineering", p: "/prompting", why: "The cheapest lever you have. Exhaust it before reaching for anything else." },
       { t: "Tokenization & cost", p: "/playgrounds", why: "Tokens are the unit of both latency and billing." },
+      { t: "Decoding & sampling", p: "/genai/decoding", why: "Temperature, top-p and structured output — what actually controls a response." },
+      { t: "Reasoning models", p: "/genai/reasoning-models", why: "When extended thinking pays for its extra tokens, and when it doesn't." },
       { t: "RAG from scratch", p: "/rag", why: "The whole pipeline, and where each stage fails." },
       { t: "Data ingestion", p: "/rag/ingestion", why: "The right LangChain loader for each format — PDFs, scans, web, SaaS — and metadata worth keeping." },
       { t: "Chunking strategies", p: "/rag/chunking", why: "Get this wrong and nothing downstream can recover." },
@@ -71,13 +86,18 @@ const PATHS = [
       { t: "Contextual compression", p: "/rag/compression", why: "Cut the padding out of retrieved context — cheaper and more accurate." },
       { t: "RAG vs fine-tuning", p: "/rag/vs-fine-tuning", why: "Decide which problem you have before you build the wrong thing." },
       { t: "RAG evaluation", p: "/rag/evaluation", why: "How to know a change helped, with a number rather than a vibe." },
+      { t: "Text-to-SQL", p: "/rag/text-to-sql", why: "Retrieval over tables: schema linking, validation and read-only guardrails." },
       { t: "Agent architecture", p: "/agents", why: "The core loop, plus reasoning strategies and guardrails." },
       { t: "Tool calling", p: "/agents/tool-calling", why: "How agents actually touch the world — and where the security boundary is." },
+      { t: "Agent SDKs", p: "/agents/sdks", why: "What the Claude Agent SDK and its peers give you over a hand-written loop." },
       { t: "MCP", p: "/mcp", why: "The standard way to connect models to external systems." },
       { t: "Multi-agent systems", p: "/agents/multi-agent", why: "Including when *not* to use them, which is most of the time." },
       { t: "LangChain + LangGraph", p: "/agents/langchain", why: "Orchestration, and stateful graphs for cyclic agent flows." },
       { t: "Framework choice", p: "/agents/frameworks", why: "CrewAI, AutoGen and LangGraph on the same task — pick on control flow." },
       { t: "Debugging agents", p: "/agents/debugging", why: "Compounding failure, tracing, and the caps you need before shipping." },
+      { t: "Red teaming", p: "/safety/red-teaming", why: "Attack your own app — prompt injection, jailbreaks, data leaks — before users do." },
+      { t: "LLM apps in production", p: "/llm-production", why: "Streaming, caching, retries, cost controls and observability." },
+      { t: "Serving stack", p: "/genai/serving", why: "Batching, KV cache and the latency numbers behind a self-hosted model." },
       { t: "Production deployment", p: "/rag/development", why: "Index-time vs query-time, monitoring, and the security checklist." },
     ],
   },
@@ -91,18 +111,29 @@ const PATHS = [
     accent: { text: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/40", dot: "bg-rose-500" },
     steps: [
       { t: "Supervised learning", p: "/ml/supervised", why: "Bias/variance, cross-validation, and honest evaluation." },
+      { t: "Evaluation metrics", p: "/ml/evaluation-metrics", why: "Precision, recall, AUC and RMSE — and which one your problem actually needs." },
+      { t: "Feature engineering", p: "/ml/feature-engineering", why: "Encoding, scaling and leakage — usually worth more than a better model." },
       { t: "Linear & logistic regression", p: "/ml/linear-regression", why: "Gradient descent and the loss surface, on the simplest possible model." },
+      { t: "Optimisation", p: "/ml/optimization", why: "SGD, momentum and Adam racing down the same loss surface." },
       { t: "Multiple linear regression", p: "/ml/multiple-regression", why: "Fit real coefficients, read residual plots, and spot multicollinearity." },
+      { t: "Regularisation", p: "/ml/regularization", why: "L1, L2 and early stopping — dial the overfit in and out." },
       { t: "Naive Bayes", p: "/ml/naive-bayes", why: "Bayes' theorem as a classifier — build a spam filter by counting words." },
-      { t: "Unsupervised learning", p: "/ml/unsupervised", why: "Clustering and dimensionality reduction." },
+      { t: "Unsupervised learning", p: "/ml/unsupervised", why: "Learning without labels — the map of the territory." },
+      { t: "Clustering", p: "/ml/clustering", why: "k-means, DBSCAN and hierarchical clustering on the same points." },
+      { t: "Dimensionality reduction", p: "/ml/dimensionality-reduction", why: "PCA from scratch, and when t-SNE and UMAP pictures mislead." },
       { t: "Decision trees & KNN", p: "/ml/decision-trees", why: "The non-parametric family, and why ensembles beat single trees." },
       { t: "Support vector machines", p: "/ml/svm", why: "Margin geometry and the kernel trick, both computed live." },
       { t: "Random forests", p: "/ml/random-forests", why: "Why averaging works, and the variance floor correlation puts under it." },
       { t: "Gradient boosting & XGBoost", p: "/ml/xgboost", why: "Still the strongest default on tabular data. Watch it fit residuals." },
+      { t: "Anomaly detection", p: "/ml/anomaly-detection", why: "Isolation forests and density scores when the positives are rare." },
+      { t: "Time series", p: "/ml/time-series", why: "Baselines, seasonality and backtesting without leaking the future." },
+      { t: "Recommenders", p: "/ml/recommenders", why: "Collaborative filtering and matrix factorisation, computed live." },
       { t: "Deep learning", p: "/ml/deep-learning", why: "From one neuron to backprop through a stack of layers." },
       { t: "CNNs", p: "/ml/cnn", why: "Apply a real kernel to a real grid and watch an edge detector fall out." },
       { t: "RNNs & LSTMs", p: "/ml/rnn", why: "The vanishing-gradient arithmetic that made attention necessary." },
       { t: "GANs", p: "/ml/gans", why: "Adversarial training, run in the browser on a two-parameter generator." },
+      { t: "Transfer learning", p: "/ml/transfer-learning", why: "Why a pretrained encoder beats training from scratch on little data." },
+      { t: "Graph neural networks", p: "/ml/graph-neural-networks", why: "Message passing over nodes and edges." },
       { t: "NLP fundamentals", p: "/ml/nlp", why: "Tokenization through TF-IDF — the ideas transformers replaced." },
       { t: "Transformers", p: "/ml/transformers", why: "Attention, positional encoding, and the architecture behind every LLM." },
       { t: "Attention, hands-on", p: "/playgrounds", why: "Watch a causal attention matrix respond to your own sentence." },
@@ -111,10 +142,13 @@ const PATHS = [
       { t: "PEFT & LoRA", p: "/genai/peft", why: "The parameter and memory arithmetic that makes large fine-tunes possible." },
       { t: "Quantization", p: "/genai/quantization", why: "Trading precision for memory, and where quality actually degrades." },
       { t: "Distillation", p: "/genai/distillation", why: "Teaching a small model from a large one, and what temperature exposes." },
+      { t: "Distributed training", p: "/genai/distributed-training", why: "Data, tensor and pipeline parallelism, and the memory each one saves." },
+      { t: "Model merging", p: "/genai/model-merging", why: "Combining fine-tunes without training: task arithmetic and TIES." },
       { t: "Reinforcement learning", p: "/ml/reinforcement-learning", why: "Bandits, Q-learning and PPO — the machinery behind alignment." },
       { t: "RLHF & alignment", p: "/ml/rlhf", why: "SFT → reward model → PPO, and why the KL penalty matters." },
       { t: "DPO", p: "/ml/dpo", why: "The same goal as RLHF with a single supervised loss." },
       { t: "GRPO & verifiable rewards", p: "/ml/grpo", why: "How reasoning models are trained with checkable answers." },
+      { t: "MLOps", p: "/mlops", why: "Registries, pipelines, drift monitoring — keeping a model alive after launch." },
     ],
   },
   {
@@ -129,9 +163,14 @@ const PATHS = [
       { t: "Python tooling & async", p: "/python/tooling-async", why: "Virtual envs, APIs, asyncio, and concurrency limits for API calls." },
       { t: "Azure basics", p: "/azure", why: "Identity, compute and storage primitives." },
       { t: "AWS basics", p: "/aws", why: "The equivalent primitives on the other major cloud." },
+      { t: "Cloud AI platforms", p: "/cloud/ai-platforms", why: "Bedrock, AI Foundry and Vertex AI side by side, plus a Google Cloud primer." },
       { t: "Vector databases", p: "/rag/vector-dbs", why: "The one piece of stateful infrastructure a RAG app really needs." },
       { t: "Indexing at scale", p: "/rag/indexing", why: "HNSW and IVF — the speed/recall tradeoff you control." },
       { t: "Cost modelling", p: "/playgrounds", why: "Model the bill before you commit to an architecture." },
+      { t: "Serving stack", p: "/genai/serving", why: "GPU memory, batching and throughput for self-hosted models." },
+      { t: "LLM apps in production", p: "/llm-production", why: "Caching, fallbacks, rate limits and tracing for model calls." },
+      { t: "MLOps", p: "/mlops", why: "CI/CD for models: registries, pipelines and drift monitoring." },
+      { t: "Governance", p: "/safety/governance", why: "Risk tiers, the EU AI Act and model documentation — what compliance asks of you." },
       { t: "Production checklist", p: "/rag/development", why: "Deployment, monitoring and security for an LLM service." },
     ],
   },
@@ -139,7 +178,17 @@ const PATHS = [
 
 function loadProgress() {
   try {
-    return JSON.parse(localStorage.getItem(STORE_KEY)) ?? {};
+    const v2 = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (v2) return v2;
+    const v1 = JSON.parse(localStorage.getItem(V1_KEY)) ?? {};
+    const migrated = {};
+    for (const k of Object.keys(v1)) {
+      const [pathId, i] = k.split(":");
+      const t = V1_STEPS[pathId]?.[Number(i)];
+      if (v1[k] && t) migrated[`${pathId}:${t}`] = true;
+    }
+    localStorage.setItem(STORE_KEY, JSON.stringify(migrated));
+    return migrated;
   } catch {
     return {};
   }
@@ -167,7 +216,7 @@ export default function RoadmapsIndex() {
   const resetPath = (path) => {
     setDone((d) => {
       const next = { ...d };
-      path.steps.forEach((_, i) => delete next[`${path.id}:${i}`]);
+      path.steps.forEach((s) => delete next[stepKey(path.id, s)]);
       try { localStorage.setItem(STORE_KEY, JSON.stringify(next)); } catch { /* noop */ }
       return next;
     });
@@ -177,7 +226,7 @@ export default function RoadmapsIndex() {
   const counts = useMemo(
     () =>
       Object.fromEntries(
-        PATHS.map((p) => [p.id, p.steps.filter((_, i) => done[`${p.id}:${i}`]).length])
+        PATHS.map((p) => [p.id, p.steps.filter((s) => done[stepKey(p.id, s)]).length])
       ),
     [done]
   );
@@ -256,7 +305,7 @@ export default function RoadmapsIndex() {
 
           <ol className="space-y-3 list-none p-0 m-0">
             {path.steps.map((s, i) => {
-              const key = `${path.id}:${i}`;
+              const key = stepKey(path.id, s);
               const isDone = !!done[key];
               return (
                 <motion.li

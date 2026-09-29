@@ -26,7 +26,7 @@ export default function Home() {
     { title: "Python Basics", desc: "The foundation of AI", path: "/python", icon: <Code size={24} className="text-blue-400" />, color: "from-blue-500/20 to-blue-600/5" },
     { title: "Machine Learning", desc: "Models that learn from data", path: "/ml", icon: <Brain size={24} className="text-emerald-400" />, color: "from-emerald-500/20 to-emerald-600/5" },
     { title: "Generative AI", desc: "Creating new content", path: "/genai", icon: <Sparkles size={24} className="text-purple-400" />, color: "from-purple-500/20 to-purple-600/5" },
-    { title: "RAG Architecture", desc: "Retrieval-Augmented Gen", path: "/rag/fundamentals", icon: <Database size={24} className="text-amber-400" />, color: "from-amber-500/20 to-amber-600/5" },
+    { title: "RAG Architecture", desc: "Retrieval-Augmented Gen", path: "/rag", icon: <Database size={24} className="text-amber-400" />, color: "from-amber-500/20 to-amber-600/5" },
     { title: "LLMs Deep Dive", desc: "Large Language Models", path: "/llms", icon: <Cpu size={24} className="text-rose-400" />, color: "from-rose-500/20 to-rose-600/5" },
     { title: "Agentic AI", desc: "Autonomous AI Agents", path: "/agents", icon: <Bot size={24} className="text-cyan-400" />, color: "from-cyan-500/20 to-cyan-600/5" }
   ];
