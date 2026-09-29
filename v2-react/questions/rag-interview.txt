@@ -19,3 +19,73 @@ Q: Why combine dense vector search with keyword (BM25) search?
 - Vector databases cannot store text
 WHY: Embeddings blur rare tokens like product codes and error IDs. Hybrid search
 fuses both rankings so each covers the other's blind spot.
+
+Q: How do you choose a chunk size?
+ANSWER: Start from the shape of the questions and the documents, not a number.
+Short factual questions favour small chunks (a few hundred tokens) so the match
+is precise; questions that need surrounding reasoning favour larger chunks or
+small-to-big retrieval (match on a small chunk, return its parent section). Then
+measure recall at k on a labelled set for two or three sizes and keep the best —
+the right size is an empirical result for your corpus.
+
+Q: Why use hybrid search instead of pure vector search?
+ANSWER: Dense embeddings are good at paraphrase but weak on exact tokens — product
+codes, error messages, names, rare jargon. BM25 is the opposite. Running both and
+fusing the rankings (for example with reciprocal rank fusion) recovers the exact
+matches without losing semantic recall, and it is usually one of the cheapest
+quality gains available.
+
+Q: What does a re-ranker add, and what does it cost?
+ANSWER: A cross-encoder reads the query and each candidate together, so it scores
+relevance far more accurately than comparing two independently computed vectors.
+It is too slow to run over the whole corpus, so you retrieve a wide candidate set
+(say 50) cheaply and re-rank down to the few you send to the model. The cost is
+added latency per query and another model to host or pay for.
+
+Q: How would you ingest a mix of PDFs, scanned documents and web pages?
+ANSWER: Route each format to a loader that preserves structure: a layout-aware
+parser for digital PDFs (keeping headings and tables), OCR for scans, and an HTML
+loader that strips navigation and boilerplate for web pages. Normalise everything
+to text plus metadata — source, page, section, date, access permissions — because
+that metadata is what enables filtering, citations and access control later.
+LangChain's document loaders give a common Document interface over all of these.
+
+Q: How do you keep a RAG index up to date as documents change?
+ANSWER: Track a stable ID and a content hash for every source document. On each
+sync, re-embed only the documents whose hash changed, delete the chunks of removed
+documents, and upsert by ID so there are no duplicates. Record the embedding model
+version with each chunk: changing the embedding model means re-indexing everything,
+because vectors from different models are not comparable.
+
+Q: A user must not see documents they are not allowed to read. How do you enforce that in RAG?
+ANSWER: Store access-control metadata (groups, tenant, classification) on every
+chunk at ingestion and apply it as a filter inside the retrieval query, before
+ranking. Never rely on the prompt to tell the model to ignore restricted content —
+anything placed in the context window can leak into the answer.
+
+Q: What is the "lost in the middle" problem and how do you mitigate it?
+ANSWER: Models tend to use information at the start and end of a long context
+more reliably than information in the middle. Mitigations: send fewer, better
+chunks (re-ranking, compression), put the most relevant chunks at the edges, and
+ask the model to quote the passages it relies on so you can check grounding.
+
+Q: How do you evaluate the generation side of a RAG system?
+ANSWER: Measure faithfulness (is every claim supported by the retrieved context?)
+and answer relevance (does it address the question?), usually with an LLM judge
+checked against a sample of human labels. Pair that with citation accuracy if the
+system cites sources. Keep a fixed regression set so every prompt, model or
+retrieval change is compared on the same questions.
+
+Q: When is RAG the wrong tool?
+ANSWER: When the answer requires aggregating over the whole dataset ("how many
+contracts expire this year?") — that is a query over structured data, better
+served by text-to-SQL or a pipeline. Also when the corpus is small enough to fit
+in the context window with prompt caching, or when the problem is behaviour or
+format rather than missing knowledge.
+
+Q: How do you make text-to-SQL safe?
+ANSWER: Connect with a read-only database role scoped to the tables the feature
+needs, parse the generated SQL and reject anything that is not a single SELECT
+over allowed tables, add a row limit and a statement timeout, and never
+interpolate user text into SQL outside the model's validated output. Show the
+query to the user for high-stakes answers.
