@@ -399,6 +399,74 @@
     "keywords": []
   },
   {
+    "path": "/agents/sdks",
+    "title": "Agent SDKs, Skills & Builders",
+    "intro": "The tools people actually build agents with — provider SDKs like the Claude Agent SDK and OpenAI Agents SDK, open frameworks, Agent Skills for packaging know-how, and low-code builders like n8n — and how to choose between them.",
+    "sections": [
+      {
+        "label": "Framework, SDK or Platform?",
+        "hash": "layers"
+      },
+      {
+        "label": "Which to Start With",
+        "hash": "chooser"
+      },
+      {
+        "label": "The Landscape",
+        "hash": "landscape"
+      },
+      {
+        "label": "The Same Agent, Three Ways",
+        "hash": "code"
+      },
+      {
+        "label": "Agent Skills",
+        "hash": "skills"
+      },
+      {
+        "label": "Low-code Builders",
+        "hash": "lowcode"
+      },
+      {
+        "label": "Choosing Well",
+        "hash": "advice"
+      }
+    ],
+    "keywords": [
+      "agent SDK",
+      "agent frameworks",
+      "Claude Agent SDK",
+      "OpenAI Agents SDK",
+      "handoffs",
+      "guardrails",
+      "Google ADK",
+      "Agent Development Kit",
+      "Pydantic AI",
+      "smolagents",
+      "CodeAgent",
+      "LlamaIndex agents",
+      "Semantic Kernel",
+      "Microsoft Agent Framework",
+      "DSPy",
+      "LangGraph",
+      "CrewAI",
+      "AutoGen",
+      "Agent Skills",
+      "SKILL.md",
+      "progressive disclosure",
+      "Claude Code skills",
+      "managed agents",
+      "n8n",
+      "Dify",
+      "Flowise",
+      "Zapier",
+      "low-code agents",
+      "no-code automation",
+      "tool runner",
+      "choosing an agent framework"
+    ]
+  },
+  {
     "path": "/agents/tool-calling",
     "title": "Tool Calling",
     "intro": "How an LLM reaches outside its own weights — calling functions, APIs, and code to act on the real world.",
@@ -1462,6 +1530,142 @@
     "keywords": []
   },
   {
+    "path": "/genai/model-merging",
+    "title": "Model Merging & Catastrophic Forgetting",
+    "intro": "Combining fine-tuned models by doing arithmetic on their weights — task vectors, TIES, DARE and SLERP — and the flip side: why fine-tuning on something new erases what a model knew, and how to prevent it.",
+    "sections": [
+      {
+        "label": "Why Merge Models",
+        "hash": "why"
+      },
+      {
+        "label": "Task Vectors",
+        "hash": "vectors"
+      },
+      {
+        "label": "Merge Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Merge Methods",
+        "hash": "methods"
+      },
+      {
+        "label": "Catastrophic Forgetting",
+        "hash": "forgetting"
+      },
+      {
+        "label": "Avoiding Forgetting",
+        "hash": "avoid"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "model merging",
+      "mergekit",
+      "task vectors",
+      "task arithmetic",
+      "linear merge",
+      "model soup",
+      "SLERP",
+      "TIES-merging",
+      "DARE",
+      "sign conflict",
+      "catastrophic forgetting",
+      "continual learning",
+      "EWC",
+      "elastic weight consolidation",
+      "replay",
+      "rehearsal",
+      "LoRA forgetting",
+      "negation",
+      "forgetting a task"
+    ]
+  },
+  {
+    "path": "/genai/multimodal-generation",
+    "title": "Multimodal & Generative Models",
+    "intro": "How models see, draw, speak and simulate: vision transformers and CLIP, VAEs and latent space, diffusion and classifier-free guidance computed live, latent diffusion and video, speech models, and world models.",
+    "sections": [
+      {
+        "label": "Beyond Text",
+        "hash": "beyond"
+      },
+      {
+        "label": "Seeing: Vision Transformers & CLIP",
+        "hash": "vision"
+      },
+      {
+        "label": "Generating: VAEs & Latent Space",
+        "hash": "vae"
+      },
+      {
+        "label": "Diffusion Models",
+        "hash": "diffusion"
+      },
+      {
+        "label": "Classifier-Free Guidance",
+        "hash": "guidance"
+      },
+      {
+        "label": "Modern Image & Video Generation",
+        "hash": "modern"
+      },
+      {
+        "label": "Audio & Speech",
+        "hash": "audio"
+      },
+      {
+        "label": "World Models",
+        "hash": "world"
+      },
+      {
+        "label": "Evaluating & Deploying",
+        "hash": "evaluating"
+      }
+    ],
+    "keywords": [
+      "multimodal",
+      "generative models",
+      "diffusion models",
+      "denoising diffusion",
+      "DDPM",
+      "noise schedule",
+      "latent diffusion",
+      "Stable Diffusion",
+      "flow matching",
+      "rectified flow",
+      "classifier-free guidance",
+      "CFG",
+      "guidance scale",
+      "DiT",
+      "diffusion transformer",
+      "VAE",
+      "variational autoencoder",
+      "latent space",
+      "Vision Transformer",
+      "ViT",
+      "patch embeddings",
+      "CLIP",
+      "contrastive learning",
+      "text-to-image",
+      "text-to-video",
+      "video generation",
+      "speech recognition",
+      "ASR",
+      "Whisper",
+      "text-to-speech",
+      "TTS",
+      "music generation",
+      "world models",
+      "FID",
+      "CLIP score"
+    ]
+  },
+  {
     "path": "/genai/peft",
     "title": "PEFT — Parameter-Efficient Fine-Tuning",
     "intro": "Six ways to adapt a large model without retraining it. They share one insight and differ in where they attach — which decides what each one costs you.",
@@ -1780,6 +1984,70 @@
     "keywords": []
   },
   {
+    "path": "/genai/reasoning-models",
+    "title": "Reasoning Models & Test-Time Compute",
+    "intro": "Models that think before they answer: chain of thought, how reinforcement learning on checkable problems produced reasoning models, the ways to spend more compute at inference, and how to prompt and budget them.",
+    "sections": [
+      {
+        "label": "What Changed",
+        "hash": "what"
+      },
+      {
+        "label": "Chain of Thought",
+        "hash": "cot"
+      },
+      {
+        "label": "How Reasoning Models Are Trained",
+        "hash": "training"
+      },
+      {
+        "label": "Scaling Test-Time Compute",
+        "hash": "scaling"
+      },
+      {
+        "label": "Voting vs Verifying Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Using Reasoning Models",
+        "hash": "using"
+      },
+      {
+        "label": "Limits & Caveats",
+        "hash": "limits"
+      }
+    ],
+    "keywords": [
+      "reasoning models",
+      "test-time compute",
+      "inference-time scaling",
+      "thinking models",
+      "extended thinking",
+      "adaptive thinking",
+      "effort",
+      "reasoning effort",
+      "thinking budget",
+      "chain of thought",
+      "CoT",
+      "self-consistency",
+      "majority voting",
+      "best-of-n",
+      "pass@k",
+      "verifier",
+      "process reward model",
+      "PRM",
+      "outcome reward model",
+      "tree of thoughts",
+      "reflection",
+      "o1",
+      "o3",
+      "DeepSeek-R1",
+      "RLVR",
+      "chain-of-thought faithfulness",
+      "overthinking"
+    ]
+  },
+  {
     "path": "/genai/serving",
     "title": "The LLM Serving Stack",
     "intro": "What happens between an API request and a stream of tokens: why decoding is memory-bound, continuous batching, KV-cache paging and prefix caching, FlashAttention, speculative decoding, and the engines that put it together.",
@@ -1978,6 +2246,91 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/llm-production",
+    "title": "LLM Apps in Production",
+    "intro": "Everything between a working notebook and a service people rely on: a streaming API, containers, retries and fallbacks, cost control with caching and batching, tracing, evals with LLM judges, and safe rollouts.",
+    "sections": [
+      {
+        "label": "From Demo to Production",
+        "hash": "gap"
+      },
+      {
+        "label": "Reference Architecture",
+        "hash": "architecture"
+      },
+      {
+        "label": "Serving an API",
+        "hash": "api"
+      },
+      {
+        "label": "Reliability: Limits, Retries, Fallbacks",
+        "hash": "reliability"
+      },
+      {
+        "label": "Cost Lab",
+        "hash": "cost"
+      },
+      {
+        "label": "Observability",
+        "hash": "observability"
+      },
+      {
+        "label": "Evals & LLM-as-a-Judge",
+        "hash": "evals"
+      },
+      {
+        "label": "Shipping Changes Safely",
+        "hash": "rollout"
+      },
+      {
+        "label": "Launch Checklist",
+        "hash": "checklist"
+      }
+    ],
+    "keywords": [
+      "LLM in production",
+      "deploying LLM apps",
+      "LLMOps",
+      "FastAPI",
+      "streaming",
+      "server-sent events",
+      "SSE",
+      "Docker",
+      "observability",
+      "tracing",
+      "OpenTelemetry",
+      "Langfuse",
+      "LangSmith",
+      "Arize Phoenix",
+      "evals",
+      "evaluation harness",
+      "LLM-as-a-judge",
+      "position bias",
+      "verbosity bias",
+      "golden dataset",
+      "regression tests",
+      "cost optimisation",
+      "token cost",
+      "prompt caching",
+      "semantic caching",
+      "batch API",
+      "rate limits",
+      "429",
+      "exponential backoff",
+      "retries",
+      "fallback models",
+      "model routing",
+      "gateway",
+      "canary release",
+      "shadow deployment",
+      "A/B testing",
+      "Streamlit",
+      "Gradio",
+      "pytest",
+      "guardrails"
+    ]
   },
   {
     "path": "/llms",
@@ -6100,6 +6453,132 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/safety/governance",
+    "title": "Responsible AI & Governance",
+    "intro": "The parts of building AI that are not about accuracy: measuring and choosing fairness criteria, protecting personal data with differential privacy, marking generated content, and the regulations and standards — EU AI Act, NIST AI RMF, ISO 42001 — that increasingly require all of it.",
+    "sections": [
+      {
+        "label": "What Responsible AI Covers",
+        "hash": "scope"
+      },
+      {
+        "label": "Fairness",
+        "hash": "fairness"
+      },
+      {
+        "label": "Privacy",
+        "hash": "privacy"
+      },
+      {
+        "label": "Provenance & Watermarking",
+        "hash": "provenance"
+      },
+      {
+        "label": "Regulation & Standards",
+        "hash": "regulation"
+      },
+      {
+        "label": "Documentation",
+        "hash": "documentation"
+      },
+      {
+        "label": "A Practical Checklist",
+        "hash": "checklist"
+      }
+    ],
+    "keywords": [
+      "responsible AI",
+      "AI governance",
+      "fairness",
+      "bias audit",
+      "demographic parity",
+      "equal opportunity",
+      "equalized odds",
+      "disparate impact",
+      "privacy",
+      "PII",
+      "differential privacy",
+      "epsilon",
+      "Laplace mechanism",
+      "federated learning",
+      "watermarking",
+      "LLM watermark",
+      "green list",
+      "C2PA",
+      "content credentials",
+      "provenance",
+      "EU AI Act",
+      "high-risk AI",
+      "general-purpose AI",
+      "NIST AI RMF",
+      "ISO 42001",
+      "model cards",
+      "datasheets",
+      "copyright",
+      "model licence",
+      "AI regulation"
+    ]
+  },
+  {
+    "path": "/safety/red-teaming",
+    "title": "Red Teaming & Prompt Injection",
+    "intro": "How LLM applications get attacked and how to test for it: jailbreaks versus prompt injection, a step-by-step indirect injection that leaks data, the layers of defence that actually help, and how to run a red-team exercise.",
+    "sections": [
+      {
+        "label": "Jailbreaks vs Prompt Injection",
+        "hash": "two"
+      },
+      {
+        "label": "Anatomy of an Attack",
+        "hash": "anatomy"
+      },
+      {
+        "label": "Common Techniques",
+        "hash": "techniques"
+      },
+      {
+        "label": "Defence in Depth",
+        "hash": "defense"
+      },
+      {
+        "label": "Red Teaming in Practice",
+        "hash": "practice"
+      },
+      {
+        "label": "OWASP Top 10 for LLM Apps",
+        "hash": "owasp"
+      }
+    ],
+    "keywords": [
+      "red teaming",
+      "prompt injection",
+      "indirect prompt injection",
+      "jailbreak",
+      "jailbreaking",
+      "role-play attack",
+      "many-shot jailbreaking",
+      "encoding attack",
+      "data exfiltration",
+      "markdown image exfiltration",
+      "excessive agency",
+      "tool misuse",
+      "system prompt leakage",
+      "OWASP Top 10 for LLM",
+      "guardrails",
+      "input classifier",
+      "output filter",
+      "spotlighting",
+      "least privilege",
+      "human in the loop",
+      "attack success rate",
+      "garak",
+      "PyRIT",
+      "promptfoo",
+      "adversarial testing",
+      "LLM security"
+    ]
   },
   {
     "path": "/system-design",

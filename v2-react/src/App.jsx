@@ -125,6 +125,13 @@ const RagLateInteraction = lazy(() => import("./pages/RagLateInteraction"));
 const GenAiDistributed = lazy(() => import("./pages/GenAiDistributed"));
 const GenAiServing = lazy(() => import("./pages/GenAiServing"));
 const GenAiDecoding = lazy(() => import("./pages/GenAiDecoding"));
+const AgentsSdks = lazy(() => import("./pages/AgentsSdks"));
+const GenAiReasoning = lazy(() => import("./pages/GenAiReasoning"));
+const GenAiMerging = lazy(() => import("./pages/GenAiMerging"));
+const GenAiMultimodal = lazy(() => import("./pages/GenAiMultimodal"));
+const SafetyGovernance = lazy(() => import("./pages/SafetyGovernance"));
+const SafetyRedTeaming = lazy(() => import("./pages/SafetyRedTeaming"));
+const LlmProduction = lazy(() => import("./pages/LlmProduction"));
 const LlmInference = lazy(() => import("./pages/LlmInference"));
 const InteractiveIndex = lazy(() => import("./pages/InteractiveIndex"));
 const EfficiencyIndex = lazy(() => import("./pages/EfficiencyIndex"));
@@ -202,6 +209,7 @@ function App() {
         <Route path="/agents/frameworks" element={<AgentsFrameworks />} />
         <Route path="/agents/a2a" element={<AgentsA2A />} />
         <Route path="/agents/debugging" element={<AgentsDebugging />} />
+        <Route path="/agents/sdks" element={<AgentsSdks />} />
         
         <Route path="/rag" element={<RagIndex />} />
         <Route path="/rag/fundamentals" element={<RagFundamentals />} />
@@ -253,6 +261,9 @@ function App() {
         <Route path="/genai/distributed-training" element={<GenAiDistributed />} />
         <Route path="/genai/serving" element={<GenAiServing />} />
         <Route path="/genai/decoding" element={<GenAiDecoding />} />
+        <Route path="/genai/reasoning-models" element={<GenAiReasoning />} />
+        <Route path="/genai/model-merging" element={<GenAiMerging />} />
+        <Route path="/genai/multimodal-generation" element={<GenAiMultimodal />} />
         
         <Route path="/python" element={<PythonIndex />} />
         <Route path="/python/foundations" element={<PythonFoundations />} />
@@ -325,6 +336,7 @@ function App() {
         
 
         <Route path="/llm-inference" element={<LlmInference />} />
+        <Route path="/llm-production" element={<LlmProduction />} />
         
         <Route path="/azure" element={<AzureIndex />} />
         <Route path="/azure/basics" element={<AzureBasics />} />
@@ -358,6 +370,8 @@ function App() {
         <Route path="/animations" element={<InteractiveIndex />} />
         <Route path="/roadmaps" element={<RoadmapsIndex />} />
         <Route path="/safety" element={<SafetyIndex />} />
+        <Route path="/safety/red-teaming" element={<SafetyRedTeaming />} />
+        <Route path="/safety/governance" element={<SafetyGovernance />} />
         <Route path="/system-design" element={<SystemDesignIndex />} />
         <Route path="/glossary" element={<GlossaryIndex />} />
         <Route path="/graph" element={<TopicGraph />} />
