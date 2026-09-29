@@ -42,7 +42,7 @@ export default function Home() {
 
   const moreLinks = [
     { title: "MCP", path: "/mcp", icon: <Plug size={16} /> },
-    { title: "Claude Code", path: "/models/claude#claude-code", icon: <MessageSquare size={16} /> },
+    { title: "Claude Code", path: "/models/anthropic#claude-code", icon: <MessageSquare size={16} /> },
     { title: "Prompt Engineering", path: "/prompting", icon: <Wand2 size={16} /> },
     { title: "Embeddings", path: "/embeddings", icon: <Layers size={16} /> },
     { title: "LLM Inference", path: "/llm-inference", icon: <Gauge size={16} /> },

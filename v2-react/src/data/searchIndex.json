@@ -12,7 +12,7 @@
     "intro": "Agents are AI systems that can perceive, reason, act, and observe in a loop — using tools, memory, and sub-agents to complete complex tasks autonomously.",
     "sections": [
       {
-        "label": "Overview",
+        "label": "What Makes an Agent",
         "hash": "overview"
       },
       {
@@ -22,6 +22,14 @@
       {
         "label": "Core Agent Loop",
         "hash": "core-loop"
+      },
+      {
+        "label": "Tools",
+        "hash": "tools"
+      },
+      {
+        "label": "Memory & Context",
+        "hash": "memory"
       },
       {
         "label": "Reasoning Strategies",
@@ -40,7 +48,7 @@
         "hash": "hooks"
       },
       {
-        "label": "Extension Stack",
+        "label": "How the Pieces Stack",
         "hash": "stack"
       },
       {
@@ -52,7 +60,7 @@
         "hash": "evaluation"
       },
       {
-        "label": "Real-World Example",
+        "label": "Worked Example",
         "hash": "realworld"
       },
       {
@@ -60,7 +68,37 @@
         "hash": "next"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "AI agents",
+      "agent architecture",
+      "agent loop",
+      "ReAct",
+      "tool use",
+      "tool_use",
+      "tool_result",
+      "stop_reason",
+      "workflow vs agent",
+      "agent harness",
+      "tool design",
+      "context window",
+      "compaction",
+      "context engineering",
+      "agent memory",
+      "skills",
+      "progressive disclosure",
+      "SKILL.md",
+      "subagents",
+      "orchestrator",
+      "hooks",
+      "PreToolUse",
+      "PostToolUse",
+      "guardrails",
+      "prompt injection",
+      "agent evaluation",
+      "plan-and-execute",
+      "Reflexion",
+      "Tree of Thoughts"
+    ]
   },
   {
     "path": "/agents/a2a",
@@ -4987,6 +5025,14 @@
         "hash": "overview"
       },
       {
+        "label": "Reading a Model Spec",
+        "hash": "spec"
+      },
+      {
+        "label": "What It Will Cost",
+        "hash": "cost"
+      },
+      {
         "label": "Model Cards",
         "hash": "model-cards"
       },
@@ -4995,24 +5041,53 @@
         "hash": "comparison"
       },
       {
+        "label": "Benchmarks",
+        "hash": "benchmarks"
+      },
+      {
         "label": "Open vs Closed Weights",
         "hash": "open-vs-closed"
       },
       {
         "label": "Choosing a Model",
         "hash": "choosing"
+      },
+      {
+        "label": "Where to Next",
+        "hash": "next"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "model comparison",
+      "benchmarks",
+      "Artificial Analysis",
+      "intelligence index",
+      "tokens per second",
+      "cost per task",
+      "price per million tokens",
+      "context window",
+      "knowledge cutoff",
+      "rate limits",
+      "reasoning effort",
+      "open weights",
+      "licence",
+      "choosing a model",
+      "model routing",
+      "cost calculator"
+    ]
   },
   {
-    "path": "/models/claude",
-    "title": "Claude (Anthropic)",
-    "intro": "The model line built around Constitutional AI — training a model to critique and revise its own outputs against a written set of principles.",
+    "path": "/models/anthropic",
+    "title": "Anthropic",
+    "intro": "The company behind Claude: its models and how they are trained, the developer platform, and Claude Code — the agentic coding tool — feature by feature.",
     "sections": [
       {
         "label": "Overview",
         "hash": "overview"
+      },
+      {
+        "label": "Products at a Glance",
+        "hash": "products"
       },
       {
         "label": "Current Lineup",
@@ -5031,8 +5106,12 @@
         "hash": "training"
       },
       {
-        "label": "Architecture",
+        "label": "Capabilities",
         "hash": "architecture"
+      },
+      {
+        "label": "The Developer Platform",
+        "hash": "platform"
       },
       {
         "label": "Strengths & Weaknesses",
@@ -5043,11 +5122,50 @@
         "hash": "use-cases"
       },
       {
-        "label": "Claude Code (Agent CLI)",
+        "label": "Claude Code",
         "hash": "claude-code"
+      },
+      {
+        "label": "Claude Code Features",
+        "hash": "claude-code-features"
+      },
+      {
+        "label": "A Typical Session",
+        "hash": "claude-code-workflow"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Claude Code",
+      "CLAUDE.md",
+      "plan mode",
+      "checkpoints",
+      "rewind",
+      "skills",
+      "SKILL.md",
+      "hooks",
+      "PreToolUse",
+      "PostToolUse",
+      "subagents",
+      "slash commands",
+      "compaction",
+      "/compact",
+      "permissions",
+      "settings.json",
+      "MCP servers",
+      "plugins",
+      "Claude Agent SDK",
+      "Messages API",
+      "prompt caching",
+      "batch API",
+      "adaptive thinking",
+      "Constitutional AI",
+      "RLAIF",
+      "Opus",
+      "Sonnet",
+      "Haiku"
+    ]
   },
   {
     "path": "/models/command-r",

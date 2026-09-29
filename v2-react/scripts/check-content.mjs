@@ -40,8 +40,10 @@ const pageFile = (rel) => src(rel.replace("./", "") + ".jsx");
 for (const [comp, rel] of imports) {
   if (!existsSync(pageFile(rel))) fail("App.jsx", `${comp} imports missing file ${rel}.jsx`);
 }
+// Components defined in App.jsx itself (redirect helpers) are fine too.
+const localComps = new Set([...app.matchAll(/^function (\w+)\(/gm)].map((m) => m[1]));
 for (const r of routes) {
-  if (!imports.has(r.comp)) fail("App.jsx", `route ${r.path} renders ${r.comp}, which is not imported`);
+  if (!imports.has(r.comp) && !localComps.has(r.comp)) fail("App.jsx", `route ${r.path} renders ${r.comp}, which is not imported`);
 }
 
 const allFiles = walk(src("."));
