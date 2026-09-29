@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 import { Globe, Building, Network, MapPin, ArrowRight, ArrowRightLeft, Lightbulb, Star, Cloud, User, Flag } from 'lucide-react';
 

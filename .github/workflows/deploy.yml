@@ -29,9 +29,15 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: v2-react/package-lock.json
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
+        working-directory: ./v2-react
+
+      - name: Lint and content checks
+        run: npx oxlint --deny-warnings && npm run check
         working-directory: ./v2-react
 
       - name: Build React App

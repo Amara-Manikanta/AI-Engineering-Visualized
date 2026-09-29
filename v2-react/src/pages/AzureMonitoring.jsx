@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Activity, Database, Lightbulb, Lightbulb as Bulb, Bell, BarChart2, Settings, LayoutDashboard, PanelTop, ArrowRight, Cloud, Server, Box, Globe, Shield, CheckSquare, Star } from 'lucide-react';
+import { Activity, Database, Lightbulb, Lightbulb as Bulb, Bell, BarChart2, Settings, LayoutDashboard, PanelTop, ArrowRight, Cloud, Server, Box, Globe, CheckSquare, Star } from 'lucide-react';
 
 export default function AzureMonitoring() {
   const toc = [

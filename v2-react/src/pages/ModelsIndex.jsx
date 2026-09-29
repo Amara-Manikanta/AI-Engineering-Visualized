@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import GuideLayout from '../components/GuideLayout';
 import ModelBenchmarks from '../components/ModelBenchmarks';
-import { PROFILES, AS_OF } from '../data/modelProfiles';
+import { PROFILES } from '../data/modelProfiles';
 
 const MODELS = [
   {

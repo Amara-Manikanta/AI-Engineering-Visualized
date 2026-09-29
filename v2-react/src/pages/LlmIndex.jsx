@@ -1,11 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { 
-  Cpu, Layers, Zap, Eye, Code2, Database, Music, 
-  Wrench, Compass, DollarSign, Award, HardDrive, Globe, 
-  ShieldAlert, Table, AlertTriangle, FileCode, Terminal, CheckCircle2, ArrowRight, Sparkles
-} from 'lucide-react';
+import { Cpu, Layers, Eye, Code2, Database, Music, Wrench, Compass, DollarSign, Award, HardDrive, Globe, ShieldAlert, Table, AlertTriangle, FileCode, Terminal, Sparkles } from 'lucide-react';
 
 export default function LlmIndex() {
   const toc = [

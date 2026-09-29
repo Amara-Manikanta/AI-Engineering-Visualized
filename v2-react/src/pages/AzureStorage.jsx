@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Database, File, MessageSquare, Table, HardDrive, Box, Layers, Building, Globe, MapPin, ArrowRightLeft, Clock, Server, Cloud, Lightbulb, Star, CheckCircle } from 'lucide-react';
+import { Database, File, MessageSquare, Table, HardDrive, Box, Layers, ArrowRightLeft, Clock, Lightbulb, Star, CheckCircle } from 'lucide-react';
 
 export default function AzureStorage() {
   const toc = [

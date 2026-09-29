@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import GuideLayout from "../components/GuideLayout";
 import CodeBlock from "../components/CodeBlock";
 
@@ -297,7 +297,6 @@ class Adapter(nn.Module):
 
     def forward(self, x):
         return x + self.up(self.act(self.down(x)))   # residual around it
-
 
 # Inserted INTO the path, after each sublayer:
 #   h = adapter(sublayer(x))

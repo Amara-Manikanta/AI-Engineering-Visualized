@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import GuideLayout from '../components/GuideLayout';
-import {
-  BookOpen, Database, Zap, Layers, FileText, Search,
-  Activity, GitBranch, ArrowRight, Sparkles, ClipboardCheck, Rocket,
-} from 'lucide-react';
+import { BookOpen, Database, Zap, Layers, FileText, Search, Activity, GitBranch, ArrowRight, Sparkles, ClipboardCheck, Rocket } from 'lucide-react';
 
 /* ---------------------------------------------------------------------------
    The four RAG stages — the spine the whole page is organized around.

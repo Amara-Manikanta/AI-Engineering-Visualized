@@ -437,40 +437,7 @@
     "path": "/aws",
     "title": "AWS Cheat Sheets",
     "intro": "Your visual guide to Amazon Web Services. Explore our interactive cheat sheets covering core AWS concepts, infrastructure, and services.",
-    "sections": [
-      {
-        "label": "1. AWS Basics",
-        "hash": "basics"
-      },
-      {
-        "label": "2. Global Infrastructure",
-        "hash": "infrastructure"
-      },
-      {
-        "label": "3. IAM (Identity & Access)",
-        "hash": "iam"
-      },
-      {
-        "label": "4. EC2 (Virtual Servers)",
-        "hash": "ec2"
-      },
-      {
-        "label": "5. Storage Services",
-        "hash": "storage"
-      },
-      {
-        "label": "6. Networking Basics",
-        "hash": "networking"
-      },
-      {
-        "label": "7. Load Balancer & Auto Scaling",
-        "hash": "load-balancer"
-      },
-      {
-        "label": "8. Route 53 & DNS",
-        "hash": "dns"
-      }
-    ],
+    "sections": [],
     "keywords": []
   },
   {

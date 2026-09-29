@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../../components/GuideLayout';
 import { CodeSnippet } from '../../components/CodeBlock';
 
@@ -140,10 +139,7 @@ function BroadcastVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Layers, 
-  LineChart, Cpu, Database, BarChart2, Sparkles, Sigma, Box
-} from 'lucide-react';
+import { Terminal, FileCode, LineChart, Cpu, Database, BarChart2, Sigma, Box } from 'lucide-react';
 
 export default function PythonDataScience() {
   const toc = [

@@ -91,10 +91,7 @@ function AsyncTimelineVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Layers, 
-  Folder, Box, Globe, FileJson, Zap, TestTube, Settings, ArrowRight, ShieldCheck
-} from 'lucide-react';
+import { Terminal, FileCode, Layers, Folder, Box, Globe, FileJson, Zap, TestTube, ArrowRight } from 'lucide-react';
 
 export default function PythonToolingAsync() {
   const toc = [

@@ -7,11 +7,13 @@ import CodeBlock from "../components/CodeBlock";
    The parameter count against LoRA is a one-line comparison, so compute it.
 -------------------------------------------------------------------------- */
 
+const ACTS = [0.8, 0.6, 0.9, 0.4, 0.7, 0.85, 0.5, 0.65];
+
 function ScalingPanel() {
   const [l, setL] = useState([1.4, 0.3, 1.0, 0.7, 1.9, 0.1, 1.1, 0.5]);
-  const acts = [0.8, 0.6, 0.9, 0.4, 0.7, 0.85, 0.5, 0.65];
+  const acts = ACTS;
 
-  const out = useMemo(() => acts.map((a, i) => a * l[i]), [l]);
+  const out = useMemo(() => ACTS.map((a, i) => a * l[i]), [l]);
   const set = (i, v) => setL((p) => p.map((x, j) => (j === i ? v : x)));
 
   const Bar = ({ v, max, color }) => (

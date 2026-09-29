@@ -1,0 +1,52 @@
+name: CI
+
+# Runs on every pull request and every push to a branch other than main
+# (main is covered by the deploy workflow, which runs the same checks).
+on:
+  pull_request:
+  push:
+    branches-ignore: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./v2-react
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: v2-react/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint (warnings fail the build)
+        run: npx oxlint --deny-warnings
+
+      - name: Content checks (routes, links, TOC anchors, quiz data)
+        run: npm run check
+
+      - name: Search index is up to date
+        run: |
+          npm run search:index
+          git diff --exit-code -- src/data/searchIndex.json || {
+            echo "::error::src/data/searchIndex.json is stale. Run 'npm run search:index' and commit the result."
+            exit 1
+          }
+
+      - name: Build
+        run: npm run build

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, FileText, Search, ArrowRight, Zap, RefreshCw, Layers } from 'lucide-react';
+import { Database, FileText, Search, ArrowRight, Zap, RefreshCw } from 'lucide-react';
 import GuideLayout from '../components/GuideLayout';
 
 const toc = [

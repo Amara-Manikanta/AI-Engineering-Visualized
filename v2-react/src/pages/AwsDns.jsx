@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 import { Globe, BookOpen, FileText, Activity, Map, User, Server, ArrowRight, ArrowLeft, ShieldCheck, CheckSquare, Lightbulb, Star } from 'lucide-react';
 

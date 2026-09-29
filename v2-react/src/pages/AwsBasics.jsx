@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Cloud, Server, Database, Shield, Network, Globe, MapPin, Building, Activity, Lightbulb, Star, Box, Zap, Lock, BarChart, HardDrive } from 'lucide-react';
+import { Cloud, Server, Database, Shield, Network, Globe, MapPin, Building, Lightbulb, Star, Zap, HardDrive } from 'lucide-react';
 
 export default function AwsBasics() {
   const toc = [

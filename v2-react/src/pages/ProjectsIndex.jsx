@@ -48,7 +48,7 @@ export default function ProjectsIndex() {
           </p>
         </div>
 
-        {LEVELS.map((group, gi) => (
+        {LEVELS.map((group) => (
           <section key={group.level} className="mb-14">
             <h2 className={`inline-block text-sm font-bold uppercase tracking-wider px-3 py-1 rounded-full border mb-6 ${group.color}`}>
               {group.level}

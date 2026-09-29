@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../../components/GuideLayout';
 import { CodeSnippet } from '../../components/CodeBlock';
 
@@ -85,10 +84,7 @@ function LegbVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Layers, 
-  Box, Database, Sliders, Type, Repeat, Hash, Search, ArrowRight, MessageSquare
-} from 'lucide-react';
+import { Code2, Terminal, FileCode, Layers, Box, Database, Sliders, Type, Repeat, Hash, Search, ArrowRight, MessageSquare } from 'lucide-react';
 
 export default function PythonDataStructures() {
   const toc = [

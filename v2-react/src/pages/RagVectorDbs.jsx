@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Database, Search, Zap, ArrowRight, GitBranch, Layers, Filter, Shuffle, AlertTriangle, CheckCircle, Code2 } from "lucide-react";
+import { Database, Search, Zap, ArrowRight, GitBranch, Layers, Shuffle, AlertTriangle, CheckCircle } from "lucide-react";
 import GuideLayout from "../components/GuideLayout";
 
 const toc = [

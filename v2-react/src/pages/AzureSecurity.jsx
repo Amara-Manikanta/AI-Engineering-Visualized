@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Shield, ShieldAlert, Key, FileCheck, Users, Lock, Flame, Globe2, ShieldCheck, Database, Activity, PanelTop, ArrowRight, CheckSquare, Lightbulb, Star, AlertTriangle, Cloud, Eye } from 'lucide-react';
+import { Shield, ShieldAlert, Key, FileCheck, Users, Lock, Flame, Globe2, Database, Activity, PanelTop, ArrowRight, CheckSquare, Lightbulb, Star, AlertTriangle, Eye } from 'lucide-react';
 
 export default function AzureSecurity() {
   const toc = [

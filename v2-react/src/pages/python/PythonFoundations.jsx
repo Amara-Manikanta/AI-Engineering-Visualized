@@ -163,10 +163,7 @@ function MemoryModelVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Cpu, Layers, 
-  ArrowRight, ShieldCheck, Zap, Variable, GitBranch, Equal, Hash, HelpCircle, Monitor, Play
-} from 'lucide-react';
+import { Code2, Terminal, FileCode, Cpu, Layers, ArrowRight, ShieldCheck, Zap, Variable, GitBranch, Equal, Hash, Monitor } from 'lucide-react';
 
 export default function PythonFoundations() {
   const toc = [
