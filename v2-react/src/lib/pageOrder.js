@@ -20,7 +20,7 @@ const SEQUENCES = [
   { prefix: "/azure", items: [{ name: "Azure Overview", path: "/azure" }, ...AZURE_LINKS] },
   { prefix: "/aws", items: [{ name: "AWS Overview", path: "/aws" }, ...AWS_LINKS] },
   { prefix: "/python", items: PYTHON_LINKS },
-  ...NAV_LINKS.filter((g) => g.subLinks && g.path !== "/azure").map((g) => {
+  ...NAV_LINKS.filter((g) => g.subLinks).map((g) => {
     const items = dedupe(links(g.subLinks));
     // Hubs such as /rag and /genai are not in their own dropdown; lead with them.
     if (!items.some((i) => i.path === g.path)) items.unshift({ name: g.name.replace(/^\S+\s/, "") + " Overview", path: g.path });
@@ -44,7 +44,7 @@ export function neighbours(pathname) {
    the current sub-heading's pages, so the on-page contents stays in view.
 --------------------------------------------------------------------------- */
 export function sectionFor(pathname) {
-  const groups = NAV_LINKS.filter((g) => g.subLinks && g.path !== "/azure");
+  const groups = NAV_LINKS.filter((g) => g.subLinks);
   const containing = groups.filter((g) => g.subLinks.some((l) => l.path === pathname));
   const group = containing.find((g) => under(pathname, g.path)) ?? containing[0];
   if (!group) return null;

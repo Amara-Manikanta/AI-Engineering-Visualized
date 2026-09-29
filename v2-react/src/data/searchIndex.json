@@ -1057,6 +1057,69 @@
     "keywords": []
   },
   {
+    "path": "/cloud/ai-platforms",
+    "title": "Cloud AI Platforms",
+    "intro": "How AWS, Azure and Google Cloud package AI: foundation-model APIs (Bedrock, AI Foundry, Vertex AI), managed ML platforms, RAG and vector search, agent services — plus a quick Google Cloud primer and how to choose.",
+    "sections": [
+      {
+        "label": "Why Use a Cloud AI Platform",
+        "hash": "why"
+      },
+      {
+        "label": "Service Map",
+        "hash": "map"
+      },
+      {
+        "label": "AWS: Bedrock & SageMaker",
+        "hash": "aws"
+      },
+      {
+        "label": "Azure: AI Foundry & Azure ML",
+        "hash": "azure"
+      },
+      {
+        "label": "Google Cloud: Vertex AI",
+        "hash": "gcp"
+      },
+      {
+        "label": "Choosing",
+        "hash": "choosing"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "cloud AI platforms",
+      "Amazon Bedrock",
+      "SageMaker",
+      "Bedrock Knowledge Bases",
+      "Bedrock AgentCore",
+      "Azure AI Foundry",
+      "Microsoft Foundry",
+      "Azure OpenAI",
+      "Azure Machine Learning",
+      "Azure AI Search",
+      "Google Cloud",
+      "GCP",
+      "Vertex AI",
+      "Gemini on Vertex",
+      "Vertex AI Vector Search",
+      "BigQuery",
+      "Cloud Run",
+      "GKE",
+      "Compute Engine",
+      "Cloud Storage",
+      "AWS vs Azure vs GCP",
+      "service mapping",
+      "data residency",
+      "private networking",
+      "managed ML",
+      "foundation model hosting"
+    ]
+  },
+  {
     "path": "/efficiency",
     "title": "Efficient Inference",
     "intro": "How a 70B model ends up running on a laptop. Every technique here trades one resource for another — the skill is knowing which trade you are making.",
@@ -3402,6 +3465,62 @@
     "keywords": []
   },
   {
+    "path": "/ml/graph-neural-networks",
+    "title": "Graph Neural Networks",
+    "intro": "Learning on networks — social graphs, molecules, transactions, knowledge graphs — where the connections carry as much information as the nodes: message passing computed live, GCN, GraphSAGE and GAT, and the tasks they solve.",
+    "sections": [
+      {
+        "label": "Data That Is a Graph",
+        "hash": "graphs"
+      },
+      {
+        "label": "Message Passing",
+        "hash": "message"
+      },
+      {
+        "label": "Message Passing Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "GNN Architectures",
+        "hash": "architectures"
+      },
+      {
+        "label": "Tasks & Applications",
+        "hash": "tasks"
+      },
+      {
+        "label": "Practical Notes",
+        "hash": "practical"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "graph neural networks",
+      "GNN",
+      "message passing",
+      "graph convolutional network",
+      "GCN",
+      "GraphSAGE",
+      "graph attention network",
+      "GAT",
+      "node classification",
+      "link prediction",
+      "graph classification",
+      "over-smoothing",
+      "adjacency matrix",
+      "node embeddings",
+      "knowledge graphs",
+      "molecules",
+      "fraud rings",
+      "PyTorch Geometric",
+      "DGL"
+    ]
+  },
+  {
     "path": "/ml/grpo",
     "title": "GRPO and RL with Verifiable Rewards",
     "intro": "The method behind open reasoning models. Sample several answers to the same problem, check which are right with a program, and push the model toward the answers that beat their siblings — no reward model and no value model required.",
@@ -4614,6 +4733,65 @@
     ]
   },
   {
+    "path": "/ml/transfer-learning",
+    "title": "Transfer & Self-Supervised Learning",
+    "intro": "Why almost nobody trains from scratch any more: reuse what a model learned on huge unlabelled data, adapt it with a few labels, and the self-supervised objectives — masking, next-token prediction, contrastive learning — that make pretraining possible.",
+    "sections": [
+      {
+        "label": "The Idea",
+        "hash": "idea"
+      },
+      {
+        "label": "Label Efficiency Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Ways to Transfer",
+        "hash": "ways"
+      },
+      {
+        "label": "Self-Supervised Learning",
+        "hash": "ssl"
+      },
+      {
+        "label": "Contrastive Learning",
+        "hash": "contrastive"
+      },
+      {
+        "label": "When Transfer Fails",
+        "hash": "fails"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "transfer learning",
+      "pretraining",
+      "fine-tuning",
+      "feature extraction",
+      "frozen backbone",
+      "linear probe",
+      "domain adaptation",
+      "self-supervised learning",
+      "SSL",
+      "contrastive learning",
+      "SimCLR",
+      "CLIP",
+      "masked modelling",
+      "masked language modelling",
+      "BERT",
+      "MAE",
+      "next-token prediction",
+      "representation learning",
+      "embeddings",
+      "few labels",
+      "label efficiency",
+      "foundation models"
+    ]
+  },
+  {
     "path": "/ml/transformers",
     "title": "Transformers & Gen AI",
     "intro": "Interactive visual explainer of Generative AI, Transformer architecture, Tokenization, Embeddings, Positional Encoding, Attention, and the full pipeline — inspired by transformer-explainer.",
@@ -4728,6 +4906,76 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/mlops",
+    "title": "MLOps",
+    "intro": "The engineering that keeps models useful after the notebook: experiment tracking and a model registry, versioned data and feature stores, serving patterns, CI/CD and infrastructure as code, and monitoring for drift — with a live PSI calculator.",
+    "sections": [
+      {
+        "label": "Why MLOps",
+        "hash": "why"
+      },
+      {
+        "label": "The Lifecycle",
+        "hash": "lifecycle"
+      },
+      {
+        "label": "Tracking & Registry",
+        "hash": "tracking"
+      },
+      {
+        "label": "Data, Features & Skew",
+        "hash": "features"
+      },
+      {
+        "label": "Serving Patterns",
+        "hash": "serving"
+      },
+      {
+        "label": "CI/CD & Infrastructure",
+        "hash": "cicd"
+      },
+      {
+        "label": "Monitoring & Drift",
+        "hash": "monitoring"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "MLOps",
+      "machine learning operations",
+      "ML lifecycle",
+      "experiment tracking",
+      "MLflow",
+      "Weights & Biases",
+      "model registry",
+      "model versioning",
+      "data versioning",
+      "DVC",
+      "feature store",
+      "Feast",
+      "training-serving skew",
+      "CI/CD for ML",
+      "continuous training",
+      "model monitoring",
+      "data drift",
+      "concept drift",
+      "PSI",
+      "population stability index",
+      "batch inference",
+      "online inference",
+      "Docker",
+      "Kubernetes",
+      "Kubeflow",
+      "Terraform",
+      "infrastructure as code",
+      "reproducibility",
+      "retraining"
+    ]
   },
   {
     "path": "/models",
@@ -6276,6 +6524,61 @@
     "intro": "The model uses special reflection tokens to critique its own retrieval and generation.",
     "sections": [],
     "keywords": []
+  },
+  {
+    "path": "/rag/text-to-sql",
+    "title": "Text-to-SQL",
+    "intro": "Answering questions over databases by having the model write SQL: schema linking, generation, validation, self-correction from database errors, the guardrails that keep it read-only, and how to measure accuracy.",
+    "sections": [
+      {
+        "label": "When Retrieval Is the Wrong Tool",
+        "hash": "why"
+      },
+      {
+        "label": "The Pipeline",
+        "hash": "pipeline"
+      },
+      {
+        "label": "Pipeline Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Getting Accuracy Up",
+        "hash": "accuracy"
+      },
+      {
+        "label": "Safety",
+        "hash": "safety"
+      },
+      {
+        "label": "Evaluating Text-to-SQL",
+        "hash": "evaluation"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "text-to-SQL",
+      "text to SQL",
+      "NL2SQL",
+      "natural language to SQL",
+      "schema linking",
+      "SQL generation",
+      "SQL agent",
+      "self-correction",
+      "query validation",
+      "read-only database",
+      "SQL injection",
+      "guardrails",
+      "execution accuracy",
+      "Spider",
+      "BIRD benchmark",
+      "semantic layer",
+      "structured data RAG",
+      "tabular question answering"
+    ]
   },
   {
     "path": "/rag/types-of-rag",

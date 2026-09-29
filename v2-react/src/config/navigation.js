@@ -62,6 +62,8 @@ export const NAV_LINKS = [
       { name: "Mamba / SSM", path: "/ml/mamba" },
       { name: "RWKV", path: "/ml/rwkv" },
       { name: "GANs", path: "/ml/gans" },
+      { name: "Transfer & Self-Supervised", path: "/ml/transfer-learning" },
+      { name: "Graph Neural Networks", path: "/ml/graph-neural-networks" },
       { name: "Reinforcement Learning", isHeader: true },
       { name: "RL Basics", path: "/ml/reinforcement-learning" },
       { name: "RLHF", path: "/ml/rlhf" },
@@ -128,6 +130,7 @@ export const NAV_LINKS = [
       { name: "Retrieval & Reranking", path: "/rag/retrieval" },
       { name: "Advanced Retrieval", path: "/rag/advanced-retrieval" },
       { name: "Late Interaction & Matryoshka", path: "/rag/late-interaction" },
+      { name: "Text-to-SQL", path: "/rag/text-to-sql" },
       { name: "Contextual Compression", path: "/rag/compression" },
       { name: "Generation", path: "/rag/generation" },
       { name: "Ship It", isHeader: true },
@@ -193,6 +196,7 @@ export const NAV_LINKS = [
     subLinks: [
       { name: "Azure", path: "/azure" },
       { name: "AWS", path: "/aws" },
+      { name: "AI Platforms (AWS · Azure · GCP)", path: "/cloud/ai-platforms" },
     ],
   },
   {
@@ -212,6 +216,7 @@ export const NAV_LINKS = [
     subLinks: [
       { name: "System Design", path: "/system-design" },
       { name: "LLM Apps in Production", path: "/llm-production" },
+      { name: "MLOps", path: "/mlops" },
       { name: "Projects", path: "/projects" },
       { name: "Resources", path: "/resources" },
     ],

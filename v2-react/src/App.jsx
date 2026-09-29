@@ -132,6 +132,11 @@ const GenAiMultimodal = lazy(() => import("./pages/GenAiMultimodal"));
 const SafetyGovernance = lazy(() => import("./pages/SafetyGovernance"));
 const SafetyRedTeaming = lazy(() => import("./pages/SafetyRedTeaming"));
 const LlmProduction = lazy(() => import("./pages/LlmProduction"));
+const RagTextToSql = lazy(() => import("./pages/RagTextToSql"));
+const Mlops = lazy(() => import("./pages/Mlops"));
+const CloudAiPlatforms = lazy(() => import("./pages/CloudAiPlatforms"));
+const MlTransferLearning = lazy(() => import("./pages/MlTransferLearning"));
+const MlGnn = lazy(() => import("./pages/MlGnn"));
 const LlmInference = lazy(() => import("./pages/LlmInference"));
 const InteractiveIndex = lazy(() => import("./pages/InteractiveIndex"));
 const EfficiencyIndex = lazy(() => import("./pages/EfficiencyIndex"));
@@ -221,6 +226,7 @@ function App() {
         <Route path="/rag/data-prep" element={<RagDataPrep />} />
         <Route path="/rag/advanced-retrieval" element={<RagAdvancedRetrieval />} />
         <Route path="/rag/late-interaction" element={<RagLateInteraction />} />
+        <Route path="/rag/text-to-sql" element={<RagTextToSql />} />
         <Route path="/rag/generation" element={<RagGeneration />} />
         <Route path="/rag/chunking" element={<RagChunking />} />
         <Route path="/rag/hybrid-rag" element={<RagHybrid />} />
@@ -285,6 +291,8 @@ function App() {
         <Route path="/ml/recommenders" element={<MlRecommenders />} />
         <Route path="/ml/anomaly-detection" element={<MlAnomaly />} />
         <Route path="/ml/time-series" element={<MlTimeSeries />} />
+        <Route path="/ml/transfer-learning" element={<MlTransferLearning />} />
+        <Route path="/ml/graph-neural-networks" element={<MlGnn />} />
         <Route path="/ml/deep-learning" element={<MlDeepLearning />} />
         <Route path="/ml/nlp" element={<MlNlp />} />
         <Route path="/ml/logistic-regression" element={<MlLogistic />} />
@@ -337,6 +345,7 @@ function App() {
 
         <Route path="/llm-inference" element={<LlmInference />} />
         <Route path="/llm-production" element={<LlmProduction />} />
+        <Route path="/mlops" element={<Mlops />} />
         
         <Route path="/azure" element={<AzureIndex />} />
         <Route path="/azure/basics" element={<AzureBasics />} />
@@ -363,6 +372,7 @@ function App() {
         <Route path="/aws/networking" element={<AwsNetworking />} />
         <Route path="/aws/load-balancer" element={<AwsLoadBalancer />} />
         <Route path="/aws/dns" element={<AwsDns />} />
+        <Route path="/cloud/ai-platforms" element={<CloudAiPlatforms />} />
 
         <Route path="/efficiency" element={<EfficiencyIndex />} />
         <Route path="/interactive" element={<InteractiveIndex />} />
