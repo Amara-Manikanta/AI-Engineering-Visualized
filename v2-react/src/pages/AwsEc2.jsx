@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 import { Cpu, Server, Key, Shield, Globe, Box, Terminal, CheckSquare, Lightbulb, Star, ArrowRight } from 'lucide-react';
 

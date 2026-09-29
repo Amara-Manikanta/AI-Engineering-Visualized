@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 /**
  * KnowledgeCheck
@@ -10,12 +10,36 @@ import React, { useState } from "react";
  * Props:
  *  - questions  [{ q, options: [string], answer: <index>, why: string }]
  *  - title      optional heading override
+ *  - id         section id, for pages with more than one check (default "check")
+ *
+ * Options are shown in a shuffled order, reshuffled on every reset, so the
+ * position of the right answer carries no signal. `answer` still indexes the
+ * option as written in the question bank.
  *
  * Deliberately has no persistence. This is a check on your own understanding,
  * not a score anyone records.
  */
-export default function KnowledgeCheck({ questions = [], title = "Check yourself" }) {
+function shuffled(n) {
+  const a = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export default function KnowledgeCheck({ questions = [], title = "Check yourself", id = "check" }) {
   const [picked, setPicked] = useState({});
+  const [round, setRound] = useState(0);
+  // One display order per question; a new round reshuffles. Keyed on the
+  // question text, not the array, because callers often pass a freshly
+  // filtered array each render and that must not reshuffle mid-answer.
+  const sig = questions.map((q) => q.q).join("\u0000");
+  const orders = useMemo(
+    () => questions.map((q) => shuffled(q.options.length)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `sig` and `round` are the real inputs
+    [sig, round],
+  );
 
   if (!questions.length) return null;
 
@@ -24,7 +48,7 @@ export default function KnowledgeCheck({ questions = [], title = "Check yourself
   const done = answered === questions.length;
 
   return (
-    <section className="mt-4 mb-4 scroll-mt-24" id="check">
+    <section className="mt-4 mb-4 scroll-mt-24" id={id}>
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-3 mb-1">
           <h2 className="text-xl font-bold text-white m-0">{title}</h2>
@@ -52,7 +76,8 @@ export default function KnowledgeCheck({ questions = [], title = "Check yourself
                 </div>
 
                 <div className="space-y-2 ml-9">
-                  {q.options.map((opt, oi) => {
+                  {orders[qi].map((oi, pos) => {
+                    const opt = q.options[oi];
                     const isCorrect = oi === q.answer;
                     const isPicked = choice === oi;
                     let cls =
@@ -73,7 +98,7 @@ export default function KnowledgeCheck({ questions = [], title = "Check yourself
                         }`}
                       >
                         <span className="shrink-0 font-mono text-xs opacity-60 mt-0.5">
-                          {String.fromCharCode(65 + oi)}
+                          {String.fromCharCode(65 + pos)}
                         </span>
                         <span className="leading-relaxed">{opt}</span>
                         {hasAnswered && isCorrect && <span className="ml-auto shrink-0">✓</span>}
@@ -104,10 +129,13 @@ export default function KnowledgeCheck({ questions = [], title = "Check yourself
                 : `${correct} of ${questions.length}. The ones you missed are usually the ones worth re-reading above.`}
             </p>
             <button
-              onClick={() => setPicked({})}
+              onClick={() => {
+                setPicked({});
+                setRound((r) => r + 1);
+              }}
               className="px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-white/15 bg-white/5 text-gray-300 hover:text-white transition-colors shrink-0"
             >
-              Reset
+              Try again (reshuffled)
             </button>
           </div>
         )}

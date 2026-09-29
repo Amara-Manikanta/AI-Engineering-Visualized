@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../../components/GuideLayout';
+import KnowledgeCheck from "../../components/KnowledgeCheck";
+import { questionsFor } from "../../data/quizBank";
 import { CodeSnippet } from '../../components/CodeBlock';
 
 /* ---------------------------------------------------------------------------
@@ -163,10 +165,7 @@ function MemoryModelVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Cpu, Layers, 
-  ArrowRight, ShieldCheck, Zap, Variable, GitBranch, Equal, Hash, HelpCircle, Monitor, Play
-} from 'lucide-react';
+import { Code2, Terminal, FileCode, Cpu, Layers, ArrowRight, ShieldCheck, Zap, Variable, GitBranch, Equal, Hash, Monitor } from 'lucide-react';
 
 export default function PythonFoundations() {
   const toc = [
@@ -789,6 +788,7 @@ match response:
           </div>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("python-core")} />
     </GuideLayout>
   );
 }

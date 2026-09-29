@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GuideLayout from "../components/GuideLayout";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const toc = [
   { label: "Overview", hash: "overview" },

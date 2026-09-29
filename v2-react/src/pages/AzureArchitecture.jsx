@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Globe, Cloud, Shield, Database, Component, Box, Flame, Lock, Settings, History, FileCheck, DollarSign, ArrowDown, Activity, ArrowRight, ArrowRightLeft, Network, Server, Key, Star, ShieldAlert, CheckSquare, Lightbulb } from 'lucide-react';
+import { Globe, Cloud, Shield, Database, Component, Box, Flame, Settings, History, FileCheck, DollarSign, ArrowDown, Activity, ArrowRightLeft, Network, Server, Key, Star, ShieldAlert, CheckSquare, Lightbulb } from 'lucide-react';
 
 export default function AzureArchitecture() {
   const toc = [

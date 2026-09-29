@@ -10,9 +10,10 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .\"",
-    "electron:build": "vite build && electron-builder",
-    "electron:build:mac": "vite build && electron-builder --mac",
-    "search:index": "node scripts/build-search-index.mjs"
+    "electron:build": "npm run build && electron-builder",
+    "electron:build:mac": "npm run build && electron-builder --mac",
+    "search:index": "node scripts/build-search-index.mjs",
+    "check": "node scripts/check-content.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

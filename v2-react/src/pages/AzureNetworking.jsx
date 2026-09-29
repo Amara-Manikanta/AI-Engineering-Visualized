@@ -1,15 +1,13 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 import { Network, Grid, Shield, Users, Map, Globe, Link, DoorOpen, ArrowRight, User, Server, Database, CheckSquare, Lightbulb, Star, ShieldCheck, Route } from 'lucide-react';
 
 export default function AzureNetworking() {
   const toc = [
-    { label: "1. Core Networking", hash: "core-networking" },
-    { label: "2. Routing & Security", hash: "routing-security" },
-    { label: "3. Connectivity", hash: "connectivity" },
-    { label: "4. Traffic Flow", hash: "traffic-flow" },
-    { label: "5. Best Practices", hash: "best-practices" }
+    { label: "1. Core Networking & Routing", hash: "core-networking" },
+    { label: "2. Connectivity & Gateways", hash: "connectivity" },
+    { label: "3. Traffic Flow", hash: "traffic-flow" },
+    { label: "4. Best Practices", hash: "best-practices" }
   ];
 
   const networkingComponents = [

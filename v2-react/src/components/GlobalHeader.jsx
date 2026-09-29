@@ -3,183 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
 import CommandPalette from "./CommandPalette";
 import ReadingSize from "./ReadingSize";
+import { NAV_LINKS } from "../config/navigation";
 
-const NAV_LINKS = [
-  { 
-    name: "🐍 Python", 
-    path: "/python",
-    subLinks: [
-      { name: "Python Overview", path: "/python" },
-      { name: "1. Python Foundations", path: "/python/foundations" },
-      { name: "2. Data Structures & Functions", path: "/python/data-structures" },
-      { name: "3. OOP & Advanced Python", path: "/python/advanced" },
-      { name: "4. System, Tooling & Async", path: "/python/tooling-async" },
-      { name: "5. Data Science & ML", path: "/python/data-science" },
-      { name: "6. Regular Expressions", path: "/python/regex" },
-    ],
-  },
-  {
-    name: "🤖 ML",
-    path: "/ml",
-    subLinks: [
-      { name: "Introduction", path: "/ml" },
-      { name: "Data & Statistics", isHeader: true },
-      { name: "Data Sourcing", path: "/ml/data-sourcing" },
-      { name: "Data Cleaning", path: "/ml/data-cleaning" },
-      { name: "Data Analysis (EDA)", path: "/ml/data-analysis" },
-      { name: "Bivariate Analysis", path: "/ml/bivariate-analysis" },
-      { name: "Inferential Statistics", path: "/ml/inferential-statistics" },
-      { name: "Central Limit Theorem", path: "/ml/central-limit-theorem" },
-      { name: "Hypothesis Testing", path: "/ml/hypothesis-testing" },
-      { name: "Foundations", isHeader: true },
-      { name: "Supervised", path: "/ml/supervised" },
-      { name: "Unsupervised", path: "/ml/unsupervised" },
-      { name: "Classical", isHeader: true },
-      { name: "Linear Reg", path: "/ml/linear-regression" },
-      { name: "Multiple Linear Reg", path: "/ml/multiple-regression" },
-      { name: "Logistic Reg", path: "/ml/logistic-regression" },
-      { name: "Naive Bayes", path: "/ml/naive-bayes" },
-      { name: "Decision Trees", path: "/ml/decision-trees" },
-      { name: "KNN", path: "/ml/knn" },
-      { name: "SVM", path: "/ml/svm" },
-      { name: "Ensembles", isHeader: true },
-      { name: "Random Forests", path: "/ml/random-forests" },
-      { name: "XGBoost", path: "/ml/xgboost" },
-      { name: "Deep Learning", isHeader: true },
-      { name: "Neural Networks", path: "/ml/deep-learning" },
-      { name: "CNNs", path: "/ml/cnn" },
-      { name: "RNNs & LSTMs", path: "/ml/rnn" },
-      { name: "GANs", path: "/ml/gans" },
-      { name: "NLP", path: "/ml/nlp" },
-      { name: "Transformers", path: "/ml/transformers" },
-      { name: "Mamba / SSM", path: "/ml/mamba" },
-      { name: "RWKV", path: "/ml/rwkv" },
-      { name: "Reinforcement Learning", isHeader: true },
-      { name: "RL Basics", path: "/ml/reinforcement-learning" },
-      { name: "RLHF", path: "/ml/rlhf" },
-      { name: "DPO & Variants", path: "/ml/dpo" },
-      { name: "GRPO & RLVR", path: "/ml/grpo" },
-      { name: "RLAIF & Constitutional AI", path: "/ml/rlaif" },
-    ],
-  },
-  {
-    name: "✨ GenAI",
-    path: "/genai",
-    subLinks: [
-      { name: "AI Models", path: "/llms" },
-      { name: "Model Types", isHeader: true },
-      { name: "LLM · VLM · SLM · MoE · LCM · LAM", path: "/llms/types" },
-      { name: "Decision Models (Jev, Laya)", path: "/genai/decision-models" },
-      { name: "Core", isHeader: true },
-      { name: "LLM Inference", path: "/llm-inference" },
-      { name: "Efficient Inference", path: "/efficiency" },
-      { name: "Prompt Engineering", path: "/prompting" },
-      { name: "Tokenization", path: "/genai/tokenization" },
-      { name: "Embeddings", path: "/rag/embeddings" },
-      { name: "Adapting Models", isHeader: true },
-      { name: "Fine-tuning", path: "/genai/fine-tuning" },
-      { name: "PEFT Overview", path: "/genai/peft" },
-      { name: "· LoRA", path: "/genai/peft/lora" },
-      { name: "· QLoRA", path: "/genai/peft/qlora" },
-      { name: "· DoRA", path: "/genai/peft/dora" },
-      { name: "· Prefix / P-tuning", path: "/genai/peft/prefix-tuning" },
-      { name: "· (IA)³", path: "/genai/peft/ia3" },
-      { name: "· Adapter Layers", path: "/genai/peft/adapters" },
-      { name: "Distillation", path: "/genai/distillation" },
-      { name: "Quantization", path: "/genai/quantization" },
-      { name: "Alignment: RLHF · DPO · GRPO", path: "/ml/rlhf" },
-      { name: "More", isHeader: true },
-      { name: "AGI & GPT-6 Astra", path: "/genai/agi" },
-      { name: "Safety & Alignment", path: "/safety" },
-    ],
-  },
-  {
-    name: "🔍 RAG",
-    path: "/rag",
-    subLinks: [
-      { name: "Fundamentals", path: "/rag/fundamentals" },
-      { name: "Types of RAG", path: "/rag/types-of-rag" },
-      { name: "Data Prep", path: "/rag/data-prep" },
-      { name: "Indexing", path: "/rag/indexing" },
-      { name: "Chunking", path: "/rag/chunking" },
-      { name: "Embeddings", path: "/rag/embeddings" },
-      { name: "Vector DBs", path: "/rag/vector-dbs" },
-      { name: "Retrieval", path: "/rag/retrieval" },
-      { name: "Adv Retrieval", path: "/rag/advanced-retrieval" },
-      { name: "Compression", path: "/rag/compression" },
-      { name: "Generation", path: "/rag/generation" },
-      { name: "Evaluation", path: "/rag/evaluation" },
-      { name: "Development", path: "/rag/development" },
-      { name: "RAG vs Fine-tuning", path: "/rag/vs-fine-tuning" },
-    ],
-  },
-  {
-    name: "🕸️ Agents",
-    path: "/agents",
-    subLinks: [
-      { name: "AI Agents", path: "/agents" },
-      { name: "Tool Calling", path: "/agents/tool-calling" },
-      { name: "Memory", path: "/agents/memory" },
-      { name: "Document Loaders", path: "/agents/document-loaders" },
-      { name: "Protocols", isHeader: true },
-      { name: "MCP", path: "/mcp" },
-      { name: "A2A Protocol", path: "/agents/a2a" },
-      { name: "Orchestration", isHeader: true },
-      { name: "Multi-Agent", path: "/agents/multi-agent" },
-      { name: "Frameworks Compared", path: "/agents/frameworks" },
-      { name: "LangChain + LangGraph", path: "/agents/langchain" },
-      { name: "Debugging Agents", path: "/agents/debugging" },
-    ],
-  },
-  {
-    name: "🧩 Models",
-    path: "/models",
-    subLinks: [
-      { name: "How Models Are Trained", path: "/models/training" },
-      { name: "Families", isHeader: true },
-      { name: "Claude", path: "/models/claude" },
-      { name: "GPT", path: "/models/gpt" },
-      { name: "Gemini", path: "/models/gemini" },
-      { name: "Llama", path: "/models/llama" },
-      { name: "Qwen", path: "/models/qwen" },
-      { name: "DeepSeek", path: "/models/deepseek" },
-      { name: "Mistral", path: "/models/mistral" },
-      { name: "Grok", path: "/models/grok" },
-      { name: "Gemma", path: "/models/gemma" },
-      { name: "Cohere Command", path: "/models/command-r" },
-      { name: "Phi-4", path: "/models/phi" },
-      { name: "Claude Code Features", path: "/models/claude#claude-code" },
-    ],
-  },
-  {
-    name: "☁️ Cloud",
-    path: "/azure",
-    subLinks: [
-      { name: "Azure", path: "/azure" },
-      { name: "AWS", path: "/aws" }
-    ],
-  },
-  {
-    name: "🎓 Learn",
-    path: "/roadmaps",
-    subLinks: [
-      { name: "Learning Paths", path: "/roadmaps" },
-      { name: "Topic Map", path: "/graph" },
-      { name: "Knowledge Checks", path: "/quizzes" },
-      { name: "Interactive", path: "/interactive" },
-      { name: "Glossary", path: "/glossary" },
-    ],
-  },
-  {
-    name: "🏗️ Build",
-    path: "/system-design",
-    subLinks: [
-      { name: "System Design", path: "/system-design" },
-      { name: "Projects", path: "/projects" },
-      { name: "Resources", path: "/resources" },
-    ],
-  },
-];
 
 export default function GlobalHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -187,11 +12,21 @@ export default function GlobalHeader() {
   const [mobileExpanded, setMobileExpanded] = useState(null);
   const location = useLocation();
 
-  // Close mobile menu on route change
+  // Close menus on route change — a clicked dropdown link would otherwise leave
+  // its menu hanging open over the new page until the mouse moved away.
   useEffect(() => {
     setMobileOpen(false);
     setMobileExpanded(null);
-  }, [location.pathname]);
+    setOpenDropdown(null);
+  }, [location.pathname, location.hash]);
+
+  // Escape closes an open dropdown.
+  useEffect(() => {
+    if (openDropdown === null) return undefined;
+    const onKey = (e) => e.key === "Escape" && setOpenDropdown(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [openDropdown]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -216,18 +51,31 @@ export default function GlobalHeader() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden xl:flex items-center gap-5">
+          <nav className="hidden xl:flex items-center gap-3 2xl:gap-5 ml-4">
             {NAV_LINKS.map((nav, i) => (
               <div 
                 key={i} 
                 className="relative group"
                 onMouseEnter={() => setOpenDropdown(i)}
                 onMouseLeave={() => setOpenDropdown(null)}
+                // Keyboard users: the menu stays open while focus is inside it.
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget)) setOpenDropdown(null);
+                }}
               >
                 {nav.subLinks ? (
-                  <div className="flex items-center gap-1 cursor-pointer py-4 text-sm font-medium text-gray-300 hover:text-white transition-colors whitespace-nowrap">
+                  <div className="flex items-center gap-1 py-4 text-sm font-medium text-gray-300 hover:text-white transition-colors whitespace-nowrap">
                     <Link to={nav.path}>{nav.name}</Link>
-                    <ChevronDown className="w-4 h-4 opacity-50" />
+                    <button
+                      type="button"
+                      onClick={() => setOpenDropdown(openDropdown === i ? null : i)}
+                      aria-expanded={openDropdown === i}
+                      aria-haspopup="true"
+                      aria-label={`Open ${nav.name.replace(/^\S+\s/, "")} menu`}
+                      className="p-0.5 rounded hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+                    >
+                      <ChevronDown className={`w-4 h-4 opacity-50 transition-transform ${openDropdown === i ? "rotate-180" : ""}`} />
+                    </button>
                   </div>
                 ) : (
                   <Link to={nav.path} className="block py-4 text-sm font-medium text-gray-300 hover:text-white transition-colors whitespace-nowrap">
@@ -274,6 +122,7 @@ export default function GlobalHeader() {
             className="xl:hidden p-2 rounded-lg hover:bg-white/10 transition-colors" 
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -300,6 +149,7 @@ export default function GlobalHeader() {
               <button 
                 className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
                 onClick={() => setMobileOpen(false)}
+                aria-label="Close navigation menu"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -320,6 +170,7 @@ export default function GlobalHeader() {
                       {/* Accordion header */}
                       <button
                         onClick={() => setMobileExpanded(mobileExpanded === i ? null : i)}
+                        aria-expanded={mobileExpanded === i}
                         className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium text-gray-200 hover:bg-white/5 transition-colors"
                       >
                         <span>{nav.name}</span>

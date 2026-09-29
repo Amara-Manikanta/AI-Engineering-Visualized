@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import GuideLayout from '../components/GuideLayout';
 import { ModelLineup, ModelWeights, ModelPipeline } from '../components/ModelProfile';
 
@@ -140,7 +139,6 @@ export default function ModelsClaude() {
           </p>
         </div>
       </section>
-
 
       <section id="architecture" className="mb-14 scroll-mt-24">
         <h2 className="text-2xl font-bold text-white mb-4">Architecture Highlights</h2>

@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import GuideLayout from '../components/GuideLayout';
-import {
-  BookOpen, Database, Zap, Layers, FileText, Search,
-  Activity, GitBranch, ArrowRight, Sparkles, ClipboardCheck, Rocket,
-} from 'lucide-react';
+import { BookOpen, Database, Zap, Layers, FileText, FileInput, Search, Activity, GitBranch, ArrowRight, Sparkles, ClipboardCheck, Rocket } from 'lucide-react';
 
 /* ---------------------------------------------------------------------------
    The four RAG stages — the spine the whole page is organized around.
@@ -23,7 +20,8 @@ const STAGES = [
     icon: <Database size={18} />,
     topics: [
       { title: 'Fundamentals', path: '/rag/fundamentals', icon: <BookOpen size={18} />, desc: 'Why RAG exists, and the four stages end to end.' },
-      { title: 'Data Prep', path: '/rag/data-prep', icon: <FileText size={18} />, desc: 'Load, parse, clean, enrich, normalize. The quality ceiling.' },
+      { title: 'Data Ingestion', path: '/rag/ingestion', icon: <FileInput size={18} />, desc: 'LangChain loaders for PDFs, scans, Office, web, JSON, code, SaaS and SQL.' },
+      { title: 'Data Prep', path: '/rag/data-prep', icon: <FileText size={18} />, desc: 'Parse, clean, enrich, normalize. The quality ceiling.' },
       { title: 'Chunking', path: '/rag/chunking', icon: <Layers size={18} />, desc: 'Splitting text so each piece is one coherent idea.' },
       { title: 'Embeddings', path: '/rag/embeddings', icon: <Activity size={18} />, desc: 'Turning text into vectors that encode meaning.' },
       { title: 'Vector DBs', path: '/rag/vector-dbs', icon: <Database size={18} />, desc: 'Where the vectors live, and how to query them.' },

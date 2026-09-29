@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../../components/GuideLayout';
+import KnowledgeCheck from "../../components/KnowledgeCheck";
+import { questionsFor } from "../../data/quizBank";
 import { CodeSnippet } from '../../components/CodeBlock';
 
 /* ---------------------------------------------------------------------------
@@ -84,10 +85,7 @@ function GeneratorVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Layers, 
-  ShieldAlert, Cpu, Sparkles, RefreshCw, Zap, FileText, Settings, ArrowRight, Box
-} from 'lucide-react';
+import { Terminal, CheckCircle2, FileCode, Layers, ShieldAlert, Cpu, Sparkles, RefreshCw, Zap, FileText, Settings, Box } from 'lucide-react';
 
 export default function PythonAdvanced() {
   const toc = [
@@ -794,6 +792,7 @@ stats.print_stats(10)          # the 10 heaviest calls
           </p>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("python-advanced")} />
     </GuideLayout>
   );
 }

@@ -1,60 +1,64 @@
 # AI Engineering Visualized 🤖
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-6366f1?style=for-the-badge&logo=github)](https://Amara-Manikanta.github.io/ai-engineering-visualized)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-8.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4.0-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.4-f1356d?style=for-the-badge&logo=framer&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
-A **beautiful, interactive, step-by-step animated educational platform** for modern AI Engineering, Machine Learning, and Cloud Architecture.
+An interactive, visual study site for AI engineering: machine learning, generative AI, RAG, agents, models, cloud and the Python that ties them together. Most guides have a live lab: you move a slider and the maths recomputes in the browser.
 
-This repository hosts two versions:
-1. 🌐 **Modern React SPA (v2)**: Located in the [`v2-react/`](file:///Users/manikantaamara/.gemini/antigravity/scratch/rag-explainer/v2-react) directory. Built with React 19, Vite 8, Tailwind CSS v4, Framer Motion animations, and React Router v7. This is the live production app.
-2. 📄 **Legacy Static Web App**: Located in the root directory. Built with vanilla HTML5, CSS3, and JavaScript.
+## Repository layout
+
+| Path | What it is |
+| --- | --- |
+| [`v2-react/`](v2-react/) | The live site: a React 19 + Vite single-page app. See its [README](v2-react/README.md) for development. |
+| [`notebooks/`](notebooks/) | Jupyter notebooks that accompany the guides (LangChain LCEL, document loaders). |
+| [`legacy/`](legacy/) | The original static HTML version, kept for reference. It is not deployed. |
+
+## What's covered
+
+- **Python**: foundations, data structures, OOP, async and tooling, NumPy/Pandas/scikit-learn, regex, and patterns for AI code.
+- **Machine learning**
+  - *Foundations*: data sourcing, cleaning, EDA and statistics; evaluation metrics, regularisation, optimisation and feature engineering.
+  - *Classical models*: regression, Naive Bayes, KNN, decision trees, SVMs, random forests and XGBoost.
+  - *Unsupervised and applied*: clustering, dimensionality reduction, anomaly detection, time series and recommenders.
+  - *Deep learning*: neural networks, CNNs, RNNs, GANs, transformers, transfer learning and graph neural networks.
+  - *Reinforcement learning and alignment*: reinforcement learning, RLHF, DPO and GRPO.
+- **Generative AI**
+  - *How LLMs work*: tokenization, decoding and reasoning models.
+  - *Adapting models*: PEFT/LoRA, distillation and model merging.
+  - *Efficiency*: quantization, distributed training and serving.
+  - Also multimodal generation, and safety topics including red teaming and governance.
+- **RAG**
+  - *Build the index*: data ingestion with LangChain loaders, chunking, embeddings, indexing and vector databases.
+  - *Query time*: advanced retrieval, late interaction, compression and text-to-SQL.
+  - *Ship it*: evaluation and production.
+  - Eight RAG architecture variants.
+- **Agents**: agent architecture, tool calling, MCP, multi-agent systems, LangChain/LangGraph, framework comparison, agent SDKs and debugging.
+- **Models**: closed and open-weight model families, model types, selection and training.
+- **Cloud and build**: Azure and AWS fundamentals, cloud AI platforms (Bedrock, AI Foundry, Vertex AI), LLM apps in production, MLOps and projects.
+- **Learn**
+  - Learning paths with saved progress, and a topic map of how the guides connect.
+  - Knowledge checks, including mock Claude architect certification questions and interview questions.
+  - A glossary of 180+ terms, and ⌘K search across every page and section.
+
+## Quick start
+
+```bash
+cd v2-react
+npm ci
+npm run dev        # http://localhost:5173
+```
+
+## Deployment
+
+Pushes to `main` build `v2-react/` and deploy it to GitHub Pages (`.github/workflows/deploy.yml`). Pull requests and pushes to other branches run CI (`.github/workflows/ci.yml`). The deploy workflow runs the same four checks before it publishes:
+
+- lint;
+- the content check (routes, links, table-of-contents anchors, quiz data);
+- a check that the search index is up to date;
+- a production build.
 
 ---
 
-## 🌟 Key Features
-
-- 🎬 **Custom `StepAnimator` & SVG Flowcharts**: Step-by-step interactive animations for complex data flows like RAG loops, MCP client-server negotiation, and LangGraph cycles.
-- 🧮 **Interactive Math Playgrounds**: Real-time calculators (e.g., Cosine Similarity Calculator) and interactive chunk size estimators.
-- 🎨 **Premium Glassmorphism Design**: Tailored CSS gradients, dark mode aesthetics, glow effects, responsive sidebar navigation, and elegant micro-animations.
-- 📱 **Mobile Responsive Navigation**: A custom hamburger drawer and collapsible sidebar menu optimized for mobile and desktop screens.
-
----
-
-## 🏗️ Deep Dives & Modules Covered
-
-### 🔍 RAG (Retrieval-Augmented Generation)
-- **RAG Fundamentals**: Naive RAG, Advanced RAG, Hybrid RAG, Agentic RAG, Self RAG, Graph RAG, Multimodal RAG, and more.
-- **Data Prep & Chunking**: Document loaders, tokenization, slide window chunking, and semantic split strategies.
-- **Vector Databases**: Dimension analysis, index types (Flat, HNSW, IVF), and cosine similarity calculators.
-
-### 🐍 Python Master Guide (61 Granular Sub-Topics)
-Comprehensive multi-sentence guides and visual diagrams covering:
-1. **Python Foundations**: Execution flows, memory pointer visual model, and interpreter environment.
-2. **Data Structures**: Lists, dicts, LLM API message format schemas (role, content, tool_calls), and prompt engineering string methods.
-3. **Advanced AI Patterns**: Custom `SimpleRetriever` implementation, 7 core RAG OOP abstractions, FastAPI Type Hints, and Dataclasses.
-4. **Tooling & Async**: Production directory structures, package imports, `venv` isolation, and `asyncio` task event loops.
-5. **Data Science Core**: NumPy vectorization, Pandas DataFrames, and Scikit-Learn pipelines.
-
-### 🔌 Model Context Protocol (MCP)
-- Complete protocol explainer showing how LLMs securely connect to local or remote server tools (databases, filesystems, terminals) over JSON-RPC.
-
-### 🤖 LLM Models Index (19 Critical Pillars)
-- Foundation vs. Fine-tuned models, open vs. closed models, MoE (Mixture of Experts) vs. Dense architectures.
-- Detailed guides for Model Selection (context windows, cost, latency), local setup (`ollama`), and evaluation benchmarks.
-- Dedicated model cards for Mistral, Qwen, DeepSeek, GPT-4, Gemini, and Llama.
-
-### 🧠 Agents & LangGraph
-- **AI Agents**: Memory systems, tool-calling loops, planning, and execution strategies.
-- **LangGraph**: Directed Acyclic Graphs (DAGs), state management, cyclic execution paths, and agent teamwork.
-
-### ☁️ Cloud Services (AWS & Azure Navigation)
-- Accessible through a unified top-level **Cloud** dropdown menu.
-- **Azure Guide**: Identity (Entra ID), networking, load balancers, AKS (Kubernetes), App Services, and architecture blueprints.
-- **AWS Guide**: IAM, VPC networking, EC2 computing, S3 storage, Route 53, and global infrastructure.
-
----
-
-Built with ❤️ by Amara Manikanta Dileep — © 2026 AI Engineering Visualized
+Built by Amara Manikanta Dileep. © 2026 AI Engineering Visualized

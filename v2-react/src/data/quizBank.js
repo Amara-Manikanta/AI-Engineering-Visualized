@@ -10,6 +10,8 @@
  * reasonable person might believe.
  */
 
+import { EXTRA_QUIZZES } from "./quizExtra.js";
+
 export const QUIZZES = [
   {
     id: "ml-ensembles",
@@ -979,6 +981,8 @@ QUIZZES.push({
     },
   ],
 });
+
+QUIZZES.push(...EXTRA_QUIZZES);
 
 export const findQuiz = (id) => QUIZZES.find((q) => q.id === id);
 export const questionsFor = (id) => findQuiz(id)?.questions ?? [];

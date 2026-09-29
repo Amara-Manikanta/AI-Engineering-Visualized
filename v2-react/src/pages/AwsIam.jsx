@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Shield, User, Users, HardHat, FileText, Smartphone, CheckSquare, Lightbulb, Star, ArrowRight, Lock, Cloud } from 'lucide-react';
+import { Shield, User, Users, HardHat, FileText, Smartphone, Lightbulb, Star, ArrowRight, Cloud } from 'lucide-react';
 
 export default function AwsIam() {
   const toc = [

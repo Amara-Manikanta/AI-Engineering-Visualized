@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Globe, ArrowRightLeft, LayoutDashboard, CopyPlus, Globe2, Lock, Activity, GitBranch, Terminal, Cloud, CheckSquare, Lightbulb, Star, RefreshCw, BarChart2, Package, GitMerge, ArrowRight } from 'lucide-react';
+import { Globe, ArrowRightLeft, LayoutDashboard, CopyPlus, Globe2, Lock, Activity, GitBranch, Terminal, Cloud, CheckSquare, Lightbulb, Star, RefreshCw, Package, GitMerge, ArrowRight } from 'lucide-react';
 
 export default function AzureAppService() {
   const toc = [

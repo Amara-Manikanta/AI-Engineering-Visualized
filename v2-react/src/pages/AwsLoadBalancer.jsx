@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 import { Scale, Server, Activity, ArrowRight, ArrowRightLeft, Users, Cloud, Network, ShieldCheck, Settings, CheckSquare, Lightbulb, Star } from 'lucide-react';
 

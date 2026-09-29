@@ -1,6 +1,126 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import GuideLayout from "../components/GuideLayout";
+import CodeBlock from "../components/CodeBlock";
+import { Panel, Slider, Metric, Card, Note, Section } from "../components/VizKit";
+import { rng, randn, pct } from "../lib/stats";
+
+/* ---------------------------------------------------------------------------
+   A real CART tree (Gini, axis-aligned splits) grown on a noisy 2-D dataset,
+   so the depth slider shows genuine train and test accuracy — not a sketch.
+--------------------------------------------------------------------------- */
+
+function makeData(seed, n) {
+  const r = rng(seed);
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const x = r();
+    const y = r();
+    // True boundary: a wavy curve. 12% of labels are flipped to act as noise.
+    let label = y > 0.5 + 0.22 * Math.sin(x * 6.2) ? 1 : 0;
+    if (r() < 0.12) label = 1 - label;
+    pts.push({ x: x + randn(r) * 0.01, y, label });
+  }
+  return pts;
+}
+
+const TRAIN = makeData(7, 160);
+const TEST = makeData(99, 400);
+
+const gini = (pts) => {
+  if (!pts.length) return 0;
+  const p = pts.filter((q) => q.label === 1).length / pts.length;
+  return 1 - p * p - (1 - p) * (1 - p);
+};
+
+function grow(pts, depth, minLeaf) {
+  const ones = pts.filter((q) => q.label === 1).length;
+  const leaf = { leaf: true, label: ones * 2 >= pts.length ? 1 : 0 };
+  if (depth === 0 || pts.length < 2 * minLeaf || ones === 0 || ones === pts.length) return leaf;
+  let best = null;
+  for (const axis of ["x", "y"]) {
+    const sorted = [...pts].sort((a, b) => a[axis] - b[axis]);
+    for (let i = minLeaf; i <= sorted.length - minLeaf; i++) {
+      if (i === sorted.length) break;
+      const t = (sorted[i - 1][axis] + sorted[i][axis]) / 2;
+      const L = sorted.slice(0, i);
+      const R = sorted.slice(i);
+      const score = (L.length * gini(L) + R.length * gini(R)) / sorted.length;
+      if (!best || score < best.score) best = { axis, t, L, R, score };
+    }
+  }
+  if (!best || best.score >= gini(pts)) return leaf;
+  return { axis: best.axis, t: best.t, l: grow(best.L, depth - 1, minLeaf), r: grow(best.R, depth - 1, minLeaf) };
+}
+
+const predict = (node, p) => (node.leaf ? node.label : predict(p[node.axis] < node.t ? node.l : node.r, p));
+const countLeaves = (n) => (n.leaf ? 1 : countLeaves(n.l) + countLeaves(n.r));
+const acc = (tree, pts) => pts.filter((p) => predict(tree, p) === p.label).length / pts.length;
+
+const CURVE = Array.from({ length: 12 }, (_, i) => {
+  const t = grow(TRAIN, i + 1, 1);
+  return { depth: i + 1, train: acc(t, TRAIN), test: acc(t, TEST) };
+});
+
+function DepthLab() {
+  const [depth, setDepth] = useState(3);
+  const [minLeaf, setMinLeaf] = useState(1);
+  const tree = useMemo(() => grow(TRAIN, depth, minLeaf), [depth, minLeaf]);
+  const W = 300;
+  const cells = 50;
+  const cs = W / cells;
+  const tr = acc(tree, TRAIN);
+  const te = acc(tree, TEST);
+  const cw = 300;
+  const ch = 150;
+  const cx = (d) => 20 + ((d - 1) / 11) * (cw - 30);
+  const cy = (a) => 10 + (1 - (a - 0.5) / 0.5) * (ch - 30);
+  const line = (k) => CURVE.map((c, i) => `${i ? "L" : "M"}${cx(c.depth)},${cy(c[k])}`).join("");
+
+  return (
+    <Panel tone="emerald" title="Grow the tree deeper and watch it memorise the noise">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <svg viewBox={`0 0 ${W} ${W}`} className="w-full h-auto block rounded-lg border border-white/10">
+            {Array.from({ length: cells * cells }, (_, i) => {
+              const gx = i % cells;
+              const gy = Math.floor(i / cells);
+              const lab = predict(tree, { x: (gx + 0.5) / cells, y: 1 - (gy + 0.5) / cells });
+              return <rect key={i} x={gx * cs} y={gy * cs} width={cs + 0.3} height={cs + 0.3} fill={lab ? "rgba(52,211,153,0.18)" : "rgba(251,113,133,0.16)"} />;
+            })}
+            {TRAIN.map((p, i) => (
+              <circle key={i} cx={p.x * W} cy={(1 - p.y) * W} r="3.2" fill={p.label ? "#34d399" : "#fb7185"} stroke="rgba(0,0,0,0.6)" strokeWidth="0.8" />
+            ))}
+          </svg>
+          <p className="text-[0.6875rem] text-gray-500 mt-2 mb-0">Shaded regions are the tree's predictions; dots are the 160 training points (12% have flipped labels).</p>
+        </div>
+        <div className="space-y-4">
+          <Slider tone="emerald" label="max_depth" value={depth} min={1} max={12} onChange={setDepth} />
+          <Slider tone="emerald" label="min_samples_leaf" value={minLeaf} min={1} max={20} onChange={setMinLeaf} />
+          <div className="grid grid-cols-3 gap-2">
+            <Metric label="Train acc" value={pct(tr, 0)} tone="emerald" />
+            <Metric label="Test acc" value={pct(te, 0)} tone={te < tr - 0.08 ? "rose" : "blue"} />
+            <Metric label="Leaves" value={countLeaves(tree)} />
+          </div>
+          <svg viewBox={`0 0 ${cw} ${ch}`} className="w-full h-auto block">
+            <path d={line("train")} fill="none" stroke="#34d399" strokeWidth="2" />
+            <path d={line("test")} fill="none" stroke="#60a5fa" strokeWidth="2" />
+            <line x1={cx(depth)} y1="6" x2={cx(depth)} y2={ch - 20} stroke="#e5e7eb" strokeDasharray="3 3" />
+            <text x="22" y={ch - 6} fill="#6b7280" fontSize="10">depth 1</text>
+            <text x={cw - 10} y={ch - 6} fill="#6b7280" fontSize="10" textAnchor="end">depth 12 (min_samples_leaf = 1)</text>
+            <text x={cw - 10} y="16" fill="#34d399" fontSize="10" textAnchor="end">train</text>
+            <text x={cw - 10} y="30" fill="#60a5fa" fontSize="10" textAnchor="end">test</text>
+          </svg>
+        </div>
+      </div>
+      <p className="text-xs text-gray-500 leading-relaxed mt-4 mb-0">
+        Past a few levels, training accuracy keeps climbing toward 100% while test accuracy stalls or falls: the extra
+        splits are carving out little boxes around mislabelled points. Raising <span className="font-mono">min_samples_leaf</span>{" "}
+        stops a leaf forming around one or two points, which is a form of pre-pruning.
+      </p>
+    </Panel>
+  );
+}
 
 export default function MlDecisionTrees() {
   const [splitState, setSplitState] = useState(0); // 0 = root, 1 = left split, 2 = all split
@@ -28,10 +148,17 @@ export default function MlDecisionTrees() {
     <GuideLayout
       title="Decision Trees"
       intro="A supervised machine learning algorithm used for both classification and regression tasks."
-      toc={[]}
+      toc={[
+        { label: "Interactive Tree", hash: "demo" },
+        { label: "Structure of a Tree", hash: "structure" },
+        { label: "Metrics for Splitting", hash: "splitting" },
+        { label: "Overfitting & Pruning", hash: "overfitting" },
+        { label: "Strengths & Weaknesses", hash: "strengths" },
+        { label: "In Code", hash: "code" },
+      ]}
     >
       <motion.section 
-        className="guide-section mb-16"
+        id="demo" className="guide-section mb-16 scroll-mt-24"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -158,7 +285,7 @@ export default function MlDecisionTrees() {
       </motion.section>
 
       <motion.section 
-        className="guide-section mb-16"
+        id="structure" className="guide-section mb-16 scroll-mt-24"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -186,7 +313,7 @@ export default function MlDecisionTrees() {
       </motion.section>
 
       <motion.section 
-        className="guide-section mb-16"
+        id="splitting" className="guide-section mb-16 scroll-mt-24"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -245,6 +372,66 @@ export default function MlDecisionTrees() {
           </div>
         </div>
       </motion.section>
+
+      <Section id="overfitting" title="Overfitting & Pruning" lead="An unconstrained tree keeps splitting until every leaf is pure — which on noisy data means one leaf per mislabelled point. Depth is the main dial between underfitting and overfitting.">
+        <DepthLab />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <Card title="Pre-pruning" tone="emerald"><p>Stop early: <span className="font-mono">max_depth</span>, <span className="font-mono">min_samples_leaf</span>, <span className="font-mono">min_samples_split</span>, <span className="font-mono">max_leaf_nodes</span>. Cheap and usually enough. Tune them with cross-validation.</p></Card>
+          <Card title="Post-pruning" tone="indigo"><p>Grow the full tree, then cut back branches that do not pay for themselves. scikit-learn's cost-complexity pruning (<span className="font-mono">ccp_alpha</span>) penalises each extra leaf.</p></Card>
+          <Card title="Or average many trees" tone="amber"><p>Deep trees have low bias and high variance. <a href="#/ml/random-forests" className="text-blue-400 hover:underline">Random forests</a> average that variance away; <a href="#/ml/xgboost" className="text-blue-400 hover:underline">boosting</a> stacks shallow trees instead.</p></Card>
+        </div>
+      </Section>
+
+      <Section id="strengths" title="Strengths & Weaknesses">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="bg-emerald-900/10 border border-emerald-500/20 rounded-xl p-5">
+            <h4 className="text-emerald-400 font-semibold mb-2">Strengths</h4>
+            <ul className="list-disc pl-5 text-sm text-gray-300 space-y-1.5">
+              <li>Readable: a shallow tree is a flowchart you can hand to a non-specialist.</li>
+              <li>No feature scaling needed — splits compare a feature with a threshold.</li>
+              <li>Captures interactions and non-linear boundaries on its own.</li>
+              <li>Mixes numeric and categorical features.</li>
+            </ul>
+          </div>
+          <div className="bg-rose-900/10 border border-rose-500/20 rounded-xl p-5">
+            <h4 className="text-rose-400 font-semibold mb-2">Weaknesses</h4>
+            <ul className="list-disc pl-5 text-sm text-gray-300 space-y-1.5">
+              <li>Unstable: a small change in the data can produce a completely different tree.</li>
+              <li>Axis-aligned splits approximate diagonal boundaries with a staircase.</li>
+              <li>Cannot extrapolate — a regression tree predicts at most the largest value it has seen.</li>
+              <li>Impurity-based feature importances favour features with many distinct values; prefer permutation importance.</li>
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="code" title="In Code">
+        <CodeBlock
+          language="python"
+          code={`from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.model_selection import GridSearchCV
+
+search = GridSearchCV(
+    DecisionTreeClassifier(random_state=0),
+    {"max_depth": [2, 3, 4, 6, 8, None], "min_samples_leaf": [1, 5, 10, 20]},
+    cv=5,
+)
+search.fit(X_train, y_train)
+tree = search.best_estimator_
+print(search.best_params_, tree.score(X_test, y_test))
+
+# The learned rules, as text
+print(export_text(tree, feature_names=list(X_train.columns)))
+
+# Cost-complexity pruning: each alpha gives a smaller tree
+path = DecisionTreeClassifier(random_state=0).cost_complexity_pruning_path(X_train, y_train)
+print(path.ccp_alphas[:5])`}
+        />
+        <Note tone="indigo">
+          To judge a classifier properly — beyond accuracy — see{" "}
+          <a href="#/ml/evaluation-metrics" className="text-blue-400 hover:underline">Evaluation Metrics</a>.
+        </Note>
+      </Section>
 
     </GuideLayout>
   );

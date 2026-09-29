@@ -1,16 +1,31 @@
-# React + Vite
+# AI Engineering Visualized — site source
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React 19, Vite 8, Tailwind CSS v4, framer-motion and React Router (`HashRouter`, so it works on GitHub Pages and in Electron).
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Dev server with hot reload. |
+| `npm run build` | Rebuilds the search index, then runs a production build into `dist/`. |
+| `npm run lint` | oxlint. CI runs it with `--deny-warnings`. |
+| `npm run check` | Content checks: every nav link has a route, internal links resolve, every table-of-contents entry has a matching section id, and quiz, glossary and `questions/` files parse. |
+| `npm run search:index` | Regenerates `src/data/searchIndex.json`. CI fails if it is stale, so run it after changing page titles, intros, sections or `SEARCH_KEYWORDS`. |
+| `npm run electron:dev` / `electron:build` | Run or package the desktop app. |
 
-## React Compiler
+## Where things live
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/pages/`: one component per guide. Each guide renders inside `GuideLayout` (title, intro, contents, section sidebar, mark-as-read, previous/next) and exports `SEARCH_KEYWORDS`.
+- `src/components/VizKit.jsx`: shared lab building blocks (`Panel`, `Slider`, `Metric`, `Card`, `Note`, `Section`, …). `src/lib/stats.js` has the maths helpers.
+- `src/config/navigation.js`: the header menus. Menu order also sets the section sidebar and previous/next links.
+- `src/App.jsx`: routes (lazy-loaded pages).
+- `src/data/quizBank.js`, `quizExtra.js`: per-page knowledge checks, looked up with `questionsFor(id)`.
+- `src/data/glossary.js`: glossary terms.
+- `questions/*.txt`: extra question sets in a plain-text format (see `src/lib/questionFormat.js`), bundled into the Knowledge Checks page.
 
-## Expanding the Oxlint configuration
+## Adding a guide
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+1. Create `src/pages/MyGuide.jsx` using `GuideLayout`, with an `id` on each section that matches its contents entry.
+2. Add a lazy import and route in `src/App.jsx`, and a menu entry in `src/config/navigation.js`.
+3. Optionally add a quiz to `quizExtra.js`, glossary terms, a topic-map node (`src/pages/TopicGraph.jsx`) and a learning-path step (`src/pages/RoadmapsIndex.jsx`).
+4. Run `npm run search:index && npm run check && npm run lint && npm run build`.

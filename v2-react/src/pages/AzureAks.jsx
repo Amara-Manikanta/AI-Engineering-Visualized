@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Container, Server, Settings, Box, Network, Route, ArrowUpRight, CopyPlus, Globe, CheckSquare, Lightbulb, Star, Cpu, ArrowRight } from 'lucide-react';
+import { Container, Server, Settings, Box, Network, Route, ArrowUpRight, CopyPlus, CheckSquare, Lightbulb, Star, ArrowRight } from 'lucide-react';
 
 export default function AzureAks() {
   const toc = [

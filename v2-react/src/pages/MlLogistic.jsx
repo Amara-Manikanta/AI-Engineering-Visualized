@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import GuideLayout from "../components/GuideLayout";
 import CodeBlock from "../components/CodeBlock";
@@ -20,26 +20,31 @@ const sigmoid = (z) => 1 / (1 + Math.exp(-z));
    Interactive sigmoid: slide the linear score z, watch the probability
 --------------------------------------------------------------------------- */
 
+const SIG = (() => {
+  const W = 320, H = 180, padX = 30, padY = 20;
+  const zMin = -8, zMax = 8;
+  const toX = (zz) => padX + ((zz - zMin) / (zMax - zMin)) * (W - padX * 2);
+  const toY = (pp) => H - padY - pp * (H - padY * 2);
+  return { W, H, padX, padY, zMin, zMax, toX, toY };
+})();
+
+// The sigmoid curve never changes, so it is drawn once.
+const SIGMOID_PATH = (() => {
+  let d = '';
+  for (let i = 0; i <= 80; i++) {
+    const zz = SIG.zMin + (i / 80) * (SIG.zMax - SIG.zMin);
+    d += (i === 0 ? 'M' : 'L') + ` ${SIG.toX(zz).toFixed(1)} ${SIG.toY(sigmoid(zz)).toFixed(1)} `;
+  }
+  return d;
+})();
+
 function SigmoidPlayground() {
   const [z, setZ] = useState(0);
   const p = sigmoid(z);
   const predicted = p >= 0.5 ? 1 : 0;
 
-  const W = 320, H = 180, padX = 30, padY = 20;
-  const zMin = -8, zMax = 8;
-  const toX = (zz) => padX + ((zz - zMin) / (zMax - zMin)) * (W - padX * 2);
-  const toY = (pp) => H - padY - pp * (H - padY * 2);
-
-  // sigmoid path
-  const path = useMemo(() => {
-    let d = '';
-    for (let i = 0; i <= 80; i++) {
-      const zz = zMin + (i / 80) * (zMax - zMin);
-      const x = toX(zz), y = toY(sigmoid(zz));
-      d += (i === 0 ? 'M' : 'L') + ` ${x.toFixed(1)} ${y.toFixed(1)} `;
-    }
-    return d;
-  }, []);
+  const { W, H, padX, padY, toX, toY } = SIG;
+  const path = SIGMOID_PATH;
 
   return (
     <div className="rounded-2xl border border-white/10 bg-black/40 p-6">

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, FileText, Search, ArrowRight, Zap, RefreshCw, Layers } from 'lucide-react';
+import { Database, FileText, Search, ArrowRight, Zap, RefreshCw } from 'lucide-react';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 
 const toc = [
   { label: '1. What are Embeddings?', hash: '#what-are' },
@@ -580,6 +582,7 @@ print(f"Dimensions: {len(vector)}") # Output: 384`}</code>
         </div>
       </section>
 
+      <KnowledgeCheck questions={questionsFor("embeddings")} />
     </GuideLayout>
   );
 };

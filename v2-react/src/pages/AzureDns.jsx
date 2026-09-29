@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Globe, Cloud, LayoutTemplate, Link, ArrowRight, User, Network, Server, ShieldCheck, CheckSquare, Lightbulb, Star, Search, Activity, Box } from 'lucide-react';
+import { Globe, Cloud, LayoutTemplate, Link, ArrowRight, User, Network, ShieldCheck, CheckSquare, Lightbulb, Star, Search, Activity, Box } from 'lucide-react';
 
 export default function AzureDns() {
   const toc = [

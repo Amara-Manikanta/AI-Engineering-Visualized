@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import GuideLayout from "../components/GuideLayout";
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 
 const ATTENTION_WORDS = ["The", "cat", "sat", "on", "the", "mat"];
 const ATTENTION_WEIGHTS = [
@@ -963,6 +965,7 @@ export default function MlTransformers() {
         </div>
       </motion.section>
 
+      <KnowledgeCheck questions={questionsFor("transformers")} />
     </GuideLayout>
   );
 }

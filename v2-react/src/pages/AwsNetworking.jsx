@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Network, Cloud, Lock, Globe, Server, List, ArrowRight, ArrowLeftRight, Share2, Search, CheckSquare, Lightbulb, Star, Cpu, Database } from 'lucide-react';
+import { Network, Cloud, Lock, Globe, List, ArrowRight, ArrowLeftRight, Share2, Search, CheckSquare, Lightbulb, Star, Cpu, Database } from 'lucide-react';
 
 export default function AwsNetworking() {
   const toc = [

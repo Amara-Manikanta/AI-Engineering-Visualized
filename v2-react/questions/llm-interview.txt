@@ -53,3 +53,73 @@ Q: What does LoRA train instead of the full weight matrix?
 - Only the final output layer
 WHY: The base weights stay frozen and the update is factorised as B·A, cutting
 trainable parameters by well over 99% for a typical layer.
+
+Q: Why is LLM inference usually memory-bandwidth bound rather than compute bound?
+ANSWER: During decoding each new token needs a pass over all the model weights
+but does very little arithmetic per weight, especially at small batch sizes. The
+GPU spends most of its time moving weights from memory. That is why batching many
+requests together, quantizing weights, and speculative decoding all raise
+throughput: they do more useful work per byte read.
+
+Q: What is the KV cache, and why does it limit how many users you can serve?
+ANSWER: During generation the keys and values for every previous token are stored
+so they are not recomputed at each step. Its size grows with layers × heads ×
+head dimension × sequence length × batch size, so long contexts and many concurrent
+requests exhaust GPU memory. Paged attention, grouped-query attention and KV-cache
+quantization are the usual ways to fit more.
+
+Q: What do temperature and top-p actually do?
+ANSWER: Temperature divides the logits before the softmax: below 1 sharpens the
+distribution towards the most likely tokens, above 1 flattens it. Top-p (nucleus)
+sampling keeps only the smallest set of tokens whose probabilities sum to p and
+samples from those. Low temperature suits extraction and code; higher values suit
+brainstorming. Neither makes a model more factual.
+
+Q: How do you get reliable structured output (JSON) from an LLM?
+ANSWER: Prefer the provider's structured-output or tool-use feature with a JSON
+schema, which constrains decoding to valid output. Otherwise give a schema and an
+example, parse and validate the result, and retry with the validation error on
+failure. Always validate on your side — the downstream code should never trust
+unchecked model output.
+
+Q: How would you reduce the cost of an LLM feature without losing quality?
+ANSWER: First measure where tokens go. Then: cache the stable prefix (system
+prompt, documents) with prompt caching, trim retrieved context, cap output
+length, route easy requests to a smaller model, and use the batch API for work
+that is not latency-sensitive. Check every change against an evaluation set so a
+saving does not quietly cost accuracy.
+
+Q: What is the difference between RLHF and DPO?
+ANSWER: RLHF trains a separate reward model on human preference pairs and then
+optimises the policy against it with reinforcement learning (typically PPO) and
+a KL penalty to stay close to the reference model. DPO reaches the same objective
+with a single supervised loss directly on the preference pairs, with no reward
+model or RL loop, which makes it simpler and more stable to train.
+
+Q: What is prompt injection and how do you defend against it?
+ANSWER: Untrusted text — a web page, email or document the model reads — contains
+instructions that the model follows as if they came from the user or developer.
+There is no complete fix, so defend in layers: give the model's tools the least
+privilege possible, require confirmation for consequential actions, keep
+untrusted content clearly separated and labelled, filter outputs, and red-team
+the application with known attack patterns.
+
+Q: When would you use a reasoning (extended-thinking) model?
+ANSWER: For multi-step problems — maths, planning, debugging, complex analysis —
+where spending more tokens on thinking measurably improves accuracy. For simple
+classification, extraction or chat, the extra latency and cost usually buy
+nothing. Evaluate both settings on your own tasks rather than assuming.
+
+Q: Why do LLMs hallucinate, and what actually reduces it?
+ANSWER: The model is trained to produce plausible continuations, not to check
+facts, so when it lacks knowledge it still produces fluent text. What helps:
+grounding answers in retrieved sources with citations, allowing and encouraging
+"I don't know", asking the model to quote supporting passages, lower temperature
+for factual tasks, and automated faithfulness checks in evaluation.
+
+Q: How does quantization trade quality for memory?
+ANSWER: Weights are stored in fewer bits — 8-bit or 4-bit instead of 16 — which
+cuts memory roughly proportionally and speeds up memory-bound decoding. Quality
+loss is small at 8 bits and usually modest at 4 bits with good methods (GPTQ, AWQ),
+but grows for small models and outlier-sensitive layers. Always compare on your
+own evaluation set after quantizing.

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import GuideLayout from "../components/GuideLayout";
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 import { METHOD_TONE } from "../components/ModelProfile";
 import { AS_OF, METHODS, PROFILES, FAMILY_ORDER, FAMILY_NAMES, FAMILY_PATHS } from "../data/modelProfiles";
 
@@ -281,6 +283,7 @@ export default function ModelsTraining() {
           ))}
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("models-training")} />
     </GuideLayout>
   );
 }

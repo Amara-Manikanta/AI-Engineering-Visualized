@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../../components/GuideLayout';
+import KnowledgeCheck from "../../components/KnowledgeCheck";
+import { questionsFor } from "../../data/quizBank";
 import { CodeSnippet } from '../../components/CodeBlock';
 
 /* ---------------------------------------------------------------------------
@@ -91,10 +93,7 @@ function AsyncTimelineVisual() {
     </div>
   );
 }
-import { 
-  Code2, Terminal, CheckCircle2, FileCode, Layers, 
-  Folder, Box, Globe, FileJson, Zap, TestTube, Settings, ArrowRight, ShieldCheck
-} from 'lucide-react';
+import { Terminal, FileCode, Layers, Folder, Box, Globe, FileJson, Zap, TestTube, ArrowRight } from 'lucide-react';
 
 export default function PythonToolingAsync() {
   const toc = [
@@ -831,6 +830,7 @@ def test_mock_api():
           </div>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("python-advanced")} />
     </GuideLayout>
   );
 }

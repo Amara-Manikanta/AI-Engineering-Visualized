@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Globe, Server, MapPin, Building, Route, ServerCrash, Lightbulb, Star, Shield, ArrowRightLeft, Radio, Network, Database } from 'lucide-react';
+import { Globe, Server, MapPin, Building, Lightbulb, Star, ArrowRightLeft, Radio, Network, Database } from 'lucide-react';
 
 export default function AzureInfrastructure() {
   const toc = [

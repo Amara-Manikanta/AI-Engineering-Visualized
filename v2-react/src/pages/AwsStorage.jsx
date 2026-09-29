@@ -1,7 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Database, HardDrive, FolderOpen, Snowflake, AlertTriangle, Lightbulb, Star, CheckSquare } from 'lucide-react';
+import { Database, HardDrive, FolderOpen, Snowflake, Lightbulb, Star, CheckSquare } from 'lucide-react';
 
 export default function AwsStorage() {
   const toc = [

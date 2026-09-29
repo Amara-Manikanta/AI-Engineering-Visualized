@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 import { Cloud, Server, Database, Lock, Network, Zap, ShieldCheck, Globe, Clock, Rocket, ArrowUpRight, Shield, Activity, Lightbulb, Star } from 'lucide-react';
 
 export default function AzureBasics() {
@@ -213,6 +215,7 @@ export default function AzureBasics() {
         </div>
       </section>
 
+      <KnowledgeCheck questions={questionsFor("cloud-basics")} />
     </GuideLayout>
   );
 }

@@ -42,3 +42,23 @@ html { font-size: calc(100% * var(--reading-scale)); }
      type; give them a little more air. */
   p { line-height: 1.7; }
 }
+
+/* Readers who ask their OS for reduced motion get no pulsing, spinning or
+   smooth scrolling. framer-motion is handled separately by <MotionConfig
+   reducedMotion="user"> in App.jsx. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* A visible focus ring for keyboard users everywhere. */
+:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}

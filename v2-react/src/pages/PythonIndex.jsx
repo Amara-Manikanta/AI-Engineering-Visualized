@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import GuideLayout from '../components/GuideLayout';
-import { 
-  Code2, Database, Globe, LineChart, Cpu, Sigma, Box,
-  Terminal, Zap, Layers, ArrowRight, BookOpen, Variable, GitBranch,
-  Sliders, Type, Repeat, ShieldAlert, Sparkles, RefreshCw, FileText,
-  Folder, FileJson, TestTube, BarChart2
-} from 'lucide-react';
+import { Code2, Database, Globe, LineChart, Cpu, Sigma, Box, Zap, ArrowRight, BookOpen, Type } from 'lucide-react';
 
 const moduleCards = [
   {

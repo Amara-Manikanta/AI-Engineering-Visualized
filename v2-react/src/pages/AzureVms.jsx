@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { Server, Cpu, Database, Blocks, Building, CopyPlus, User, UploadCloud, CheckCircle, Play, ShieldAlert, History, Activity, ShieldCheck, Zap, ServerCrash, LayoutGrid, CheckSquare, Lightbulb, Star, ArrowRight } from 'lucide-react';
+import { Server, Cpu, Database, Blocks, Building, CopyPlus, User, UploadCloud, CheckCircle, Play, ShieldAlert, History, ShieldCheck, CheckSquare, Lightbulb, Star, ArrowRight } from 'lucide-react';
 
 export default function AzureVms() {
   const toc = [

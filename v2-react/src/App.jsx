@@ -1,5 +1,6 @@
-import { lazy, Suspense } from "react";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense, useLayoutEffect } from "react";
+import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 const DocumentLoaders = lazy(() => import("./pages/DocumentLoaders"));
@@ -110,6 +111,32 @@ const AgentsDebugging = lazy(() => import("./pages/AgentsDebugging"));
 const TopicGraph = lazy(() => import("./pages/TopicGraph"));
 const QuizIndex = lazy(() => import("./pages/QuizIndex"));
 
+const MlEvaluationMetrics = lazy(() => import("./pages/MlEvaluationMetrics"));
+const MlRegularization = lazy(() => import("./pages/MlRegularization"));
+const MlClustering = lazy(() => import("./pages/MlClustering"));
+const MlDimensionality = lazy(() => import("./pages/MlDimensionality"));
+const MlOptimization = lazy(() => import("./pages/MlOptimization"));
+const RagIngestion = lazy(() => import("./pages/RagIngestion"));
+const MlFeatureEngineering = lazy(() => import("./pages/MlFeatureEngineering"));
+const MlRecommenders = lazy(() => import("./pages/MlRecommenders"));
+const MlAnomaly = lazy(() => import("./pages/MlAnomaly"));
+const MlTimeSeries = lazy(() => import("./pages/MlTimeSeries"));
+const RagLateInteraction = lazy(() => import("./pages/RagLateInteraction"));
+const GenAiDistributed = lazy(() => import("./pages/GenAiDistributed"));
+const GenAiServing = lazy(() => import("./pages/GenAiServing"));
+const GenAiDecoding = lazy(() => import("./pages/GenAiDecoding"));
+const AgentsSdks = lazy(() => import("./pages/AgentsSdks"));
+const GenAiReasoning = lazy(() => import("./pages/GenAiReasoning"));
+const GenAiMerging = lazy(() => import("./pages/GenAiMerging"));
+const GenAiMultimodal = lazy(() => import("./pages/GenAiMultimodal"));
+const SafetyGovernance = lazy(() => import("./pages/SafetyGovernance"));
+const SafetyRedTeaming = lazy(() => import("./pages/SafetyRedTeaming"));
+const LlmProduction = lazy(() => import("./pages/LlmProduction"));
+const RagTextToSql = lazy(() => import("./pages/RagTextToSql"));
+const Mlops = lazy(() => import("./pages/Mlops"));
+const CloudAiPlatforms = lazy(() => import("./pages/CloudAiPlatforms"));
+const MlTransferLearning = lazy(() => import("./pages/MlTransferLearning"));
+const MlGnn = lazy(() => import("./pages/MlGnn"));
 const LlmInference = lazy(() => import("./pages/LlmInference"));
 const InteractiveIndex = lazy(() => import("./pages/InteractiveIndex"));
 const EfficiencyIndex = lazy(() => import("./pages/EfficiencyIndex"));
@@ -157,9 +184,24 @@ function RouteFallback() {
   );
 }
 
+// HashRouter keeps the window's scroll position across navigations, so a new
+// page would open wherever the previous one was scrolled to. Reset to the top
+// on every page change; links to "#/page#section" are scrolled by GuideLayout.
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useLayoutEffect(() => {
+    if (!hash) window.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only a page change resets scroll
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   return (
     <HashRouter>
+      {/* "user": framer-motion skips transform animations when the OS asks for reduced motion */}
+      <MotionConfig reducedMotion="user">
+      <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -172,15 +214,19 @@ function App() {
         <Route path="/agents/frameworks" element={<AgentsFrameworks />} />
         <Route path="/agents/a2a" element={<AgentsA2A />} />
         <Route path="/agents/debugging" element={<AgentsDebugging />} />
+        <Route path="/agents/sdks" element={<AgentsSdks />} />
         
         <Route path="/rag" element={<RagIndex />} />
         <Route path="/rag/fundamentals" element={<RagFundamentals />} />
+        <Route path="/rag/ingestion" element={<RagIngestion />} />
         <Route path="/rag/vector-dbs" element={<RagVectorDbs />} />
         <Route path="/rag/advanced-rag" element={<RagAdvanced />} />
         <Route path="/rag/retrieval" element={<RagRetrieval />} />
         <Route path="/rag/evaluation" element={<RagEvaluation />} />
         <Route path="/rag/data-prep" element={<RagDataPrep />} />
         <Route path="/rag/advanced-retrieval" element={<RagAdvancedRetrieval />} />
+        <Route path="/rag/late-interaction" element={<RagLateInteraction />} />
+        <Route path="/rag/text-to-sql" element={<RagTextToSql />} />
         <Route path="/rag/generation" element={<RagGeneration />} />
         <Route path="/rag/chunking" element={<RagChunking />} />
         <Route path="/rag/hybrid-rag" element={<RagHybrid />} />
@@ -218,6 +264,12 @@ function App() {
         <Route path="/genai/distillation" element={<GenAiDistillation />} />
         <Route path="/genai/tokenization" element={<GenAiTokenization />} />
         <Route path="/genai/decision-models" element={<GenAiDecisionModels />} />
+        <Route path="/genai/distributed-training" element={<GenAiDistributed />} />
+        <Route path="/genai/serving" element={<GenAiServing />} />
+        <Route path="/genai/decoding" element={<GenAiDecoding />} />
+        <Route path="/genai/reasoning-models" element={<GenAiReasoning />} />
+        <Route path="/genai/model-merging" element={<GenAiMerging />} />
+        <Route path="/genai/multimodal-generation" element={<GenAiMultimodal />} />
         
         <Route path="/python" element={<PythonIndex />} />
         <Route path="/python/foundations" element={<PythonFoundations />} />
@@ -230,6 +282,17 @@ function App() {
         <Route path="/ml" element={<MlIndex />} />
         <Route path="/ml/supervised" element={<MlSupervised />} />
         <Route path="/ml/unsupervised" element={<MlUnsupervised />} />
+        <Route path="/ml/evaluation-metrics" element={<MlEvaluationMetrics />} />
+        <Route path="/ml/regularization" element={<MlRegularization />} />
+        <Route path="/ml/clustering" element={<MlClustering />} />
+        <Route path="/ml/dimensionality-reduction" element={<MlDimensionality />} />
+        <Route path="/ml/optimization" element={<MlOptimization />} />
+        <Route path="/ml/feature-engineering" element={<MlFeatureEngineering />} />
+        <Route path="/ml/recommenders" element={<MlRecommenders />} />
+        <Route path="/ml/anomaly-detection" element={<MlAnomaly />} />
+        <Route path="/ml/time-series" element={<MlTimeSeries />} />
+        <Route path="/ml/transfer-learning" element={<MlTransferLearning />} />
+        <Route path="/ml/graph-neural-networks" element={<MlGnn />} />
         <Route path="/ml/deep-learning" element={<MlDeepLearning />} />
         <Route path="/ml/nlp" element={<MlNlp />} />
         <Route path="/ml/logistic-regression" element={<MlLogistic />} />
@@ -281,6 +344,8 @@ function App() {
         
 
         <Route path="/llm-inference" element={<LlmInference />} />
+        <Route path="/llm-production" element={<LlmProduction />} />
+        <Route path="/mlops" element={<Mlops />} />
         
         <Route path="/azure" element={<AzureIndex />} />
         <Route path="/azure/basics" element={<AzureBasics />} />
@@ -307,6 +372,7 @@ function App() {
         <Route path="/aws/networking" element={<AwsNetworking />} />
         <Route path="/aws/load-balancer" element={<AwsLoadBalancer />} />
         <Route path="/aws/dns" element={<AwsDns />} />
+        <Route path="/cloud/ai-platforms" element={<CloudAiPlatforms />} />
 
         <Route path="/efficiency" element={<EfficiencyIndex />} />
         <Route path="/interactive" element={<InteractiveIndex />} />
@@ -314,6 +380,8 @@ function App() {
         <Route path="/animations" element={<InteractiveIndex />} />
         <Route path="/roadmaps" element={<RoadmapsIndex />} />
         <Route path="/safety" element={<SafetyIndex />} />
+        <Route path="/safety/red-teaming" element={<SafetyRedTeaming />} />
+        <Route path="/safety/governance" element={<SafetyGovernance />} />
         <Route path="/system-design" element={<SystemDesignIndex />} />
         <Route path="/glossary" element={<GlossaryIndex />} />
         <Route path="/graph" element={<TopicGraph />} />
@@ -325,6 +393,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
+      </MotionConfig>
     </HashRouter>
   );
 }

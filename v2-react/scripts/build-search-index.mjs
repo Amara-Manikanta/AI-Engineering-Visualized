@@ -33,10 +33,18 @@ for (const { path, comp } of routes) {
   if (!existsSync(file)) continue;
   const src = readFileSync(file, "utf8");
 
+  // Read title and intro from the <GuideLayout …> tag itself. The first
+  // title="…" in a file is often an inner <Panel title>, which is how pages
+  // like /ml/hypothesis-testing were once indexed under a panel caption.
+  const layout = src.match(/<GuideLayout\b([\s\S]*?)>/)?.[1] ?? "";
+  const attr = (name) =>
+    layout.match(new RegExp(`\\b${name}=(?:"([^"]+)"|\\{\\s*["'\`]([^"'\`]+)["'\`]\\s*\\})`))?.slice(1).find(Boolean);
   const title =
+    attr("title") ??
     src.match(/title="([^"]+)"/)?.[1] ??
     comp.replace(/([a-z])([A-Z])/g, "$1 $2");
-  const intro = src.match(/intro="([^"]+)"/)?.[1] ?? "";
+  let intro = attr("intro") ?? src.match(/intro="([^"]+)"/)?.[1] ?? "";
+  if (intro.includes("${")) intro = ""; // a template literal — its text only exists at runtime
 
   // TOC section labels -> sub-entries with #hash
   const sections = [];
