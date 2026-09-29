@@ -191,6 +191,10 @@ export default function RoadmapsIndex() {
       title="Learning Paths"
       intro={`${PATHS.length} ordered routes through the material, depending on what you're trying to become. Tick steps off as you go — progress is saved in your browser.`}
       toc={toc}
+      // Only the active path is rendered, so a contents click switches to it.
+      onTocClick={(id) => {
+        if (PATHS.some((p) => p.id === id)) setActive(id);
+      }}
     >
       {/* path picker with progress */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import GuideLayout from "../components/GuideLayout";
 import CodeBlock from "../components/CodeBlock";
 import KnowledgeCheck from "../components/KnowledgeCheck";
@@ -15,7 +15,7 @@ export const SEARCH_KEYWORDS = [
 
 /* ---------------------------------------------------------------------------
    200-dimensional data whose class signal lives in a hidden 3-D subspace,
-   buried in noise. "Pretraining" = learn that subspace from 2,000 unlabelled
+   buried in noise. "Pretraining" = learn that subspace from 1,000 unlabelled
    points (top principal components). Then train logistic regression with n
    labels on raw features vs the learned 3-D representation.
 --------------------------------------------------------------------------- */
@@ -43,19 +43,30 @@ const WORLD = (() => {
       const x = Array.from({ length: D }, (_, i) => z[0] * basis[0][i] + z[1] * basis[1][i] + z[2] * basis[2][i] + randn(r) * 1.6);
       return { x, label };
     });
-  return { unlabelled: sample(2000), train: sample(400), test: sample(1000) };
+  return { unlabelled: sample(1000), train: sample(400), test: sample(600) };
 })();
 
 // Top-K principal directions by power iteration with deflation.
-const ENCODER = (() => {
+let encoderCache = null;
+const ENCODER = (x) => (encoderCache ??= buildEncoder())(x);
+
+function buildEncoder() {
   const X = WORLD.unlabelled.map((p) => p.x);
   const mean = Array.from({ length: D }, (_, j) => X.reduce((s, x) => s + x[j], 0) / X.length);
-  const C = Array.from({ length: D }, (_, i) => Array.from({ length: D }, (_, j) => X.reduce((s, x) => s + (x[i] - mean[i]) * (x[j] - mean[j]), 0) / (X.length - 1)));
+  // Covariance of the centred data; symmetric, so only the upper triangle is computed.
+  const Xc = X.map((x) => x.map((v, j) => v - mean[j]));
+  const C = Array.from({ length: D }, () => new Float64Array(D));
+  for (let i = 0; i < D; i++)
+    for (let j = i; j < D; j++) {
+      let s = 0;
+      for (let r = 0; r < Xc.length; r++) s += Xc[r][i] * Xc[r][j];
+      C[i][j] = C[j][i] = s / (Xc.length - 1);
+    }
   const r = rng(2);
   const comps = [];
   for (let k = 0; k < K; k++) {
     let v = Array.from({ length: D }, () => r() - 0.5);
-    for (let it = 0; it < 200; it++) {
+    for (let it = 0; it < 60; it++) {
       let w = C.map((row) => row.reduce((s, c, j) => s + c * v[j], 0));
       comps.forEach((u) => {
         const d = w.reduce((s, x, i) => s + x * u[i], 0);
@@ -67,9 +78,9 @@ const ENCODER = (() => {
     comps.push(v);
   }
   return (x) => comps.map((u) => u.reduce((s, c, i) => s + c * (x[i] - mean[i]), 0));
-})();
+}
 
-function trainLogistic(rows, dim, epochs = 300, lr = 0.1, l2 = 0.01) {
+function trainLogistic(rows, dim, epochs = 150, lr = 0.2, l2 = 0.01) {
   const w = new Array(dim).fill(0);
   let b = 0;
   for (let e = 0; e < epochs; e++) {
@@ -105,8 +116,20 @@ function experiment(n) {
 const NS = [6, 10, 20, 40, 80, 160, 400];
 
 function LabelEfficiencyLab() {
-  const curve = useMemo(() => NS.map((n) => ({ n, ...experiment(n) })), []);
-  const [idx, setIdx] = useState(1);
+  // The experiment takes a moment, so it runs after the page has painted.
+  const [curve, setCurve] = useState(null);
+  useEffect(() => {
+    const t = setTimeout(() => setCurve(NS.map((n) => ({ n, ...experiment(n) }))), 50);
+    return () => clearTimeout(t);
+  }, []);
+  const [idx, setIdx] = useState(2);
+  if (!curve) {
+    return (
+      <Panel tone="emerald" title="Pretrain on unlabelled data, then learn from a handful of labels">
+        <p className="text-sm text-gray-400 m-0">Running the experiment in your browser…</p>
+      </Panel>
+    );
+  }
   const cur = curve[idx];
   const W = 360;
   const H = 170;
@@ -139,10 +162,10 @@ function LabelEfficiencyLab() {
       </div>
       <p className="text-xs text-gray-500 leading-relaxed mt-4 mb-0">
         The class depends on three hidden factors spread across 200 noisy features. The “pretraining” step never sees
-        a label: it learns from 2,000 unlabelled points which directions carry structure (here simply their top
+        a label: it learns from 1,000 unlabelled points which directions carry structure (here simply their top
         principal components). With that representation, logistic regression is accurate from very few labels;
         on the raw 200 features it needs many more examples to reach the same accuracy, and the two converge as
-        labels become plentiful. Neither passes about 82%: that ceiling is the noise built into the problem. Large models do the same at vastly greater scale — which is why a pretrained
+        labels become plentiful. Neither passes about 85%: that ceiling is the noise built into the problem. Large models do the same at vastly greater scale — which is why a pretrained
         backbone plus a few hundred labels routinely beats training from scratch on thousands.
       </p>
     </Panel>

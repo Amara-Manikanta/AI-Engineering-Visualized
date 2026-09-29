@@ -13,7 +13,10 @@ const CAT_TONE = {
   Serving:      { text: "text-cyan-300",    chip: "border-cyan-500/40 bg-cyan-500/10" },
   ML:           { text: "text-rose-300",    chip: "border-rose-500/40 bg-rose-500/10" },
   "Data & Stats": { text: "text-teal-300",  chip: "border-teal-500/40 bg-teal-500/10" },
+  "Safety & Ops": { text: "text-orange-300", chip: "border-orange-500/40 bg-orange-500/10" },
 };
+
+const catAnchor = (c) => "cat-" + c.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 function Highlight({ text, q }) {
   if (!q) return <>{text}</>;
@@ -91,7 +94,15 @@ export default function GlossaryIndex() {
     <GuideLayout
       title="AI Glossary"
       intro={`${GLOSSARY.length} terms you'll meet across this site, each in one or two sentences — and a link to where it's explained properly.`}
-      toc={CATEGORIES.map((c) => ({ label: c, hash: c.toLowerCase() }))}
+      // Each contents entry filters to its category and scrolls to the list.
+      toc={CATEGORIES.map((c) => ({ label: c, hash: catAnchor(c) }))}
+      onTocClick={(id) => {
+        const c = CATEGORIES.find((x) => catAnchor(x) === id);
+        if (c) {
+          setQ("");
+          setCat(c);
+        }
+      }}
     >
       {/* search + filter */}
       <div className="sticky top-16 z-20 -mx-1 px-1 py-3 bg-[#0a0a0a]/90 backdrop-blur-sm mb-4">
@@ -127,6 +138,10 @@ export default function GlossaryIndex() {
         </div>
       </div>
 
+      {/* Scroll targets for the contents entries (one per category, all at the list top). */}
+      {CATEGORIES.map((c) => (
+        <span key={c} id={catAnchor(c)} className="block scroll-mt-40" />
+      ))}
       <div className="text-xs text-gray-500 mb-4">
         {results.length} term{results.length === 1 ? "" : "s"}
         {q.trim() && ` matching “${q.trim()}”`}

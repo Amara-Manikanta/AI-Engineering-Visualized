@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import GuideLayout from '../../components/GuideLayout';
+import KnowledgeCheck from "../../components/KnowledgeCheck";
+import { questionsFor } from "../../data/quizBank";
 import { CodeSnippet } from '../../components/CodeBlock';
 
 /* ---------------------------------------------------------------------------
@@ -586,6 +588,7 @@ print("Top Docs Dict:", top_docs)`}</CodeSnippet>
           </div>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("python-core")} />
     </GuideLayout>
   );
 }

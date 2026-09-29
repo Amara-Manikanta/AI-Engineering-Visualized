@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import GuideLayout from '../../components/GuideLayout';
+import KnowledgeCheck from "../../components/KnowledgeCheck";
+import { questionsFor } from "../../data/quizBank";
 import { CodeSnippet } from '../../components/CodeBlock';
 
 /* ---------------------------------------------------------------------------
@@ -790,6 +792,7 @@ stats.print_stats(10)          # the 10 heaviest calls
           </p>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("python-advanced")} />
     </GuideLayout>
   );
 }

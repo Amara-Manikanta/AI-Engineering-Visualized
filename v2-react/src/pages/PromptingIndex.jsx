@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 
 export default function PromptingIndex() {
   const toc = [
@@ -177,6 +179,7 @@ export default function PromptingIndex() {
           </div>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("prompting")} />
     </GuideLayout>
   );
 }

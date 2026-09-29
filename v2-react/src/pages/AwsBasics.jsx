@@ -1,5 +1,7 @@
 import React from 'react';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 import { Cloud, Server, Database, Shield, Network, Globe, MapPin, Building, Lightbulb, Star, Zap, HardDrive } from 'lucide-react';
 
 export default function AwsBasics() {
@@ -199,6 +201,7 @@ export default function AwsBasics() {
         </div>
       </section>
 
+      <KnowledgeCheck questions={questionsFor("cloud-basics")} />
     </GuideLayout>
   );
 }

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 
 const stagger = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } } };
@@ -431,6 +433,7 @@ if __name__ == "__main__":
           <li><strong className="text-white">Always gate destructive tools behind confirmation.</strong> Don't let the model silently delete, send, or pay for something.</li>
         </ul>
       </section>
+      <KnowledgeCheck questions={questionsFor("mcp")} />
     </GuideLayout>
   );
 }

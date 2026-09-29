@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../../components/GuideLayout';
+import KnowledgeCheck from "../../components/KnowledgeCheck";
+import { questionsFor } from "../../data/quizBank";
 import { CodeSnippet } from '../../components/CodeBlock';
 
 /* ---------------------------------------------------------------------------
@@ -828,6 +830,7 @@ def test_mock_api():
           </div>
         </div>
       </section>
+      <KnowledgeCheck questions={questionsFor("python-advanced")} />
     </GuideLayout>
   );
 }
