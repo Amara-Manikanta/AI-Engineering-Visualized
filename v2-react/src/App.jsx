@@ -1,5 +1,6 @@
-import { lazy, Suspense } from "react";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense, useLayoutEffect } from "react";
+import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 const DocumentLoaders = lazy(() => import("./pages/DocumentLoaders"));
@@ -157,9 +158,24 @@ function RouteFallback() {
   );
 }
 
+// HashRouter keeps the window's scroll position across navigations, so a new
+// page would open wherever the previous one was scrolled to. Reset to the top
+// on every page change; links to "#/page#section" are scrolled by GuideLayout.
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useLayoutEffect(() => {
+    if (!hash) window.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only a page change resets scroll
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   return (
     <HashRouter>
+      {/* "user": framer-motion skips transform animations when the OS asks for reduced motion */}
+      <MotionConfig reducedMotion="user">
+      <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -325,6 +341,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
+      </MotionConfig>
     </HashRouter>
   );
 }

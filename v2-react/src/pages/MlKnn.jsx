@@ -146,9 +146,15 @@ export default function MlKnn() {
     <GuideLayout
       title="K-Nearest Neighbors (KNN)"
       intro="An instance-based learning algorithm that memorizes training data and makes predictions by comparing new data points to stored instances."
-      toc={[]}
+      toc={[
+        { label: "Interactive KNN", hash: "demo" },
+        { label: "Key Concepts & Distances", hash: "concepts" },
+        { label: "How KNN Works", hash: "how" },
+        { label: "Evaluating the Model", hash: "evaluation" },
+        { label: "Choosing k & Scaling", hash: "choosing-k" },
+      ]}
     >
-      <section className="guide-section mb-16">
+      <section id="demo" className="guide-section mb-16 scroll-mt-24">
         <h2 className="text-2xl font-bold mb-4 text-gray-100">Interactive KNN Animation</h2>
         <p className="text-gray-300 mb-6 leading-relaxed">
           Click anywhere on the canvas below to place a <strong>new data point</strong> (marked as a star). Use the slider to adjust <strong>K</strong> (the number of neighbors to consider). The algorithm calculates the Euclidean distance, draws a radius encompassing the K closest neighbors, and assigns a class based on majority voting!
@@ -187,7 +193,7 @@ export default function MlKnn() {
         </div>
       </section>
 
-      <section className="guide-section mb-16">
+      <section id="concepts" className="guide-section mb-16 scroll-mt-24">
         <h2 className="text-2xl font-bold mb-6 text-gray-100">Key Concepts of KNN</h2>
         <ul className="list-disc list-inside space-y-3 text-gray-300 text-lg">
           <li><strong className="text-white">Instance-Based Learning:</strong> KNN doesn't explicitly train a mathematical model. It simply stores the training dataset and performs computation at prediction time.</li>
@@ -213,7 +219,7 @@ export default function MlKnn() {
         </div>
       </section>
 
-      <section className="guide-section mb-16">
+      <section id="how" className="guide-section mb-16 scroll-mt-24">
         <h2 className="text-2xl font-bold mb-6 text-gray-100">How KNN Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[#111] border border-gray-800 rounded-xl p-6">
@@ -237,7 +243,7 @@ export default function MlKnn() {
         </div>
       </section>
 
-      <section className="guide-section mb-16">
+      <section id="evaluation" className="guide-section mb-16 scroll-mt-24">
         <h2 className="text-2xl font-bold mb-6 text-gray-100">Evaluation Metrics</h2>
         
         <div className="bg-[#111] border border-gray-800 rounded-xl p-6 mb-6">
@@ -286,6 +292,28 @@ export default function MlKnn() {
           <div className="bg-[#111] border border-gray-800 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-white mb-2">Cross-Validation</h3>
             <p className="text-gray-400 text-sm">Technique to evaluate model performance by partitioning data into subsets (e.g., K-Fold). Essential for assessing generalizability to unseen data.</p>
+          </div>
+        </div>
+        <p className="text-sm text-gray-400 mt-6">
+          For interactive versions of these metrics — a live confusion matrix, threshold slider and ROC curve — see{" "}
+          <a href="#/ml/evaluation-metrics" className="text-blue-400 hover:underline">Evaluation Metrics</a>.
+        </p>
+      </section>
+
+      <section id="choosing-k" className="guide-section mb-16 scroll-mt-24">
+        <h2 className="text-2xl font-bold mb-6 text-gray-100">Choosing k and Scaling Features</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-[#111] border border-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Small k vs large k</h3>
+            <p className="text-gray-400 text-sm">k = 1 follows every noisy point (high variance). A very large k smooths toward the majority class everywhere (high bias). Pick k by cross-validation, and use an odd k for two classes to avoid ties.</p>
+          </div>
+          <div className="bg-[#111] border border-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Always scale</h3>
+            <p className="text-gray-400 text-sm">Distances add up raw units. Income in dollars will drown out age in years unless you standardise first — put a <span className="font-mono">StandardScaler</span> in the same pipeline as the model.</p>
+          </div>
+          <div className="bg-[#111] border border-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">The curse of dimensionality</h3>
+            <p className="text-gray-400 text-sm">In hundreds of dimensions all points are roughly equally far apart, so "nearest" stops meaning much. Reduce dimensions first (<a href="#/ml/dimensionality-reduction" className="text-blue-400 hover:underline">PCA</a>) or use learned embeddings.</p>
           </div>
         </div>
       </section>

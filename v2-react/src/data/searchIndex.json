@@ -927,23 +927,19 @@
     "intro": "Azure Networking enables secure, scalable and highly available communication between resources, users and the internet.",
     "sections": [
       {
-        "label": "1. Core Networking",
+        "label": "1. Core Networking & Routing",
         "hash": "core-networking"
       },
       {
-        "label": "2. Routing & Security",
-        "hash": "routing-security"
-      },
-      {
-        "label": "3. Connectivity",
+        "label": "2. Connectivity & Gateways",
         "hash": "connectivity"
       },
       {
-        "label": "4. Traffic Flow",
+        "label": "3. Traffic Flow",
         "hash": "traffic-flow"
       },
       {
-        "label": "5. Best Practices",
+        "label": "4. Best Practices",
         "hash": "best-practices"
       }
     ],
@@ -2035,7 +2031,7 @@
   },
   {
     "path": "/ml/bivariate-analysis",
-    "title": "Correlation explorer",
+    "title": "Bivariate Analysis",
     "intro": "Two variables at a time: does one move with the other, how strongly, and is it real? The step between describing columns and building a model.",
     "sections": [
       {
@@ -2092,7 +2088,7 @@
   },
   {
     "path": "/ml/central-limit-theorem",
-    "title": "The CLT machine",
+    "title": "Central Limit Theorem",
     "intro": "Average enough independent values and the average is approximately normally distributed — whatever the shape of the values themselves. It is why the bell curve is everywhere in statistics.",
     "sections": [
       {
@@ -2181,7 +2177,7 @@
   },
   {
     "path": "/ml/data-analysis",
-    "title": "Move one salary and watch the summaries react",
+    "title": "Data Analysis (EDA)",
     "intro": "Exploratory data analysis is looking before you model: what each column contains, how it is distributed, and what surprises are hiding in it.",
     "sections": [
       {
@@ -2247,7 +2243,7 @@
   },
   {
     "path": "/ml/data-cleaning",
-    "title": "Clean a messy table, one step at a time",
+    "title": "Data Cleaning",
     "intro": "Real data arrives with typos, duplicates, gaps and impossible values. Cleaning turns it into something a model can learn from — without inventing what is not there.",
     "sections": [
       {
@@ -2305,7 +2301,7 @@
   },
   {
     "path": "/ml/data-sourcing",
-    "title": "Same population, four ways to sample it",
+    "title": "Data Sourcing",
     "intro": "Every model is a summary of its data. Where that data came from — and who was left out — decides what the model can ever learn.",
     "sections": [
       {
@@ -2362,7 +2358,32 @@
     "path": "/ml/decision-trees",
     "title": "Decision Trees",
     "intro": "A supervised machine learning algorithm used for both classification and regression tasks.",
-    "sections": [],
+    "sections": [
+      {
+        "label": "Interactive Tree",
+        "hash": "demo"
+      },
+      {
+        "label": "Structure of a Tree",
+        "hash": "structure"
+      },
+      {
+        "label": "Metrics for Splitting",
+        "hash": "splitting"
+      },
+      {
+        "label": "Overfitting & Pruning",
+        "hash": "overfitting"
+      },
+      {
+        "label": "Strengths & Weaknesses",
+        "hash": "strengths"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
     "keywords": []
   },
   {
@@ -2399,7 +2420,7 @@
   },
   {
     "path": "/ml/dpo",
-    "title": "From RLHF to DPO in five lines",
+    "title": "DPO — Direct Preference Optimization",
     "intro": "RLHF's goal without its machinery. A short piece of algebra shows the reward model and the RL loop can be skipped: train the language model directly on 'answer A is better than answer B' pairs.",
     "sections": [
       {
@@ -2494,7 +2515,7 @@
   },
   {
     "path": "/ml/grpo",
-    "title": "Sample a group, score it, compare within the group",
+    "title": "GRPO and RL with Verifiable Rewards",
     "intro": "The method behind open reasoning models. Sample several answers to the same problem, check which are right with a program, and push the model toward the answers that beat their siblings — no reward model and no value model required.",
     "sections": [
       {
@@ -2558,7 +2579,7 @@
   },
   {
     "path": "/ml/hypothesis-testing",
-    "title": "A delivery app claims deliveries average 30 minutes. You timed some.",
+    "title": "Hypothesis Testing",
     "intro": "A formal way to ask whether a pattern in a sample is real or could be chance: assume nothing is going on, and measure how surprising your data would be if that were true.",
     "sections": [
       {
@@ -2625,7 +2646,7 @@
   },
   {
     "path": "/ml/inferential-statistics",
-    "title": "Heights of adults — a normal distribution",
+    "title": "Inferential Statistics",
     "intro": "Descriptive statistics summarise the data you have. Inferential statistics use that sample to say something — with a stated uncertainty — about everyone you did not measure.",
     "sections": [
       {
@@ -2691,7 +2712,28 @@
     "path": "/ml/knn",
     "title": "K-Nearest Neighbors (KNN)",
     "intro": "An instance-based learning algorithm that memorizes training data and makes predictions by comparing new data points to stored instances.",
-    "sections": [],
+    "sections": [
+      {
+        "label": "Interactive KNN",
+        "hash": "demo"
+      },
+      {
+        "label": "Key Concepts & Distances",
+        "hash": "concepts"
+      },
+      {
+        "label": "How KNN Works",
+        "hash": "how"
+      },
+      {
+        "label": "Evaluating the Model",
+        "hash": "evaluation"
+      },
+      {
+        "label": "Choosing k & Scaling",
+        "hash": "choosing-k"
+      }
+    ],
     "keywords": []
   },
   {
@@ -2724,7 +2766,7 @@
   },
   {
     "path": "/ml/logistic-regression",
-    "title": "Probability, odds and log-odds",
+    "title": "Logistic Regression",
     "intro": "A supervised algorithm for classification — it predicts the probability that an example belongs to a class, then thresholds it into a decision.",
     "sections": [
       {
@@ -2845,7 +2887,7 @@
   },
   {
     "path": "/ml/multiple-regression",
-    "title": "Fit a regression on thirty houses",
+    "title": "Multiple Linear Regression",
     "intro": "Predicting a value from several input features at once — the workhorse model behind pricing, forecasting, and scoring systems.",
     "sections": [
       {
@@ -2917,7 +2959,7 @@
   },
   {
     "path": "/ml/naive-bayes",
-    "title": "You test positive. How worried should you be?",
+    "title": "Naive Bayes",
     "intro": "A classifier built directly on Bayes' theorem, with one bold simplification: treat every feature as independent given the class. It trains in a single pass, needs little data, and is still a strong baseline for text.",
     "sections": [
       {
@@ -3074,7 +3116,7 @@
   },
   {
     "path": "/ml/reinforcement-learning",
-    "title": "The loop every RL problem shares",
+    "title": "Reinforcement Learning",
     "intro": "Learning by trial and error. No labelled answers — an agent acts, the world responds with rewards, and over many attempts it learns which actions pay off in the long run.",
     "sections": [
       {
@@ -3150,7 +3192,7 @@
   },
   {
     "path": "/ml/rlaif",
-    "title": "Critique → revise, against written principles",
+    "title": "RLAIF and Constitutional AI",
     "intro": "Replace most human preference labels with judgements from an AI model, guided by a written set of principles. Cheaper, faster and more consistent than human labelling — and the values being taught are written down where anyone can read them.",
     "sections": [
       {
@@ -3207,7 +3249,7 @@
   },
   {
     "path": "/ml/rlhf",
-    "title": "RLHF in three stages",
+    "title": "RLHF — Reinforcement Learning from Human Feedback",
     "intro": "How a model that predicts text becomes an assistant people prefer: learn a reward from human comparisons, then use reinforcement learning to write answers that score well on it — without drifting too far from where it started.",
     "sections": [
       {
@@ -4521,7 +4563,7 @@
   },
   {
     "path": "/rag/advanced-retrieval",
-    "title": "Vector top-5",
+    "title": "Advanced Retrieval Techniques",
     "intro": "Optimizing the search step for maximum precision — the seven techniques that separate a demo from a production RAG system.",
     "sections": [
       {

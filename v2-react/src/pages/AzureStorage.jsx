@@ -173,7 +173,7 @@ export default function AzureStorage() {
           </div>
 
           {/* Lifecycle */}
-          <div className="bg-[#111] border border-[#333] rounded-xl p-6">
+          <div id="lifecycle" className="bg-[#111] border border-[#333] rounded-xl p-6 scroll-mt-24">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Clock className="text-emerald-400" /> Lifecycle Management</h3>
             
             <div className="flex items-center justify-between mb-6 bg-[#1a1a1a] p-6 rounded-xl border border-gray-800">

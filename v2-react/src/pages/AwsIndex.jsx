@@ -75,7 +75,7 @@ export default function AwsIndex() {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {topics.map((topic, i) => (
-          <Link key={i} to={topic.path} className="block">
+          <Link key={i} id={toc[i].hash} to={topic.path} className="block scroll-mt-24">
             <motion.div 
               whileHover={{ scale: 1.02 }}
               className="bg-[#111] border border-gray-800 hover:border-orange-500/50 rounded-xl p-6 h-full transition-colors relative overflow-hidden"
