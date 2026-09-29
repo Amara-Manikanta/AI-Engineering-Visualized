@@ -179,10 +179,13 @@ function Landscape() {
         </div>
       </div>
       <p className="text-xs text-gray-500 leading-relaxed mt-4 mb-0">
-        On the ravine, plain gradient descent zig-zags across the steep direction while barely moving along the
-        shallow one — raise the learning rate to speed it up and it starts bouncing, then diverges. Momentum
-        accumulates velocity along the consistent direction and damps the zig-zag. Adam and RMSProp divide each
-        coordinate's step by its recent gradient size, so steep and shallow directions move at similar speeds.
+        On the ravine at the default rate, gradient descent drops quickly down the steep wall, then crawls along
+        the shallow valley floor. Raise the rate toward 0.6 and it starts zig-zagging across the ravine — too big a
+        step for the steep direction — and above about 0.67 it diverges, while the step is still small for the
+        shallow direction. One learning rate cannot suit both, and that is the core problem. Momentum builds
+        speed along the valley and reaches a far lower loss, overshooting and swinging back and forth on the way
+        (heavy-ball behaviour). Adam and RMSProp divide each coordinate's step by its recent gradient size, so
+        steep and shallow directions move at similar speeds and the path heads almost straight for the minimum.
         On the Rosenbrock banana (a classic test function), dropping into the curved valley is easy; following it
         to (1, 1) is the hard part. With the defaults, momentum gets there while gradient descent is still crawling
         along the valley floor. Adam barely moves: its steps are roughly the learning rate in size, so a rate tuned

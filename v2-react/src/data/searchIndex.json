@@ -1254,6 +1254,73 @@
     ]
   },
   {
+    "path": "/genai/decoding",
+    "title": "Decoding & Sampling",
+    "intro": "How a model's next-token probabilities become text: greedy and beam search, temperature, top-k, top-p and min-p, repetition penalties and logit bias, and constrained decoding that guarantees valid JSON.",
+    "sections": [
+      {
+        "label": "From Logits to Text",
+        "hash": "logits"
+      },
+      {
+        "label": "Greedy & Beam Search",
+        "hash": "beam"
+      },
+      {
+        "label": "Sampling Controls",
+        "hash": "sampling"
+      },
+      {
+        "label": "Penalties & Logit Bias",
+        "hash": "penalties"
+      },
+      {
+        "label": "Structured Output",
+        "hash": "structured"
+      },
+      {
+        "label": "Stopping & Determinism",
+        "hash": "stopping"
+      },
+      {
+        "label": "Recommended Settings",
+        "hash": "settings"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "decoding",
+      "sampling",
+      "greedy decoding",
+      "beam search",
+      "beam width",
+      "length penalty",
+      "temperature",
+      "top-k",
+      "top-p",
+      "nucleus sampling",
+      "min-p",
+      "repetition penalty",
+      "frequency penalty",
+      "presence penalty",
+      "logit bias",
+      "stop sequences",
+      "max tokens",
+      "constrained decoding",
+      "structured output",
+      "JSON mode",
+      "JSON schema",
+      "grammar-constrained generation",
+      "Outlines",
+      "XGrammar",
+      "seed",
+      "determinism"
+    ]
+  },
+  {
     "path": "/genai/distillation",
     "title": "Knowledge Distillation",
     "intro": "Train a small model to imitate a large one. It reliably beats training the same small model on the original labels — and the reason why is worth understanding.",
@@ -1288,6 +1355,83 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/genai/distributed-training",
+    "title": "Distributed Training",
+    "intro": "How models too big for one GPU get trained: the memory arithmetic of Adam, data parallelism, ZeRO and FSDP sharding, tensor and pipeline parallelism, mixed precision, and a back-of-the-envelope for training time.",
+    "sections": [
+      {
+        "label": "Why One GPU Is Not Enough",
+        "hash": "why"
+      },
+      {
+        "label": "Memory Lab",
+        "hash": "memory"
+      },
+      {
+        "label": "Data Parallelism",
+        "hash": "dp"
+      },
+      {
+        "label": "ZeRO & FSDP",
+        "hash": "zero"
+      },
+      {
+        "label": "Tensor, Pipeline & More",
+        "hash": "model-parallel"
+      },
+      {
+        "label": "Mixed Precision",
+        "hash": "precision"
+      },
+      {
+        "label": "Saving Memory",
+        "hash": "saving"
+      },
+      {
+        "label": "Compute Lab",
+        "hash": "compute"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "distributed training",
+      "data parallel",
+      "DDP",
+      "all-reduce",
+      "ZeRO",
+      "ZeRO-1",
+      "ZeRO-2",
+      "ZeRO-3",
+      "FSDP",
+      "fully sharded data parallel",
+      "DeepSpeed",
+      "tensor parallel",
+      "pipeline parallel",
+      "pipeline bubble",
+      "sequence parallel",
+      "context parallel",
+      "expert parallel",
+      "Megatron-LM",
+      "3D parallelism",
+      "mixed precision",
+      "bf16",
+      "fp16",
+      "fp8",
+      "loss scaling",
+      "gradient checkpointing",
+      "activation checkpointing",
+      "gradient accumulation",
+      "training memory",
+      "optimizer state memory",
+      "MFU",
+      "training FLOPs",
+      "6ND"
+    ]
   },
   {
     "path": "/genai/fine-tuning",
@@ -1634,6 +1778,96 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/genai/serving",
+    "title": "The LLM Serving Stack",
+    "intro": "What happens between an API request and a stream of tokens: why decoding is memory-bound, continuous batching, KV-cache paging and prefix caching, FlashAttention, speculative decoding, and the engines that put it together.",
+    "sections": [
+      {
+        "label": "Two Phases: Prefill & Decode",
+        "hash": "phases"
+      },
+      {
+        "label": "Decode Calculator",
+        "hash": "decode"
+      },
+      {
+        "label": "Continuous Batching",
+        "hash": "batching"
+      },
+      {
+        "label": "KV Cache Management",
+        "hash": "kv"
+      },
+      {
+        "label": "FlashAttention",
+        "hash": "flash"
+      },
+      {
+        "label": "Faster Decoding",
+        "hash": "speculative"
+      },
+      {
+        "label": "Serving Architecture",
+        "hash": "architecture"
+      },
+      {
+        "label": "Serving Engines",
+        "hash": "engines"
+      },
+      {
+        "label": "Metrics That Matter",
+        "hash": "metrics"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "LLM serving",
+      "inference server",
+      "prefill",
+      "decode",
+      "memory bound",
+      "compute bound",
+      "arithmetic intensity",
+      "roofline",
+      "KV cache",
+      "KV cache size",
+      "continuous batching",
+      "in-flight batching",
+      "static batching",
+      "PagedAttention",
+      "vLLM",
+      "SGLang",
+      "RadixAttention",
+      "TensorRT-LLM",
+      "Triton Inference Server",
+      "TGI",
+      "llama.cpp",
+      "Ollama",
+      "ONNX Runtime",
+      "FlashAttention",
+      "prefix caching",
+      "prompt caching",
+      "speculative decoding",
+      "Medusa",
+      "EAGLE",
+      "disaggregated serving",
+      "prefill decode disaggregation",
+      "multi-LoRA serving",
+      "S-LoRA",
+      "LoRAX",
+      "TTFT",
+      "time to first token",
+      "TPOT",
+      "inter-token latency",
+      "throughput",
+      "goodput",
+      "batch API"
+    ]
   },
   {
     "path": "/genai/tokenization",
@@ -1995,6 +2229,62 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/ml/anomaly-detection",
+    "title": "Anomaly Detection",
+    "intro": "Finding the rare, the broken and the fraudulent when you have few or no labelled examples: statistical rules, isolation forests, neighbour distances and autoencoders — and how to evaluate them honestly.",
+    "sections": [
+      {
+        "label": "What Counts as an Anomaly",
+        "hash": "what"
+      },
+      {
+        "label": "Detector Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "How Isolation Forest Works",
+        "hash": "iforest"
+      },
+      {
+        "label": "The Method Toolbox",
+        "hash": "methods"
+      },
+      {
+        "label": "Evaluating Without Labels",
+        "hash": "evaluation"
+      },
+      {
+        "label": "In Production",
+        "hash": "production"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "anomaly detection",
+      "outlier detection",
+      "novelty detection",
+      "isolation forest",
+      "z-score",
+      "IQR",
+      "local outlier factor",
+      "LOF",
+      "k-nearest neighbour distance",
+      "one-class SVM",
+      "autoencoder",
+      "reconstruction error",
+      "fraud detection",
+      "intrusion detection",
+      "contamination",
+      "point anomaly",
+      "contextual anomaly",
+      "collective anomaly",
+      "alert fatigue"
+    ]
   },
   {
     "path": "/ml/bivariate-analysis",
@@ -3423,6 +3713,71 @@
     "keywords": []
   },
   {
+    "path": "/ml/recommenders",
+    "title": "Recommender Systems",
+    "intro": "How products, films and posts get chosen for you: content-based and collaborative filtering, matrix factorisation learned live, the cold-start problem, and the retrieve-then-rank architecture behind large-scale recommenders.",
+    "sections": [
+      {
+        "label": "The Problem",
+        "hash": "problem"
+      },
+      {
+        "label": "Content vs Collaborative",
+        "hash": "approaches"
+      },
+      {
+        "label": "Matrix Factorisation Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Implicit Feedback",
+        "hash": "implicit"
+      },
+      {
+        "label": "Cold Start",
+        "hash": "cold"
+      },
+      {
+        "label": "Production Architecture",
+        "hash": "architecture"
+      },
+      {
+        "label": "Evaluating Recommendations",
+        "hash": "evaluation"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "recommender systems",
+      "recommendation engine",
+      "collaborative filtering",
+      "content-based filtering",
+      "matrix factorization",
+      "latent factors",
+      "ALS",
+      "alternating least squares",
+      "user-user similarity",
+      "item-item similarity",
+      "implicit feedback",
+      "explicit ratings",
+      "cold start",
+      "two-tower model",
+      "candidate generation",
+      "ranking",
+      "re-ranking",
+      "NDCG",
+      "precision at k",
+      "recall at k",
+      "MAP",
+      "popularity bias",
+      "filter bubble",
+      "A/B testing"
+    ]
+  },
+  {
     "path": "/ml/regularization",
     "title": "Regularisation & the Bias–Variance Tradeoff",
     "intro": "Why a model that fits the training data perfectly usually fails on new data, and the tools — penalties, early stopping, dropout, tuning — that keep capacity in check.",
@@ -3839,6 +4194,71 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/ml/time-series",
+    "title": "Time Series & Forecasting",
+    "intro": "Data where order matters: decompose a series into trend and seasonality, forecast with baselines and Holt–Winters, turn forecasting into supervised learning with lag features, and validate without looking into the future.",
+    "sections": [
+      {
+        "label": "What Makes Time Series Different",
+        "hash": "different"
+      },
+      {
+        "label": "Decomposition",
+        "hash": "decomposition"
+      },
+      {
+        "label": "Forecast Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Classical Models",
+        "hash": "classical"
+      },
+      {
+        "label": "Machine Learning Approach",
+        "hash": "ml"
+      },
+      {
+        "label": "Validating Forecasts",
+        "hash": "validation"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "time series",
+      "forecasting",
+      "trend",
+      "seasonality",
+      "decomposition",
+      "moving average",
+      "exponential smoothing",
+      "Holt-Winters",
+      "ETS",
+      "ARIMA",
+      "SARIMA",
+      "stationarity",
+      "differencing",
+      "autocorrelation",
+      "ACF",
+      "lag features",
+      "rolling features",
+      "walk-forward validation",
+      "TimeSeriesSplit",
+      "backtesting",
+      "seasonal naive",
+      "Prophet",
+      "LightGBM forecasting",
+      "N-BEATS",
+      "Temporal Fusion Transformer",
+      "Chronos",
+      "TimesFM",
+      "MASE"
+    ]
   },
   {
     "path": "/ml/transformers",
@@ -5395,6 +5815,64 @@
       "RecordManager",
       "incremental ingestion",
       "deduplication"
+    ]
+  },
+  {
+    "path": "/rag/late-interaction",
+    "title": "Late Interaction & Matryoshka Embeddings",
+    "intro": "Two ways to get more out of embeddings: keep a vector per token and match them at query time (ColBERT), or shrink vectors by truncation and binarisation (Matryoshka, binary quantisation) — with both computed live.",
+    "sections": [
+      {
+        "label": "Beyond One Vector per Chunk",
+        "hash": "why"
+      },
+      {
+        "label": "Bi-encoder, Cross-encoder, Late Interaction",
+        "hash": "three"
+      },
+      {
+        "label": "MaxSim, by Hand",
+        "hash": "maxsim"
+      },
+      {
+        "label": "ColBERT in Practice",
+        "hash": "colbert"
+      },
+      {
+        "label": "Matryoshka & Binary Embeddings",
+        "hash": "matryoshka"
+      },
+      {
+        "label": "When to Use What",
+        "hash": "when"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "late interaction",
+      "ColBERT",
+      "ColBERTv2",
+      "PLAID",
+      "MaxSim",
+      "multi-vector retrieval",
+      "token-level embeddings",
+      "ColPali",
+      "bi-encoder",
+      "cross-encoder",
+      "Matryoshka embeddings",
+      "Matryoshka representation learning",
+      "MRL",
+      "embedding truncation",
+      "dimensions",
+      "binary quantization",
+      "binary embeddings",
+      "Hamming distance",
+      "int8 embeddings",
+      "rescoring",
+      "embedding storage cost"
     ]
   },
   {

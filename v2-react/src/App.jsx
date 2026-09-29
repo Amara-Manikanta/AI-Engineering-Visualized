@@ -118,6 +118,13 @@ const MlDimensionality = lazy(() => import("./pages/MlDimensionality"));
 const MlOptimization = lazy(() => import("./pages/MlOptimization"));
 const RagIngestion = lazy(() => import("./pages/RagIngestion"));
 const MlFeatureEngineering = lazy(() => import("./pages/MlFeatureEngineering"));
+const MlRecommenders = lazy(() => import("./pages/MlRecommenders"));
+const MlAnomaly = lazy(() => import("./pages/MlAnomaly"));
+const MlTimeSeries = lazy(() => import("./pages/MlTimeSeries"));
+const RagLateInteraction = lazy(() => import("./pages/RagLateInteraction"));
+const GenAiDistributed = lazy(() => import("./pages/GenAiDistributed"));
+const GenAiServing = lazy(() => import("./pages/GenAiServing"));
+const GenAiDecoding = lazy(() => import("./pages/GenAiDecoding"));
 const LlmInference = lazy(() => import("./pages/LlmInference"));
 const InteractiveIndex = lazy(() => import("./pages/InteractiveIndex"));
 const EfficiencyIndex = lazy(() => import("./pages/EfficiencyIndex"));
@@ -205,6 +212,7 @@ function App() {
         <Route path="/rag/evaluation" element={<RagEvaluation />} />
         <Route path="/rag/data-prep" element={<RagDataPrep />} />
         <Route path="/rag/advanced-retrieval" element={<RagAdvancedRetrieval />} />
+        <Route path="/rag/late-interaction" element={<RagLateInteraction />} />
         <Route path="/rag/generation" element={<RagGeneration />} />
         <Route path="/rag/chunking" element={<RagChunking />} />
         <Route path="/rag/hybrid-rag" element={<RagHybrid />} />
@@ -242,6 +250,9 @@ function App() {
         <Route path="/genai/distillation" element={<GenAiDistillation />} />
         <Route path="/genai/tokenization" element={<GenAiTokenization />} />
         <Route path="/genai/decision-models" element={<GenAiDecisionModels />} />
+        <Route path="/genai/distributed-training" element={<GenAiDistributed />} />
+        <Route path="/genai/serving" element={<GenAiServing />} />
+        <Route path="/genai/decoding" element={<GenAiDecoding />} />
         
         <Route path="/python" element={<PythonIndex />} />
         <Route path="/python/foundations" element={<PythonFoundations />} />
@@ -260,6 +271,9 @@ function App() {
         <Route path="/ml/dimensionality-reduction" element={<MlDimensionality />} />
         <Route path="/ml/optimization" element={<MlOptimization />} />
         <Route path="/ml/feature-engineering" element={<MlFeatureEngineering />} />
+        <Route path="/ml/recommenders" element={<MlRecommenders />} />
+        <Route path="/ml/anomaly-detection" element={<MlAnomaly />} />
+        <Route path="/ml/time-series" element={<MlTimeSeries />} />
         <Route path="/ml/deep-learning" element={<MlDeepLearning />} />
         <Route path="/ml/nlp" element={<MlNlp />} />
         <Route path="/ml/logistic-regression" element={<MlLogistic />} />
