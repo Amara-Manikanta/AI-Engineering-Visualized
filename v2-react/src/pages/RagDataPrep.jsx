@@ -348,7 +348,10 @@ export default function RagDataPrep() {
             <code className="px-1.5 py-0.5 bg-gray-800 rounded text-blue-300 font-mono text-sm">Document</code> object
             with <code className="px-1.5 py-0.5 bg-gray-800 rounded text-blue-300 font-mono text-sm">page_content</code>{' '}
             and <code className="px-1.5 py-0.5 bg-gray-800 rounded text-blue-300 font-mono text-sm">metadata</code>.
-            LangChain and LlamaIndex ship hundreds of them, so you rarely write your own.
+            LangChain and LlamaIndex ship hundreds of them, so you rarely write your own. For the loader to use
+            with each format — PDFs, scans, Office files, web pages, JSON, code, SaaS tools and databases — with
+            working LangChain code, see{' '}
+            <a href="#/rag/ingestion" className="text-blue-400 hover:underline">Data Ingestion</a>.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

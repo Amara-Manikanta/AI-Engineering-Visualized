@@ -327,6 +327,7 @@ export default function RagIndexing() {
                   <h4 className="text-xl text-white font-semibold mb-2">Document Input</h4>
                   <p className="text-gray-400 text-sm mb-3">Start with any document — PDFs, Word files, web pages, or text files. These are your knowledge sources that you want the AI to be able to query and reason over.</p>
                   <div className="bg-indigo-900/20 text-indigo-300 text-xs p-2 rounded"><strong>Key insight:</strong> The quality and structure of your source documents directly impacts the quality of RAG responses.</div>
+                  <a href="#/rag/ingestion" className="inline-block mt-3 text-xs font-semibold text-blue-400 hover:underline">How to load each format with LangChain → Data Ingestion</a>
                 </motion.div>
               )}
               {step === 2 && (

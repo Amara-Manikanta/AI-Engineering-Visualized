@@ -5,7 +5,7 @@ import GlobalHeader from "./GlobalHeader";
 import Footer from "./Footer";
 import { AZURE_LINKS, AWS_LINKS } from "../config/navigation";
 import { PYTHON_LINKS } from "../config/pythonNavigation";
-import { neighbours } from "../lib/pageOrder";
+import { neighbours, sectionFor } from "../lib/pageOrder";
 import { useReadPages, setRead } from "../lib/progress";
 
 const cleanName = (n) => n.replace(/^·\s*/, "");
@@ -86,6 +86,13 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
   } else if (location.pathname.startsWith("/python")) {
     sidebarLinks = PYTHON_LINKS;
     sectionTitle = "Python Modules";
+  } else {
+    // Every other page: the pages under the same menu sub-heading.
+    const sec = sectionFor(location.pathname);
+    if (sec && sec.items.length > 1) {
+      sidebarLinks = sec.items.map((l) => ({ ...l, name: l.name.replace(/^·\s*/, "") }));
+      sectionTitle = sec.header ? `${sec.group} · ${sec.header}` : sec.group;
+    }
   }
 
   return (

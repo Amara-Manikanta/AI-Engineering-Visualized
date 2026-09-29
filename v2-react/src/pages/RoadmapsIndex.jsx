@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import GuideLayout from "../components/GuideLayout";
+import { useReadPages } from "../lib/progress";
 
 /* ===========================================================================
    Guided learning paths. Every step links to a page that actually exists in
@@ -64,6 +65,7 @@ const PATHS = [
       { t: "Prompt engineering", p: "/prompting", why: "The cheapest lever you have. Exhaust it before reaching for anything else." },
       { t: "Tokenization & cost", p: "/playgrounds", why: "Tokens are the unit of both latency and billing." },
       { t: "RAG from scratch", p: "/rag", why: "The whole pipeline, and where each stage fails." },
+      { t: "Data ingestion", p: "/rag/ingestion", why: "The right LangChain loader for each format — PDFs, scans, web, SaaS — and metadata worth keeping." },
       { t: "Chunking strategies", p: "/rag/chunking", why: "Get this wrong and nothing downstream can recover." },
       { t: "Advanced retrieval", p: "/rag/advanced-retrieval", why: "Hybrid search and re-ranking — the highest value-per-effort upgrade." },
       { t: "Contextual compression", p: "/rag/compression", why: "Cut the padding out of retrieved context — cheaper and more accurate." },
@@ -146,6 +148,7 @@ function loadProgress() {
 export default function RoadmapsIndex() {
   const [active, setActive] = useState(PATHS[0].id);
   const [done, setDone] = useState({});
+  const readPages = useReadPages();
 
   // localStorage can throw (private mode, blocked storage) — never let it break the page.
   useEffect(() => setDone(loadProgress()), []);
@@ -186,7 +189,7 @@ export default function RoadmapsIndex() {
   return (
     <GuideLayout
       title="Learning Paths"
-      intro="Four ordered routes through the material, depending on what you're trying to become. Tick steps off as you go — progress is saved in your browser."
+      intro={`${PATHS.length} ordered routes through the material, depending on what you're trying to become. Tick steps off as you go — progress is saved in your browser.`}
       toc={toc}
     >
       {/* path picker with progress */}
@@ -286,6 +289,11 @@ export default function RoadmapsIndex() {
                         {s.t}
                       </Link>
                       <span className="text-[0.625rem] font-mono text-gray-600">{s.p}</span>
+                      {readPages.has(s.p) && (
+                        <span className="text-[0.625rem] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                          page read
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-gray-400 leading-relaxed m-0">{s.why}</p>
                   </div>
@@ -313,7 +321,8 @@ export default function RoadmapsIndex() {
           <p className="text-xs text-gray-400 leading-relaxed m-0">
             Progress is stored in this browser only — it isn't synced, and clearing site data resets it. Paths overlap
             deliberately: a step ticked in one path stays independent in another, so you can follow two at once
-            without one marking the other done.
+            without one marking the other done. A "page read" badge appears when you have used the Mark as read button
+            at the foot of that page.
           </p>
         </div>
       </section>

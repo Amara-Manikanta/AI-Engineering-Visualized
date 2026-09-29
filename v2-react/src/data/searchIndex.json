@@ -2103,6 +2103,70 @@
     ]
   },
   {
+    "path": "/ml/clustering",
+    "title": "Clustering",
+    "intro": "Finding groups in data without labels: k-means run step by step, how to pick the number of clusters, density-based DBSCAN for odd shapes and noise, and when each method fits.",
+    "sections": [
+      {
+        "label": "What Clustering Is For",
+        "hash": "why"
+      },
+      {
+        "label": "k-means, Step by Step",
+        "hash": "kmeans"
+      },
+      {
+        "label": "Choosing k",
+        "hash": "choosing-k"
+      },
+      {
+        "label": "Density: DBSCAN",
+        "hash": "dbscan"
+      },
+      {
+        "label": "Hierarchical & GMM",
+        "hash": "others"
+      },
+      {
+        "label": "Which Algorithm?",
+        "hash": "compare"
+      },
+      {
+        "label": "Practical Pitfalls",
+        "hash": "pitfalls"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "clustering",
+      "k-means",
+      "kmeans",
+      "k-means++",
+      "centroid",
+      "inertia",
+      "elbow method",
+      "silhouette score",
+      "DBSCAN",
+      "density-based clustering",
+      "eps",
+      "min_samples",
+      "noise points",
+      "HDBSCAN",
+      "hierarchical clustering",
+      "agglomerative clustering",
+      "dendrogram",
+      "linkage",
+      "Gaussian mixture model",
+      "GMM",
+      "soft clustering",
+      "customer segmentation",
+      "unsupervised learning"
+    ]
+  },
+  {
     "path": "/ml/cnn",
     "title": "Convolutional Neural Networks",
     "intro": "A small window of weights slid across an image, reused at every position. That one constraint is what made computer vision work.",
@@ -2386,6 +2450,67 @@
     "keywords": []
   },
   {
+    "path": "/ml/dimensionality-reduction",
+    "title": "Dimensionality Reduction",
+    "intro": "Compressing many features into a few that keep what matters: PCA from the geometry up, choosing how many components to keep, why high dimensions misbehave, and t-SNE and UMAP for visualisation.",
+    "sections": [
+      {
+        "label": "Why Reduce Dimensions",
+        "hash": "why"
+      },
+      {
+        "label": "PCA, Geometrically",
+        "hash": "pca"
+      },
+      {
+        "label": "How Many Components",
+        "hash": "scree"
+      },
+      {
+        "label": "The Curse of Dimensionality",
+        "hash": "curse"
+      },
+      {
+        "label": "t-SNE & UMAP",
+        "hash": "manifold"
+      },
+      {
+        "label": "Other Methods",
+        "hash": "others"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "dimensionality reduction",
+      "PCA",
+      "principal component analysis",
+      "principal components",
+      "eigenvectors",
+      "eigenvalues",
+      "explained variance",
+      "scree plot",
+      "SVD",
+      "singular value decomposition",
+      "truncated SVD",
+      "LSA",
+      "t-SNE",
+      "tSNE",
+      "UMAP",
+      "perplexity",
+      "manifold learning",
+      "curse of dimensionality",
+      "distance concentration",
+      "random projection",
+      "Johnson-Lindenstrauss",
+      "autoencoder",
+      "feature extraction",
+      "whitening"
+    ]
+  },
+  {
     "path": "/ml/dpo",
     "title": "DPO — Direct Preference Optimization",
     "intro": "RLHF's goal without its machinery. A short piece of algebra shows the reward model and the RL loop can be skipped: train the language model directly on 'answer A is better than answer B' pairs.",
@@ -2442,6 +2567,159 @@
       "likelihood displacement",
       "RLHF without reinforcement learning",
       "Bradley-Terry"
+    ]
+  },
+  {
+    "path": "/ml/evaluation-metrics",
+    "title": "Evaluation Metrics",
+    "intro": "How to tell whether a model is actually good: the confusion matrix, precision and recall, ROC and PR curves, regression errors, and the validation schemes that keep the numbers honest.",
+    "sections": [
+      {
+        "label": "Why Accuracy Misleads",
+        "hash": "why"
+      },
+      {
+        "label": "The Confusion Matrix",
+        "hash": "confusion"
+      },
+      {
+        "label": "Threshold Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "ROC vs Precision–Recall",
+        "hash": "curves"
+      },
+      {
+        "label": "Multi-class Averaging",
+        "hash": "multiclass"
+      },
+      {
+        "label": "Regression Metrics",
+        "hash": "regression"
+      },
+      {
+        "label": "Cross-Validation",
+        "hash": "cv"
+      },
+      {
+        "label": "Data Leakage",
+        "hash": "leakage"
+      },
+      {
+        "label": "Choosing a Metric",
+        "hash": "choose"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "evaluation metrics",
+      "model evaluation",
+      "confusion matrix",
+      "true positive",
+      "false positive",
+      "false negative",
+      "precision",
+      "recall",
+      "sensitivity",
+      "specificity",
+      "F1 score",
+      "F-beta",
+      "accuracy paradox",
+      "class imbalance",
+      "ROC curve",
+      "AUC",
+      "ROC-AUC",
+      "precision-recall curve",
+      "average precision",
+      "PR-AUC",
+      "decision threshold",
+      "macro average",
+      "micro average",
+      "weighted average",
+      "MAE",
+      "RMSE",
+      "R squared",
+      "MAPE",
+      "cross-validation",
+      "k-fold",
+      "stratified k-fold",
+      "TimeSeriesSplit",
+      "data leakage",
+      "log loss",
+      "calibration"
+    ]
+  },
+  {
+    "path": "/ml/feature-engineering",
+    "title": "Feature Engineering",
+    "intro": "Turning raw columns into inputs a model can use: scaling that survives outliers, encodings for categories, new features from domain knowledge, and handling imbalanced classes — all inside a leak-proof pipeline.",
+    "sections": [
+      {
+        "label": "Why Features Matter",
+        "hash": "why"
+      },
+      {
+        "label": "Scaling",
+        "hash": "scaling"
+      },
+      {
+        "label": "Transforming & Creating",
+        "hash": "creating"
+      },
+      {
+        "label": "Encoding Categories",
+        "hash": "encoding"
+      },
+      {
+        "label": "Target Encoding",
+        "hash": "target"
+      },
+      {
+        "label": "Imbalanced Classes",
+        "hash": "imbalance"
+      },
+      {
+        "label": "Feature Selection",
+        "hash": "selection"
+      },
+      {
+        "label": "Pipelines",
+        "hash": "pipelines"
+      }
+    ],
+    "keywords": [
+      "feature engineering",
+      "feature scaling",
+      "standardization",
+      "standardisation",
+      "normalization",
+      "StandardScaler",
+      "MinMaxScaler",
+      "RobustScaler",
+      "log transform",
+      "one-hot encoding",
+      "ordinal encoding",
+      "label encoding",
+      "target encoding",
+      "mean encoding",
+      "feature hashing",
+      "high cardinality",
+      "class imbalance",
+      "imbalanced data",
+      "SMOTE",
+      "oversampling",
+      "undersampling",
+      "class weights",
+      "feature selection",
+      "ColumnTransformer",
+      "Pipeline",
+      "interaction features",
+      "binning",
+      "date features"
     ]
   },
   {
@@ -3042,6 +3320,69 @@
     "keywords": []
   },
   {
+    "path": "/ml/optimization",
+    "title": "Optimisation: Gradient Descent to Adam",
+    "intro": "How models actually learn: follow the gradient downhill. Watch plain gradient descent, momentum, RMSProp and Adam race on real loss surfaces, and see why learning-rate schedules and warmup matter.",
+    "sections": [
+      {
+        "label": "The Update Rule",
+        "hash": "rule"
+      },
+      {
+        "label": "Loss Landscape Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "The Optimisers",
+        "hash": "optimisers"
+      },
+      {
+        "label": "Learning Rate Schedules",
+        "hash": "schedules"
+      },
+      {
+        "label": "Batch Size & Noise",
+        "hash": "batch"
+      },
+      {
+        "label": "When Training Goes Wrong",
+        "hash": "debug"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "optimization",
+      "optimisation",
+      "optimizer",
+      "gradient descent",
+      "stochastic gradient descent",
+      "SGD",
+      "mini-batch",
+      "momentum",
+      "Nesterov",
+      "RMSProp",
+      "Adam",
+      "AdamW",
+      "learning rate",
+      "learning rate schedule",
+      "warmup",
+      "cosine decay",
+      "step decay",
+      "loss landscape",
+      "saddle point",
+      "local minimum",
+      "ill-conditioned",
+      "Rosenbrock",
+      "gradient clipping",
+      "batch size",
+      "convergence",
+      "divergence"
+    ]
+  },
+  {
     "path": "/ml/random-forests",
     "title": "Random Forests",
     "intro": "Hundreds of deliberately imperfect trees, each shown a different slice of the data, voting together. The strongest baseline in classical machine learning.",
@@ -3080,6 +3421,72 @@
       }
     ],
     "keywords": []
+  },
+  {
+    "path": "/ml/regularization",
+    "title": "Regularisation & the Bias–Variance Tradeoff",
+    "intro": "Why a model that fits the training data perfectly usually fails on new data, and the tools — penalties, early stopping, dropout, tuning — that keep capacity in check.",
+    "sections": [
+      {
+        "label": "Bias & Variance",
+        "hash": "bias-variance"
+      },
+      {
+        "label": "Bias–Variance Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "L2 (Ridge) & L1 (Lasso)",
+        "hash": "penalties"
+      },
+      {
+        "label": "Coefficient Paths",
+        "hash": "paths"
+      },
+      {
+        "label": "Regularising Neural Nets",
+        "hash": "deep"
+      },
+      {
+        "label": "Hyperparameter Tuning",
+        "hash": "tuning"
+      },
+      {
+        "label": "Diagnosing a Model",
+        "hash": "diagnose"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "regularization",
+      "regularisation",
+      "bias variance tradeoff",
+      "bias-variance",
+      "overfitting",
+      "underfitting",
+      "ridge regression",
+      "L2 regularization",
+      "weight decay",
+      "lasso",
+      "L1 regularization",
+      "elastic net",
+      "sparsity",
+      "feature selection",
+      "hyperparameter tuning",
+      "grid search",
+      "random search",
+      "Bayesian optimization",
+      "Optuna",
+      "early stopping",
+      "dropout",
+      "data augmentation",
+      "learning curve",
+      "validation curve",
+      "model complexity"
+    ]
   },
   {
     "path": "/ml/reinforcement-learning",
@@ -4893,6 +5300,104 @@
     "keywords": []
   },
   {
+    "path": "/rag/ingestion",
+    "title": "Data Ingestion with LangChain",
+    "intro": "The first step of every RAG system: getting knowledge out of PDFs, Office files, web pages, databases and SaaS tools and into clean LangChain Documents — with the right loader for each format, useful metadata, and re-runs that don't duplicate.",
+    "sections": [
+      {
+        "label": "Where Ingestion Fits",
+        "hash": "where"
+      },
+      {
+        "label": "The Document Object",
+        "hash": "document"
+      },
+      {
+        "label": "Loader Lab",
+        "hash": "lab"
+      },
+      {
+        "label": "Format Explorer",
+        "hash": "formats"
+      },
+      {
+        "label": "Choosing a PDF Parser",
+        "hash": "pdf"
+      },
+      {
+        "label": "Loading a Whole Folder",
+        "hash": "folder"
+      },
+      {
+        "label": "Metadata That Pays Off",
+        "hash": "metadata"
+      },
+      {
+        "label": "Re-ingesting Without Duplicates",
+        "hash": "incremental"
+      },
+      {
+        "label": "Writing a Custom Loader",
+        "hash": "custom"
+      },
+      {
+        "label": "Checklist",
+        "hash": "checklist"
+      }
+    ],
+    "keywords": [
+      "data ingestion",
+      "data injection",
+      "ingestion pipeline",
+      "document loaders",
+      "LangChain loaders",
+      "Document object",
+      "page_content",
+      "metadata",
+      "PyPDFLoader",
+      "PyMuPDFLoader",
+      "PDFPlumberLoader",
+      "UnstructuredLoader",
+      "Unstructured",
+      "DoclingLoader",
+      "Docling",
+      "LlamaParse",
+      "Azure Document Intelligence",
+      "Amazon Textract",
+      "OCR",
+      "scanned PDF",
+      "Docx2txtLoader",
+      "Word documents",
+      "PowerPoint",
+      "Excel",
+      "CSVLoader",
+      "JSONLoader",
+      "jq",
+      "WebBaseLoader",
+      "RecursiveUrlLoader",
+      "SitemapLoader",
+      "web scraping",
+      "Markdown",
+      "MarkdownHeaderTextSplitter",
+      "GitLoader",
+      "code ingestion",
+      "ConfluenceLoader",
+      "NotionDBLoader",
+      "GoogleDriveLoader",
+      "S3DirectoryLoader",
+      "SQLDatabaseLoader",
+      "YoutubeLoader",
+      "DirectoryLoader",
+      "lazy_load",
+      "BaseLoader",
+      "custom loader",
+      "indexing API",
+      "RecordManager",
+      "incremental ingestion",
+      "deduplication"
+    ]
+  },
+  {
     "path": "/rag/multimodal-rag",
     "title": "Multi-modal RAG",
     "intro": "Retrieves images, video frames, and text simultaneously into a Vision-Language Model.",
@@ -5086,7 +5591,7 @@
   {
     "path": "/roadmaps",
     "title": "Learning Paths",
-    "intro": "Four ordered routes through the material, depending on what you're trying to become. Tick steps off as you go — progress is saved in your browser.",
+    "intro": "",
     "sections": [],
     "keywords": []
   },

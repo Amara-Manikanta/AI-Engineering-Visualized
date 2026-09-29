@@ -111,6 +111,13 @@ const AgentsDebugging = lazy(() => import("./pages/AgentsDebugging"));
 const TopicGraph = lazy(() => import("./pages/TopicGraph"));
 const QuizIndex = lazy(() => import("./pages/QuizIndex"));
 
+const MlEvaluationMetrics = lazy(() => import("./pages/MlEvaluationMetrics"));
+const MlRegularization = lazy(() => import("./pages/MlRegularization"));
+const MlClustering = lazy(() => import("./pages/MlClustering"));
+const MlDimensionality = lazy(() => import("./pages/MlDimensionality"));
+const MlOptimization = lazy(() => import("./pages/MlOptimization"));
+const RagIngestion = lazy(() => import("./pages/RagIngestion"));
+const MlFeatureEngineering = lazy(() => import("./pages/MlFeatureEngineering"));
 const LlmInference = lazy(() => import("./pages/LlmInference"));
 const InteractiveIndex = lazy(() => import("./pages/InteractiveIndex"));
 const EfficiencyIndex = lazy(() => import("./pages/EfficiencyIndex"));
@@ -191,6 +198,7 @@ function App() {
         
         <Route path="/rag" element={<RagIndex />} />
         <Route path="/rag/fundamentals" element={<RagFundamentals />} />
+        <Route path="/rag/ingestion" element={<RagIngestion />} />
         <Route path="/rag/vector-dbs" element={<RagVectorDbs />} />
         <Route path="/rag/advanced-rag" element={<RagAdvanced />} />
         <Route path="/rag/retrieval" element={<RagRetrieval />} />
@@ -246,6 +254,12 @@ function App() {
         <Route path="/ml" element={<MlIndex />} />
         <Route path="/ml/supervised" element={<MlSupervised />} />
         <Route path="/ml/unsupervised" element={<MlUnsupervised />} />
+        <Route path="/ml/evaluation-metrics" element={<MlEvaluationMetrics />} />
+        <Route path="/ml/regularization" element={<MlRegularization />} />
+        <Route path="/ml/clustering" element={<MlClustering />} />
+        <Route path="/ml/dimensionality-reduction" element={<MlDimensionality />} />
+        <Route path="/ml/optimization" element={<MlOptimization />} />
+        <Route path="/ml/feature-engineering" element={<MlFeatureEngineering />} />
         <Route path="/ml/deep-learning" element={<MlDeepLearning />} />
         <Route path="/ml/nlp" element={<MlNlp />} />
         <Route path="/ml/logistic-regression" element={<MlLogistic />} />

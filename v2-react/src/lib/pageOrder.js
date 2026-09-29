@@ -37,3 +37,28 @@ export function neighbours(pathname) {
   const i = seq.items.findIndex((x) => x.path === pathname);
   return { prev: seq.items[i - 1] ?? null, next: seq.items[i + 1] ?? null };
 }
+
+/* ---------------------------------------------------------------------------
+   The sidebar's "you are here" block: the menu group a page belongs to, and
+   the run of links under the same sub-heading. Long groups like ML list only
+   the current sub-heading's pages, so the on-page contents stays in view.
+--------------------------------------------------------------------------- */
+export function sectionFor(pathname) {
+  const groups = NAV_LINKS.filter((g) => g.subLinks && g.path !== "/azure");
+  const containing = groups.filter((g) => g.subLinks.some((l) => l.path === pathname));
+  const group = containing.find((g) => under(pathname, g.path)) ?? containing[0];
+  if (!group) return null;
+  const list = group.subLinks;
+  const i = list.findIndex((l) => l.path === pathname);
+  let start = i;
+  while (start > 0 && !list[start - 1].isHeader) start--;
+  let end = i;
+  while (end < list.length - 1 && !list[end + 1].isHeader) end++;
+  const header = start > 0 ? list[start - 1].name : null;
+  return {
+    group: group.name.replace(/^\S+\s/, ""),
+    hub: group.path,
+    header,
+    items: list.slice(start, end + 1).filter((l) => l.path && !l.path.includes("#")),
+  };
+}
