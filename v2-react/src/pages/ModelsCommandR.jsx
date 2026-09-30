@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { ModelLineup, ModelWeights, ModelPipeline } from '../components/ModelProfile';
+import { ModelLineup, ModelWeights, ModelAccess, ModelPipeline } from '../components/ModelProfile';
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } } };
 const stagger = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -11,6 +11,8 @@ export default function ModelsCommandR() {
     { label: 'Overview', hash: 'overview' },
     { label: 'Current Lineup', hash: 'lineup' },
     { label: 'Model Weights', hash: 'weights' },
+    { label: 'When to Choose It', hash: 'choose' },
+    { label: 'How to Access It', hash: 'access' },
     { label: 'Built for RAG', hash: 'rag' },
     { label: 'Training Pipeline', hash: 'pipeline' },
     { label: 'How Command Is Trained', hash: 'training' },
@@ -40,6 +42,8 @@ export default function ModelsCommandR() {
       <ModelLineup id="commandr" />
 
       <ModelWeights id="commandr" />
+
+      <ModelAccess id="commandr" name="Cohere Command" />
 
 
       <section id="rag" className="mb-16 scroll-mt-24">

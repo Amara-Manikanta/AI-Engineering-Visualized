@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { ModelLineup, ModelWeights, ModelPipeline } from '../components/ModelProfile';
+import { ModelLineup, ModelWeights, ModelAccess, ModelPipeline } from '../components/ModelProfile';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -14,6 +14,8 @@ export default function ModelsDeepseek() {
     { label: 'Overview', hash: 'overview' },
     { label: 'Current Lineup', hash: 'lineup' },
     { label: 'Model Weights', hash: 'weights' },
+    { label: 'When to Choose It', hash: 'choose' },
+    { label: 'How to Access It', hash: 'access' },
     { label: 'Architecture', hash: 'architecture' },
     { label: 'Training Pipeline', hash: 'pipeline' },
     { label: 'Training & Uniqueness', hash: 'training' },
@@ -38,6 +40,8 @@ export default function ModelsDeepseek() {
       <ModelLineup id="deepseek" />
 
       <ModelWeights id="deepseek" />
+
+      <ModelAccess id="deepseek" name="DeepSeek" />
 
 
       <section id="architecture" className="mb-14 scroll-mt-24">

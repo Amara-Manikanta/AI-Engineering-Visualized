@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { ModelLineup, ModelWeights, ModelPipeline } from '../components/ModelProfile';
+import { ModelLineup, ModelWeights, ModelAccess, ModelPipeline } from '../components/ModelProfile';
 import CodeBlock from '../components/CodeBlock';
 
 export const SEARCH_KEYWORDS = [
@@ -265,6 +265,8 @@ export default function ModelsAnthropic() {
     { label: 'Products at a Glance', hash: 'products' },
     { label: 'Current Lineup', hash: 'lineup' },
     { label: 'Model Weights', hash: 'weights' },
+    { label: 'When to Choose It', hash: 'choose' },
+    { label: 'How to Access It', hash: 'access' },
     { label: 'Training Pipeline', hash: 'pipeline' },
     { label: 'How Claude Is Trained', hash: 'training' },
     { label: 'Capabilities', hash: 'architecture' },
@@ -314,6 +316,8 @@ export default function ModelsAnthropic() {
       <ModelLineup id="claude" />
 
       <ModelWeights id="claude" />
+
+      <ModelAccess id="claude" name="Claude" />
 
       <ModelPipeline id="claude" name="Claude" />
 

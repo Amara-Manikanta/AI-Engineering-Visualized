@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import CodeBlock from "./CodeBlock";
+import { ACCESS } from "../data/modelAccess";
 import { motion } from "framer-motion";
 import { AS_OF, METHODS, PROFILES } from "../data/modelProfiles";
 
@@ -207,6 +209,59 @@ export function ModelWeights({ id }) {
           ))}
         </div>
       </section>
+  );
+}
+
+/* When to choose it, how to reach it, a minimal call, and licence notes. */
+export function ModelAccess({ id, name }) {
+  const a = ACCESS[id];
+  const p = PROFILES[id];
+  if (!a || !p) return null;
+  return (
+    <>
+      <section id="choose" className="mb-16 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">When to Choose {name}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/[0.07] p-5">
+            <div className="text-sm font-semibold text-emerald-400 mb-2">A good fit</div>
+            <ul className="list-disc pl-5 text-sm text-gray-300 space-y-1.5 m-0">
+              {a.good.map((g) => <li key={g}>{g}</li>)}
+            </ul>
+          </div>
+          <div className="rounded-xl border border-rose-500/25 bg-rose-500/[0.07] p-5">
+            <div className="text-sm font-semibold text-rose-400 mb-2">Look elsewhere if</div>
+            <ul className="list-disc pl-5 text-sm text-gray-300 space-y-1.5 m-0">
+              {a.look.map((g) => <li key={g}>{g}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="access" className="mb-16 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">How to Access {name}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+          {[["Direct API and apps", a.api], ["Cloud and hosts", a.hosts], ["Run it yourself", a.local]].map(([t, d]) => (
+            <div key={t} className="p-4 rounded-xl border border-white/10 bg-black/30">
+              <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">{t}</div>
+              <div className="text-sm text-gray-200 leading-relaxed">{d}</div>
+            </div>
+          ))}
+        </div>
+        <div className="text-sm font-semibold text-white mb-2">A minimal call</div>
+        <CodeBlock language={a.codeLang} code={a.code} maxHeight="340px" />
+        <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+          Model IDs and package APIs change often. Treat this as the shape of a call and copy the current model name from the
+          provider's documentation. Availability on partner clouds varies by region and model.
+        </p>
+        <div className="mt-6 rounded-xl border border-amber-500/25 bg-amber-500/[0.07] p-5">
+          <div className="text-sm font-semibold text-amber-400 mb-2">Licence notes ({p.weights.licence})</div>
+          <ul className="list-disc pl-5 text-sm text-gray-300 space-y-1.5 m-0">
+            {a.licence.map((g) => <li key={g}>{g}</li>)}
+          </ul>
+          <p className="text-xs text-gray-500 mt-3 mb-0">A summary, not legal advice: read the licence text for the exact model and version you ship.</p>
+        </div>
+      </section>
+    </>
   );
 }
 

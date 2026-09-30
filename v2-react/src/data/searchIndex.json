@@ -5503,6 +5503,14 @@
         "hash": "weights"
       },
       {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
+      },
+      {
         "label": "Training Pipeline",
         "hash": "pipeline"
       },
@@ -5590,6 +5598,14 @@
         "hash": "weights"
       },
       {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
+      },
+      {
         "label": "Built for RAG",
         "hash": "rag"
       },
@@ -5628,6 +5644,14 @@
       {
         "label": "Model Weights",
         "hash": "weights"
+      },
+      {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
       },
       {
         "label": "Architecture",
@@ -5670,6 +5694,14 @@
         "hash": "weights"
       },
       {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
+      },
+      {
         "label": "Architecture",
         "hash": "architecture"
       },
@@ -5708,6 +5740,14 @@
       {
         "label": "Model Weights",
         "hash": "weights"
+      },
+      {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
       },
       {
         "label": "Architecture",
@@ -5750,6 +5790,14 @@
         "hash": "weights"
       },
       {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
+      },
+      {
         "label": "Architecture",
         "hash": "architecture"
       },
@@ -5788,6 +5836,14 @@
       {
         "label": "Model Weights",
         "hash": "weights"
+      },
+      {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
       },
       {
         "label": "Architecture",
@@ -5830,6 +5886,14 @@
         "hash": "weights"
       },
       {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
+      },
+      {
         "label": "Architecture",
         "hash": "architecture"
       },
@@ -5870,6 +5934,14 @@
         "hash": "weights"
       },
       {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
+      },
+      {
         "label": "Architecture",
         "hash": "architecture"
       },
@@ -5908,6 +5980,14 @@
       {
         "label": "Model Weights",
         "hash": "weights"
+      },
+      {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
       },
       {
         "label": "The Small-Model Case",
@@ -5952,6 +6032,14 @@
       {
         "label": "Model Weights",
         "hash": "weights"
+      },
+      {
+        "label": "When to Choose It",
+        "hash": "choose"
+      },
+      {
+        "label": "How to Access It",
+        "hash": "access"
       },
       {
         "label": "Architecture",

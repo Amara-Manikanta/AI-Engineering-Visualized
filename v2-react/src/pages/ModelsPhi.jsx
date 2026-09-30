@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { ModelLineup, ModelWeights, ModelPipeline } from '../components/ModelProfile';
+import { ModelLineup, ModelWeights, ModelAccess, ModelPipeline } from '../components/ModelProfile';
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } } };
 const stagger = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -11,6 +11,8 @@ export default function ModelsPhi() {
     { label: 'Overview', hash: 'overview' },
     { label: 'Current Lineup', hash: 'lineup' },
     { label: 'Model Weights', hash: 'weights' },
+    { label: 'When to Choose It', hash: 'choose' },
+    { label: 'How to Access It', hash: 'access' },
     { label: 'The Small-Model Case', hash: 'small' },
     { label: 'Training Pipeline', hash: 'pipeline' },
     { label: 'How Phi Is Trained', hash: 'training' },
@@ -41,6 +43,8 @@ export default function ModelsPhi() {
       <ModelLineup id="phi" />
 
       <ModelWeights id="phi" />
+
+      <ModelAccess id="phi" name="Phi" />
 
       <section id="small" className="mb-14 scroll-mt-24">
         <h2 className="text-2xl font-bold text-white mb-4">The Small-Model Case</h2>

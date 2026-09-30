@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
-import { ModelLineup, ModelWeights, ModelPipeline } from '../components/ModelProfile';
+import { ModelLineup, ModelWeights, ModelAccess, ModelPipeline } from '../components/ModelProfile';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -39,6 +39,8 @@ export default function ModelsGpt() {
     { label: 'Overview', hash: 'overview' },
     { label: 'Current Lineup', hash: 'lineup' },
     { label: 'Model Weights', hash: 'weights' },
+    { label: 'When to Choose It', hash: 'choose' },
+    { label: 'How to Access It', hash: 'access' },
     { label: 'Architecture', hash: 'architecture' },
     { label: 'Training Pipeline', hash: 'pipeline' },
     { label: 'Training & Uniqueness', hash: 'training' },
@@ -63,6 +65,8 @@ export default function ModelsGpt() {
       <ModelLineup id="gpt" />
 
       <ModelWeights id="gpt" />
+
+      <ModelAccess id="gpt" name="GPT" />
 
 
       <section id="architecture" className="mb-14 scroll-mt-24">
