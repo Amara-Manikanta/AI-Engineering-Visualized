@@ -2661,10 +2661,10 @@
   {
     "path": "/mcp",
     "title": "Model Context Protocol (MCP)",
-    "intro": "An open standard that lets any AI model plug into any external tool, file, or API — the same way USB-C standardized device connectors.",
+    "intro": "An open standard that lets an AI application plug into tools, files and services through one shared protocol: the way USB-C standardised device connectors.",
     "sections": [
       {
-        "label": "What is MCP?",
+        "label": "What Is MCP?",
         "hash": "mcp"
       },
       {
@@ -2680,27 +2680,47 @@
         "hash": "primitives"
       },
       {
+        "label": "Tools in Depth",
+        "hash": "tools"
+      },
+      {
+        "label": "Notifications & Utilities",
+        "hash": "utilities"
+      },
+      {
         "label": "Transport Layers",
         "hash": "transports"
       },
       {
-        "label": "Handshake & Message Format",
+        "label": "Handshake & Messages",
         "hash": "handshake"
       },
       {
-        "label": "Security & Permissions",
-        "hash": "security"
+        "label": "Lab: A Session, Step by Step",
+        "hash": "session"
       },
       {
-        "label": "Authorization (OAuth)",
+        "label": "Authorization (OAuth 2.1)",
         "hash": "authorization"
       },
       {
-        "label": "Building a Minimal Server",
+        "label": "Security & Threats",
+        "hash": "security"
+      },
+      {
+        "label": "Using MCP Servers",
+        "hash": "using"
+      },
+      {
+        "label": "Building a Server",
         "hash": "building"
       },
       {
-        "label": "MCP vs Function Calling",
+        "label": "Context Cost",
+        "hash": "context-cost"
+      },
+      {
+        "label": "MCP vs Everything Else",
         "hash": "vs-function-calling"
       },
       {
@@ -2710,9 +2730,59 @@
       {
         "label": "Best Practices",
         "hash": "best-practices"
+      },
+      {
+        "label": "Debugging",
+        "hash": "debugging"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "MCP",
+      "Model Context Protocol",
+      "MCP server",
+      "MCP client",
+      "MCP host",
+      "JSON-RPC",
+      "stdio transport",
+      "Streamable HTTP",
+      "SSE",
+      "Mcp-Session-Id",
+      "tools/list",
+      "tools/call",
+      "resources",
+      "prompts",
+      "sampling",
+      "roots",
+      "elicitation",
+      "OAuth 2.1",
+      "PKCE",
+      "protected resource metadata",
+      "tool poisoning",
+      "rug pull",
+      "confused deputy",
+      "token passthrough",
+      "lethal trifecta",
+      "prompt injection",
+      "FastMCP",
+      "MCP Inspector",
+      "MCP connector",
+      "mcp_servers",
+      "mcp_toolset",
+      "claude mcp add",
+      "claude_desktop_config.json",
+      ".mcp.json",
+      "tool annotations",
+      "readOnlyHint",
+      "isError",
+      "structuredContent",
+      "MCP registry",
+      "context cost",
+      "protocol version 2025-11-25",
+      "notifications/initialized",
+      "list_changed",
+      "progress",
+      "cancellation"
+    ]
   },
   {
     "path": "/ml",

@@ -1309,6 +1309,61 @@ export const EXTRA_QUIZZES = [
     tone: "purple",
     questions: [
       {
+        q: "After the server answers initialize, what must the client send before normal traffic?",
+        options: [
+          "A ping to check the server is alive",
+          "tools/list, immediately",
+          "notifications/initialized, a notification with no reply",
+          "Nothing; the session is already open",
+        ],
+        answer: 2,
+        why: "The handshake has three messages: initialize, its result, then notifications/initialized. Only after that may either side use the negotiated features.",
+      },
+      {
+        q: "A tool call fails because a city name is misspelled. How should the server report it so the model can retry?",
+        options: [
+          "Return a JSON-RPC protocol error",
+          "Close the connection and reconnect",
+          "Return an empty content array",
+          "Return a normal result with isError: true and a helpful message",
+        ],
+        answer: 3,
+        why: "A protocol error is for malformed requests. A tool failure is a result with isError: true, which the model sees and can act on, such as fixing the spelling and calling again.",
+      },
+      {
+        q: "A new stdio server connects, then the host reports JSON parse errors. What is the most likely cause?",
+        options: [
+          "The server printed something other than protocol messages to stdout",
+          "The tool names are too long",
+          "The host is using the wrong model",
+          "The server needs a session header",
+        ],
+        answer: 0,
+        why: "On stdio, stdout carries the protocol. A stray print or startup banner corrupts the message stream. Log to stderr instead.",
+      },
+      {
+        q: "Why must an MCP server never forward the access token it received to another API?",
+        options: [
+          "Tokens expire too quickly to forward",
+          "The token was issued for that server only, and forwarding it enables confused-deputy abuse",
+          "Other APIs cannot read bearer tokens",
+          "It would exceed the context window",
+        ],
+        answer: 1,
+        why: "Tokens are audience-bound to one resource. Passing them on lets one service act as the user at another, bypassing that service's own checks. The server should obtain its own credential for downstream calls.",
+      },
+      {
+        q: "A tool is annotated readOnlyHint: true by a server you found online. What should a host do with that?",
+        options: [
+          "Skip approval, since it says read-only",
+          "Treat it as a hint only, and not rely on it when the server is untrusted",
+          "Reject the tool as invalid",
+          "Convert it to a resource",
+        ],
+        answer: 1,
+        why: "Annotations are hints from the server, not guarantees. A malicious server can claim anything, so trust decisions must come from the host's own policy about the source.",
+      },
+      {
         q: "What problem does MCP mainly solve?",
         options: [
           "It makes models faster",

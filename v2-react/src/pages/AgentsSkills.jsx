@@ -376,7 +376,7 @@ Settings → Capabilities → Skills → Upload skill`,
   api: {
     label: "Claude API",
     lang: "python",
-    note: "Skills run inside the code execution tool's container. Pre-built skills are pptx, xlsx, docx and pdf; custom skills are uploaded through the /v1/skills endpoints. Generated files come back as file IDs you download with the Files API. Not available on Amazon Bedrock or Google Vertex AI.",
+    note: "Skills run inside the code execution tool's container. Pre-built skills are pptx, xlsx, docx and pdf; custom skills are managed through the /v1/skills endpoints (client.skills), which are out of beta and need no beta header. Generated files come back as file IDs you download with the Files API. Not available on Amazon Bedrock or Google Vertex AI.",
     code: `import anthropic
 
 client = anthropic.Anthropic()
@@ -397,7 +397,7 @@ response = client.beta.messages.create(
 )
 
 # File outputs appear as file IDs in the response content.
-# Download them through the Files API (client.beta.files).`,
+# Download them through the Files API (client.files).`,
   },
   sdk: {
     label: "Agent SDK & Managed Agents",
