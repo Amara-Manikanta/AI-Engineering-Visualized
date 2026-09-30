@@ -284,6 +284,7 @@ description: Build quarterly revenue and churn reports from the
           </div>
         </div>
         <SkillsLab />
+        <p className="mt-4 mb-0 text-sm"><a href="#/agents/skills" className="text-blue-400 hover:underline font-semibold">Read more →</a> <span className="text-gray-500">the full Agent Skills guide: format, linter lab, where skills run and security.</span></p>
       </Section>
 
       <Section id="lowcode" title="Low-code Builders" lead="Visual canvases where you wire triggers, LLM calls, tools and branches together. Fast to build, easy to hand to non-engineers, harder to test and version.">

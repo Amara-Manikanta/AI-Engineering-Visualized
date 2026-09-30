@@ -126,6 +126,7 @@ const GenAiDistributed = lazy(() => import("./pages/GenAiDistributed"));
 const GenAiServing = lazy(() => import("./pages/GenAiServing"));
 const GenAiDecoding = lazy(() => import("./pages/GenAiDecoding"));
 const AgentsSdks = lazy(() => import("./pages/AgentsSdks"));
+const AgentsSkills = lazy(() => import("./pages/AgentsSkills"));
 const GenAiReasoning = lazy(() => import("./pages/GenAiReasoning"));
 const GenAiMerging = lazy(() => import("./pages/GenAiMerging"));
 const GenAiMultimodal = lazy(() => import("./pages/GenAiMultimodal"));
@@ -227,6 +228,7 @@ function App() {
         <Route path="/agents/a2a" element={<AgentsA2A />} />
         <Route path="/agents/debugging" element={<AgentsDebugging />} />
         <Route path="/agents/sdks" element={<AgentsSdks />} />
+        <Route path="/agents/skills" element={<AgentsSkills />} />
         
         <Route path="/rag" element={<RagIndex />} />
         <Route path="/rag/fundamentals" element={<RagFundamentals />} />

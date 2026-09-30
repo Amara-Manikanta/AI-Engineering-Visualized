@@ -155,6 +155,7 @@ export const NAV_LINKS = [
       { name: "AI Agents", path: "/agents" },
       { name: "Building Blocks", isHeader: true },
       { name: "Tool Calling", path: "/agents/tool-calling" },
+      { name: "Agent Skills", path: "/agents/skills" },
       { name: "Memory & State", path: "/agents/memory" },
       { name: "Protocols", isHeader: true },
       { name: "MCP", path: "/mcp" },

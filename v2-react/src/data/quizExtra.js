@@ -1697,4 +1697,80 @@ export const EXTRA_QUIZZES = [
       },
     ],
   },
+  {
+    id: "agents-skills",
+    topic: "Agent Skills",
+    label: "Agent Skills",
+    path: "/agents/skills",
+    icon: "📘",
+    tone: "purple",
+    questions: [
+      {
+        q: "An agent has 60 skills installed. What is always in its context?",
+        options: [
+          "Every SKILL.md body",
+          "Each skill's name and description only",
+          "Every script's source code",
+          "Nothing until the user names a skill",
+        ],
+        answer: 1,
+        why: "Progressive disclosure: metadata is loaded for all skills, the body only when a request matches, and scripts and references only when the instructions call for them.",
+      },
+      {
+        q: "Which frontmatter name is valid?",
+        options: [
+          "Quarterly Report",
+          "claude-report-helper",
+          "report_builder_v2",
+          "quarterly-report",
+        ],
+        answer: 3,
+        why: "Names use lowercase letters, digits and hyphens only, at most 64 characters, and may not contain the reserved words anthropic or claude. Spaces and underscores are not allowed.",
+      },
+      {
+        q: "A skill's description reads 'Helps with reports.' It rarely triggers. What is the best fix?",
+        options: [
+          "Move the instructions into the description",
+          "Rename the folder",
+          "Add what it does and when to use it, with the words users actually say",
+          "Install it in more places",
+        ],
+        answer: 2,
+        why: "The description is the only text Claude sees when deciding whether to use a skill. Say what it does and when, in the third person, with the concrete terms requests contain.",
+      },
+      {
+        q: "What enters the context when Claude runs scripts/validate_report.py?",
+        options: [
+          "The script's source code and its output",
+          "Only the script's output",
+          "Nothing at all",
+          "The whole scripts folder",
+        ],
+        answer: 1,
+        why: "Scripts run in the sandbox. Their code stays out of the context, and only what they print comes back, which makes scripts a cheap and reliable way to do exact work.",
+      },
+      {
+        q: "Which need is best served by an MCP server rather than a skill?",
+        options: [
+          "Reaching a live ticketing system",
+          "Following your report template",
+          "Applying the brand voice guide",
+          "Running a fixed review checklist",
+        ],
+        answer: 0,
+        why: "MCP connects an agent to systems and data. Skills carry know-how: how to do a job well with the access the agent already has. They combine.",
+      },
+      {
+        q: "You are given a skill from a public repository. What should you do before enabling it?",
+        options: [
+          "Enable it and watch the results",
+          "Read SKILL.md only, since scripts are sandboxed",
+          "Trust it if it has many stars",
+          "Audit the scripts and references too, and check for external URL fetches",
+        ],
+        answer: 3,
+        why: "A skill can direct the model and run code. Everything in the folder is part of your trust boundary, and fetched content can change after you reviewed it.",
+      },
+    ],
+  },
 ];

@@ -87,6 +87,7 @@ const QUICK_LINKS = [
   { path: "/python", label: "Python Master Guide" },
   { path: "/ml/transformers", label: "Transformers" },
   { path: "/mcp", label: "Model Context Protocol" },
+  { path: "/agents/skills", label: "Agent Skills" },
 ];
 
 export default function CommandPalette() {

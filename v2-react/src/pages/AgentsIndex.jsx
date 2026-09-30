@@ -989,6 +989,7 @@ reference/chart-style.md      ← read only when drawing charts`}
             </tbody>
           </table>
         </div>
+      <p className="mt-5 mb-0 text-sm"><a href="#/agents/skills" className="text-blue-400 hover:underline font-semibold">Read more →</a> <span className="text-gray-500">Agent Skills: the SKILL.md format, a linter lab, and where skills run.</span></p>
       </section>
 
       <section id="subagents" className="mb-20 scroll-mt-24">

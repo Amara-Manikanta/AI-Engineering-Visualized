@@ -90,6 +90,7 @@ const PATHS = [
       { t: "Agent architecture", p: "/agents", why: "The core loop, plus reasoning strategies and guardrails." },
       { t: "Tool calling", p: "/agents/tool-calling", why: "How agents actually touch the world — and where the security boundary is." },
       { t: "Agent SDKs", p: "/agents/sdks", why: "What the Claude Agent SDK and its peers give you over a hand-written loop." },
+      { t: "Agent Skills", p: "/agents/skills", why: "Package know-how as a folder the agent loads only when a task needs it." },
       { t: "MCP", p: "/mcp", why: "The standard way to connect models to external systems." },
       { t: "Multi-agent systems", p: "/agents/multi-agent", why: "Including when *not* to use them, which is most of the time." },
       { t: "LangChain + LangGraph", p: "/agents/langchain", why: "Orchestration, and stateful graphs for cyclic agent flows." },

@@ -505,6 +505,92 @@
     ]
   },
   {
+    "path": "/agents/skills",
+    "title": "Agent Skills",
+    "intro": "A skill is a folder of know-how an agent can pick up when it needs it: instructions, scripts and reference files, packaged the way an onboarding guide is for a new hire.",
+    "sections": [
+      {
+        "label": "What a Skill Is",
+        "hash": "what"
+      },
+      {
+        "label": "Skills vs Everything Else",
+        "hash": "compare"
+      },
+      {
+        "label": "Anatomy of a Skill",
+        "hash": "anatomy"
+      },
+      {
+        "label": "The SKILL.md Format",
+        "hash": "format"
+      },
+      {
+        "label": "Lab: SKILL.md Linter",
+        "hash": "linter"
+      },
+      {
+        "label": "Progressive Disclosure",
+        "hash": "disclosure"
+      },
+      {
+        "label": "How a Skill Runs",
+        "hash": "runs"
+      },
+      {
+        "label": "Where Skills Run",
+        "hash": "where"
+      },
+      {
+        "label": "Writing Good Skills",
+        "hash": "writing"
+      },
+      {
+        "label": "Lab: Description Workshop",
+        "hash": "workshop"
+      },
+      {
+        "label": "Testing and Iterating",
+        "hash": "testing"
+      },
+      {
+        "label": "Security",
+        "hash": "security"
+      },
+      {
+        "label": "Example Gallery",
+        "hash": "gallery"
+      }
+    ],
+    "keywords": [
+      "agent skills",
+      "skills",
+      "SKILL.md",
+      "skill frontmatter",
+      "progressive disclosure",
+      "Claude skills",
+      "Claude Code skills",
+      "skills API",
+      "custom skills",
+      "pre-built skills",
+      "pptx skill",
+      "xlsx skill",
+      "docx skill",
+      "pdf skill",
+      "skill-creator",
+      "allowed-tools",
+      ".claude/skills",
+      "skill description",
+      "skill linter",
+      "skills vs MCP",
+      "skills vs system prompt",
+      "skills vs subagents",
+      "container skills",
+      "code execution tool",
+      "skill security"
+    ]
+  },
+  {
     "path": "/agents/tool-calling",
     "title": "Tool Calling",
     "intro": "How an LLM reaches outside its own weights — calling functions, APIs, and code to act on the real world.",

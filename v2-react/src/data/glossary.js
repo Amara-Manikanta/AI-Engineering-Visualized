@@ -182,7 +182,7 @@ export const GLOSSARY = [
   { t: "Binary quantization", c: "RAG", d: "Storing one bit per embedding dimension and comparing with Hamming distance; usually followed by rescoring with full vectors.", see: "/rag/late-interaction" },
   { t: "Text-to-SQL", c: "RAG", d: "Having a model write a SQL query to answer a question over a database, instead of retrieving text.", see: "/rag/text-to-sql" },
   { t: "Schema linking", c: "RAG", d: "Selecting the tables and columns relevant to a question before generating SQL.", see: "/rag/text-to-sql" },
-  { t: "Agent Skills", c: "Agents", d: "Folders containing a SKILL.md with instructions plus scripts and resources, loaded by an agent only when their description matches the task.", see: "/agents/sdks" },
+  { t: "Agent Skills", c: "Agents", d: "Folders containing a SKILL.md with instructions plus scripts and resources, loaded by an agent only when their description matches the task.", see: "/agents/skills" },
   { t: "Agent SDK", c: "Agents", d: "A library that runs the agent loop for you — from lightweight tool runners to full harnesses with built-in tools, like the Claude Agent SDK.", see: "/agents/sdks" },
 
   // Classical & applied ML
