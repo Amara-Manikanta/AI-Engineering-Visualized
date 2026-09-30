@@ -3,11 +3,15 @@ import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 import KnowledgeCheck from "../components/KnowledgeCheck";
 import { questionsFor } from "../data/quizBank";
+import PromptPractice from "../components/PromptPractice";
+
+export const SEARCH_KEYWORDS = ["prompt practice", "practice prompts", "prompt playground", "prompt exercise", "write a good prompt", "prompt checklist", "prompt rubric", "prompt engineering practice", "delimiters", "output format", "few-shot example"];
 
 export default function PromptingIndex() {
   const toc = [
     { label: 'Prompt Engineering', hash: '#prompt-engineering' },
     { label: 'Techniques', hash: '#techniques' },
+    { label: 'Practice Studio', hash: '#practice' },
     { label: 'Best Practices', hash: '#best-practices' }
   ];
 
@@ -155,6 +159,15 @@ export default function PromptingIndex() {
               💡 Use with OpenAI's <code>response_format</code> or Pydantic models for reliability.
             </div>
           </motion.div>
+        </div>
+
+        <div id="practice" className="mb-12 scroll-mt-24">
+          <h3 className="text-2xl font-bold text-white mb-2">🎯 Practice Studio</h3>
+          <p className="text-gray-400 mb-5 max-w-3xl text-sm leading-relaxed">
+            Reading about prompts only goes so far. Pick a job, write a prompt, run it and watch the reply build up. Then use the
+            checklist to improve it and run it again. Start with something short and see how far each addition moves the result.
+          </p>
+          <PromptPractice />
         </div>
 
         <div id="best-practices" className="p-8 bg-white/5 border border-white/10 rounded-2xl">

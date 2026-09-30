@@ -6146,11 +6146,27 @@
         "hash": "techniques"
       },
       {
+        "label": "Practice Studio",
+        "hash": "practice"
+      },
+      {
         "label": "Best Practices",
         "hash": "best-practices"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "prompt practice",
+      "practice prompts",
+      "prompt playground",
+      "prompt exercise",
+      "write a good prompt",
+      "prompt checklist",
+      "prompt rubric",
+      "prompt engineering practice",
+      "delimiters",
+      "output format",
+      "few-shot example"
+    ]
   },
   {
     "path": "/python",
