@@ -1,6 +1,11 @@
 import React from 'react';
 import GuideLayout from "../components/GuideLayout";
 import { motion } from "framer-motion";
+import CodeBlock from "../components/CodeBlock";
+import { Card, Note } from "../components/VizKit";
+import { ForgettingLab } from "../components/agents/MemoryLab";
+
+export const SEARCH_KEYWORDS = ["agent memory", "memory tool", "memory_20250818", "write policy", "read policy", "forgetting", "memory decay", "memory poisoning", "episodic memory", "semantic memory", "procedural memory", "long-term memory", "user preferences memory", "memory privacy"];
 
 const toc = [
   { label: "Why Agents Need Memory", hash: "overview" },
@@ -8,6 +13,10 @@ const toc = [
   { label: "Context Window Management", hash: "context-window" },
   { label: "Long-Term Memory Patterns", hash: "long-term" },
   { label: "Comparison Table", hash: "comparison" },
+  { label: "Write and Read Policies", hash: "policies" },
+  { label: "Lab: Forgetting", hash: "forgetting" },
+  { label: "A Memory Tool", hash: "memory-tool" },
+  { label: "Risks", hash: "risks" },
 ];
 
 const memoryTypes = [
@@ -92,7 +101,7 @@ export default function AgentsMemory() {
         </div>
       </section>
 
-      <section id="comparison" className="mb-4 scroll-mt-24">
+      <section id="comparison" className="mb-14 scroll-mt-24">
         <h2 className="text-2xl font-bold text-white mb-4">Comparison</h2>
         <div className="overflow-x-auto rounded-xl border border-gray-800">
           <table className="w-full text-sm border-collapse">
@@ -113,6 +122,60 @@ export default function AgentsMemory() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section id="policies" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Write and Read Policies</h2>
+        <p className="text-gray-300 mb-5 max-w-3xl">Memory is only useful if the right things get saved and the right things come back. Decide both on purpose.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card title="When to write" tone="emerald"><p>After a task finishes, when the user states a preference or correction, or at the end of a session. Save decisions and facts, not chatter. A common mistake is saving everything, which buries what matters.</p></Card>
+          <Card title="What to write" tone="indigo"><p>Short, self-contained notes with a date and a source: "Prefers metric units (said 12 Sep)". Notes that need the original conversation to make sense are useless later.</p></Card>
+          <Card title="When to read" tone="blue"><p>At the start of a session (load a small profile), and on demand when a topic comes up (search). Loading everything up front wastes context.</p></Card>
+          <Card title="How to update" tone="amber"><p>Edit or replace an old note rather than adding a contradicting one. Two notes saying opposite things leave the model to guess.</p></Card>
+        </div>
+      </section>
+
+      <section id="forgetting" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Lab: Forgetting</h2>
+        <p className="text-gray-300 mb-5 max-w-3xl">Storage is cheap, attention is not. Forgetting keeps the useful memories findable.</p>
+        <ForgettingLab />
+      </section>
+
+      <section id="memory-tool" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">A Memory Tool</h2>
+        <p className="text-gray-300 mb-4 max-w-3xl">
+          The Claude API has a memory tool: you declare it, the model issues file-style commands (view, create, edit,
+          delete) against a memory folder, and <em>your code</em> carries them out and stores the files wherever you choose.
+          The model reads its notes at the start of a task and updates them as it learns.
+        </p>
+        <CodeBlock
+          language="python"
+          code={`import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-opus-5-5",
+    max_tokens=1024,
+    tools=[{"type": "memory_20250818", "name": "memory"}],
+    messages=[{"role": "user", "content": "Remember that I prefer answers in metric units."}],
+)
+
+# The model replies with tool_use blocks for the memory tool (view / create / ...).
+# Your code executes each command against your own storage, restricts paths to the
+# memory folder, and returns the outcome as a tool_result. The SDKs ship helper
+# classes for implementing that backend; see the current docs for the command list.`}
+        />
+      </section>
+
+      <section id="risks" className="mb-4 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Risks</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <Card title="Memory poisoning" tone="rose"><p>If an agent saves text it read on a web page, an attacker can plant instructions that come back in every future session. Do not store untrusted content as trusted notes.</p></Card>
+          <Card title="Privacy" tone="amber"><p>Stored memories are personal data. Let users see, correct and delete them, keep each user's memory separate, and avoid saving secrets.</p></Card>
+          <Card title="Stale facts" tone="purple"><p>Old notes can be wrong. Date them, and prefer checking the source when accuracy matters.</p></Card>
+        </div>
+        <Note tone="indigo">See also <a href="#/agents/context-engineering" className="text-blue-400 hover:underline">Context Engineering</a> for keeping notes out of the window until needed.</Note>
       </section>
     </GuideLayout>
   );

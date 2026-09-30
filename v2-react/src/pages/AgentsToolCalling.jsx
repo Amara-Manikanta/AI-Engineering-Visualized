@@ -2,6 +2,11 @@ import React from 'react';
 import GuideLayout from "../components/GuideLayout";
 import { motion } from "framer-motion";
 import AdvancedFlowchart from "../components/AdvancedFlowchart";
+import CodeBlock from "../components/CodeBlock";
+import { Card, Note } from "../components/VizKit";
+import { DescriptionLab } from "../components/agents/ToolLab";
+
+export const SEARCH_KEYWORDS = ["tool_choice", "forced tool use", "parallel tool calls", "strict tool use", "structured outputs", "tool_result", "is_error", "tool error handling", "tool descriptions", "tool_use", "function calling loop", "disable_parallel_tool_use"];
 
 const toolLoopChart = {
   nodes: [
@@ -25,6 +30,11 @@ const toc = [
   { label: "The Tool-Call Loop", hash: "loop" },
   { label: "Anatomy of a Tool Schema", hash: "schema" },
   { label: "Parallel vs Sequential Calls", hash: "parallel" },
+  { label: "Choosing Tools: tool_choice", hash: "tool-choice" },
+  { label: "Strict Schemas & Structured Output", hash: "strict" },
+  { label: "Errors and Results", hash: "errors" },
+  { label: "Lab: Tool Descriptions", hash: "lab" },
+  { label: "The Loop in Code", hash: "code" },
   { label: "Best Practices", hash: "best-practices" },
 ];
 
@@ -122,6 +132,93 @@ export default function AgentsToolCalling() {
               <span>→ merge → answer</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section id="tool-choice" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Choosing Tools: tool_choice</h2>
+        <p className="text-gray-300 mb-4 max-w-3xl">
+          By default the model decides whether to call a tool. <span className="font-mono text-emerald-300">tool_choice</span> lets you steer that.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <Card title="auto (default)" tone="emerald"><p>The model decides: answer directly, or call one or more tools. Use this for most agents.</p></Card>
+          <Card title="any / a named tool" tone="amber"><p>Force a tool call, or one specific tool. Handy for extraction. Some newer models reject forced choice, so check your model's docs; a clear instruction plus a strict schema often works instead.</p></Card>
+          <Card title="none" tone="blue"><p>Tools are visible but not allowed. Useful for a final "write the answer" turn.</p></Card>
+          <Card title="A common mistake" tone="rose"><p>Forcing a tool on every turn, so the agent can never finish. Force it once, then go back to auto.</p></Card>
+        </div>
+      </section>
+
+      <section id="strict" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Strict Schemas and Structured Output</h2>
+        <p className="text-gray-300 mb-4 max-w-3xl">
+          Models usually produce arguments that match your schema, but not always. Two features tighten that.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <Card title="Strict tool use" tone="indigo"><p>Set <span className="font-mono">strict: true</span> on the tool, with <span className="font-mono">additionalProperties: false</span> and every required field listed. The arguments are then guaranteed to validate.</p></Card>
+          <Card title="Structured outputs" tone="purple"><p>When you want the final answer as JSON rather than a tool call, ask for a JSON schema for the response format. Same guarantee, no fake tool needed.</p></Card>
+        </div>
+        <p className="text-xs text-gray-500">Validate arguments in your own code anyway: a schema says a date is a string, not that it is a real date or that the user may act on that record.</p>
+      </section>
+
+      <section id="errors" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Errors and Results</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card title="Return every result" tone="emerald"><p>Each tool call needs a matching result. For parallel calls, put all results in a single reply message; splitting them teaches the model to stop calling in parallel.</p></Card>
+          <Card title="Mark failures" tone="rose"><p>Set <span className="font-mono">is_error: true</span> on the result and say what went wrong and what to try. The model can then correct itself instead of guessing.</p></Card>
+          <Card title="Keep results short" tone="amber"><p>Return the fields needed, paginate lists, and truncate long text. Large results eat context (see <a href="#/agents/context-engineering" className="text-blue-400 hover:underline">Context Engineering</a>).</p></Card>
+        </div>
+      </section>
+
+      <section id="lab" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">Lab: Tool Descriptions</h2>
+        <DescriptionLab />
+      </section>
+
+      <section id="code" className="mb-14 scroll-mt-24">
+        <h2 className="text-2xl font-bold text-white mb-4">The Loop in Code</h2>
+        <CodeBlock
+          language="python"
+          code={`import anthropic
+
+client = anthropic.Anthropic()
+
+tools = [{
+    "name": "get_weather",
+    "description": "Get the current weather for a city. Use when the user asks about weather.",
+    "strict": True,
+    "input_schema": {
+        "type": "object",
+        "properties": {"city": {"type": "string"}},
+        "required": ["city"],
+        "additionalProperties": False,
+    },
+}]
+
+messages = [{"role": "user", "content": "Weather in Pune and Delhi?"}]
+
+while True:
+    response = client.messages.create(
+        model="claude-opus-5-5", max_tokens=1024, tools=tools, messages=messages
+    )
+    if response.stop_reason != "tool_use":
+        break
+    messages.append({"role": "assistant", "content": response.content})
+
+    results = []                                    # may hold several parallel calls
+    for block in response.content:
+        if block.type == "tool_use":
+            try:
+                out, is_error = run_tool(block.name, block.input), False
+            except Exception as e:                  # tell the model what went wrong
+                out, is_error = f"Error: {e}", True
+            results.append({"type": "tool_result", "tool_use_id": block.id,
+                            "content": out, "is_error": is_error})
+    messages.append({"role": "user", "content": results})   # ALL results in one message
+
+print(response.content[0].text)`}
+        />
+        <div className="mt-4">
+          <Note tone="indigo">The SDK also has a tool runner that does this loop for you; write it by hand once so you know what it does.</Note>
         </div>
       </section>
 

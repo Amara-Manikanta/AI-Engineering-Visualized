@@ -504,9 +504,40 @@
       {
         "label": "Comparison Table",
         "hash": "comparison"
+      },
+      {
+        "label": "Write and Read Policies",
+        "hash": "policies"
+      },
+      {
+        "label": "Lab: Forgetting",
+        "hash": "forgetting"
+      },
+      {
+        "label": "A Memory Tool",
+        "hash": "memory-tool"
+      },
+      {
+        "label": "Risks",
+        "hash": "risks"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "agent memory",
+      "memory tool",
+      "memory_20250818",
+      "write policy",
+      "read policy",
+      "forgetting",
+      "memory decay",
+      "memory poisoning",
+      "episodic memory",
+      "semantic memory",
+      "procedural memory",
+      "long-term memory",
+      "user preferences memory",
+      "memory privacy"
+    ]
   },
   {
     "path": "/agents/multi-agent",
@@ -728,11 +759,44 @@
         "hash": "parallel"
       },
       {
+        "label": "Choosing Tools: tool_choice",
+        "hash": "tool-choice"
+      },
+      {
+        "label": "Strict Schemas & Structured Output",
+        "hash": "strict"
+      },
+      {
+        "label": "Errors and Results",
+        "hash": "errors"
+      },
+      {
+        "label": "Lab: Tool Descriptions",
+        "hash": "lab"
+      },
+      {
+        "label": "The Loop in Code",
+        "hash": "code"
+      },
+      {
         "label": "Best Practices",
         "hash": "best-practices"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "tool_choice",
+      "forced tool use",
+      "parallel tool calls",
+      "strict tool use",
+      "structured outputs",
+      "tool_result",
+      "is_error",
+      "tool error handling",
+      "tool descriptions",
+      "tool_use",
+      "function calling loop",
+      "disable_parallel_tool_use"
+    ]
   },
   {
     "path": "/animations",
