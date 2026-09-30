@@ -141,6 +141,122 @@
     "keywords": []
   },
   {
+    "path": "/agents/computer-use",
+    "title": "Computer Use & Browser Agents",
+    "intro": "A model that looks at a screenshot and decides where to click and what to type, so it can use software made for people, with no API needed.",
+    "sections": [
+      {
+        "label": "What Computer Use Is",
+        "hash": "what"
+      },
+      {
+        "label": "The Loop",
+        "hash": "loop"
+      },
+      {
+        "label": "Coordinate Scaling",
+        "hash": "scaling"
+      },
+      {
+        "label": "Sandboxing",
+        "hash": "sandbox"
+      },
+      {
+        "label": "Injection from the Screen",
+        "hash": "injection"
+      },
+      {
+        "label": "API or Screen?",
+        "hash": "when"
+      },
+      {
+        "label": "Cost and Latency",
+        "hash": "cost"
+      },
+      {
+        "label": "A Loop in Code",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "computer use",
+      "browser agents",
+      "GUI agents",
+      "screenshot action loop",
+      "coordinate scaling",
+      "click coordinates",
+      "sandbox",
+      "virtual machine",
+      "browser automation",
+      "Playwright",
+      "prompt injection screen",
+      "OSWorld",
+      "WebArena",
+      "screen resolution",
+      "vision tokens",
+      "screenshot cost",
+      "human in the loop",
+      "operator"
+    ]
+  },
+  {
+    "path": "/agents/context-engineering",
+    "title": "Context Engineering",
+    "intro": "Prompt engineering is what you write. Context engineering is everything the model sees on each step: what goes in, in what order, and what gets removed.",
+    "sections": [
+      {
+        "label": "What Context Engineering Is",
+        "hash": "what"
+      },
+      {
+        "label": "Context Rot",
+        "hash": "rot"
+      },
+      {
+        "label": "What Fills the Window",
+        "hash": "fill"
+      },
+      {
+        "label": "Prompt Caching",
+        "hash": "caching"
+      },
+      {
+        "label": "Keeping Context Small",
+        "hash": "techniques"
+      },
+      {
+        "label": "Tool Definition Bloat",
+        "hash": "tools"
+      },
+      {
+        "label": "A Checklist",
+        "hash": "checklist"
+      }
+    ],
+    "keywords": [
+      "context engineering",
+      "context window",
+      "context rot",
+      "attention budget",
+      "prompt caching",
+      "cache breakpoint",
+      "cache hit",
+      "compaction",
+      "context editing",
+      "clear tool results",
+      "agent memory notes",
+      "just-in-time retrieval",
+      "subagents context isolation",
+      "tool definition bloat",
+      "token budget",
+      "cache_control",
+      "lost in the middle",
+      "long context",
+      "context management",
+      "prefix caching"
+    ]
+  },
+  {
     "path": "/agents/debugging",
     "title": "Debugging Agents",
     "intro": "Agents fail in ways ordinary programs do not: non-deterministically, mid-run, and often without raising anything. This is the observability you need before shipping one.",
@@ -2369,6 +2485,75 @@
     "intro": "Every hands-on tool and step-through animation on the site, in one place. Poke at the thing rather than reading about it.",
     "sections": [],
     "keywords": []
+  },
+  {
+    "path": "/llm-evals",
+    "title": "LLM Evaluation & Evals",
+    "intro": "Model output is not a function you can unit-test with one assert. Evals are how you find out whether a change made your system better, worse or just different.",
+    "sections": [
+      {
+        "label": "Why Evals",
+        "hash": "why"
+      },
+      {
+        "label": "Build the Eval Set",
+        "hash": "set"
+      },
+      {
+        "label": "Graders",
+        "hash": "graders"
+      },
+      {
+        "label": "Pairwise vs Absolute",
+        "hash": "pairwise"
+      },
+      {
+        "label": "Evaluating Agents",
+        "hash": "agents"
+      },
+      {
+        "label": "Statistics: How Sure Are You?",
+        "hash": "stats"
+      },
+      {
+        "label": "Variance Across Runs",
+        "hash": "variance"
+      },
+      {
+        "label": "Regression Gating in CI",
+        "hash": "ci"
+      },
+      {
+        "label": "A Minimal Harness",
+        "hash": "code"
+      }
+    ],
+    "keywords": [
+      "LLM evaluation",
+      "evals",
+      "eval set",
+      "golden dataset",
+      "LLM as a judge",
+      "grader",
+      "pairwise comparison",
+      "absolute scoring",
+      "agent evaluation",
+      "trajectory evaluation",
+      "regression testing",
+      "CI gating",
+      "pass@k",
+      "pass^k",
+      "confidence interval",
+      "sample size",
+      "Wilson interval",
+      "flaky evals",
+      "non-determinism",
+      "eval variance",
+      "human review",
+      "rubric",
+      "benchmarks",
+      "prompt regression"
+    ]
   },
   {
     "path": "/llm-inference",

@@ -156,6 +156,8 @@ export const NAV_LINKS = [
       { name: "Building Blocks", isHeader: true },
       { name: "Tool Calling", path: "/agents/tool-calling" },
       { name: "Agent Skills", path: "/agents/skills" },
+      { name: "Context Engineering", path: "/agents/context-engineering" },
+      { name: "Computer Use & Browser Agents", path: "/agents/computer-use" },
       { name: "Memory & State", path: "/agents/memory" },
       { name: "Protocols", isHeader: true },
       { name: "MCP", path: "/mcp" },
@@ -216,6 +218,7 @@ export const NAV_LINKS = [
     subLinks: [
       { name: "System Design", path: "/system-design" },
       { name: "LLM Apps in Production", path: "/llm-production" },
+      { name: "LLM Evaluation & Evals", path: "/llm-evals" },
       { name: "MLOps", path: "/mlops" },
       { name: "Projects", path: "/projects" },
       { name: "Resources", path: "/resources" },
