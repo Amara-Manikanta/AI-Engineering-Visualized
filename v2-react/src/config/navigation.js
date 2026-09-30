@@ -105,11 +105,10 @@ export const NAV_LINKS = [
       { name: "LLM Serving Stack", path: "/genai/serving" },
       { name: "Quantization", path: "/genai/quantization" },
       { name: "Distillation", path: "/genai/distillation" },
-      { name: "Safety & Frontier", isHeader: true },
+      { name: "Safety", isHeader: true },
       { name: "Safety & Alignment", path: "/safety" },
       { name: "Red Teaming & Prompt Injection", path: "/safety/red-teaming" },
       { name: "Responsible AI & Governance", path: "/safety/governance" },
-      { name: "AGI & GPT-6 Astra", path: "/genai/agi" },
     ],
   },
   {
@@ -186,6 +185,8 @@ export const NAV_LINKS = [
       { name: "Gemma", path: "/models/gemma" },
       { name: "Phi-4", path: "/models/phi" },
       { name: "Cohere Command", path: "/models/command-r" },
+      { name: "Evaluating Models", isHeader: true },
+      { name: "AGI Claims: A Case Study", path: "/models/agi-claims" },
     ],
   },
   {

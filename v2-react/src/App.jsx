@@ -193,6 +193,12 @@ function ClaudeRedirect() {
   return <Navigate to={{ pathname: "/models/anthropic", hash }} replace />;
 }
 
+// The AGI case study moved from GenAI to Models; keep old links working.
+function AgiRedirect() {
+  const { hash } = useLocation();
+  return <Navigate to={{ pathname: "/models/agi-claims", hash }} replace />;
+}
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useLayoutEffect(() => {
@@ -259,7 +265,8 @@ function App() {
         <Route path="/genai" element={<GenAiIndex />} />
         <Route path="/genai/fine-tuning" element={<GenAiFineTuning />} />
         <Route path="/genai/quantization" element={<GenAiQuantization />} />
-        <Route path="/genai/agi" element={<GenAiAgi />} />
+        <Route path="/models/agi-claims" element={<GenAiAgi />} />
+        <Route path="/genai/agi" element={<AgiRedirect />} />
         <Route path="/genai/peft" element={<GenAiPeft />} />
         <Route path="/genai/peft/lora" element={<GenAiLora />} />
         <Route path="/genai/peft/qlora" element={<GenAiQlora />} />

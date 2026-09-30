@@ -381,12 +381,13 @@ export default function ModelsIndex() {
 
       <section id="next" className="mb-8 scroll-mt-24">
         <h2 className="text-2xl font-bold text-white mb-6">Where to Next</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { t: 'How Models Are Trained', d: 'Every family\'s pipeline side by side.', p: '/models/training' },
             { t: 'Model Types', d: 'Base, instruct, reasoning, embedding and multimodal models.', p: '/llms/types' },
             { t: 'Reasoning Models', d: 'When extended thinking is worth its tokens.', p: '/genai/reasoning-models' },
             { t: 'Serving Stack', d: 'What it takes to self-host an open model.', p: '/genai/serving' },
+            { t: 'AGI Claims: A Case Study', d: 'How to read a headline claim about a new model.', p: '/models/agi-claims' },
           ].map((c) => (
             <Link key={c.t} to={c.p} className="block p-4 rounded-xl border border-white/10 bg-white/5 hover:border-indigo-500/50 transition-colors">
               <div className="text-sm font-semibold text-white mb-1">{c.t}</div>

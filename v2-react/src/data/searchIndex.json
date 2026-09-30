@@ -1328,34 +1328,6 @@
     "keywords": []
   },
   {
-    "path": "/genai/agi",
-    "title": "AGI & the GPT-6 Astra Claim",
-    "intro": "In September 2026 OpenAI shipped GPT-6 Astra and said we had entered the AGI era. Unpacking that claim is a better lesson in evaluating AI than the claim itself.",
-    "sections": [
-      {
-        "label": "What Was Claimed",
-        "hash": "claim"
-      },
-      {
-        "label": "The Harness Gap",
-        "hash": "harness"
-      },
-      {
-        "label": "The Rest of the Scoreboard",
-        "hash": "scoreboard"
-      },
-      {
-        "label": "The Monitoring Problem",
-        "hash": "monitoring"
-      },
-      {
-        "label": "Reading an AGI Claim",
-        "hash": "checklist"
-      }
-    ],
-    "keywords": []
-  },
-  {
     "path": "/genai/decision-models",
     "title": "Decision Models — Jev and Laya",
     "intro": "A new kind of model that never writes text. You give it the possible answers; it picks one in a single forward pass and tells you how sure it is.",
@@ -5075,6 +5047,34 @@
       "model routing",
       "cost calculator"
     ]
+  },
+  {
+    "path": "/models/agi-claims",
+    "title": "AGI & the GPT-6 Astra Claim",
+    "intro": "In September 2026 OpenAI shipped GPT-6 Astra and said we had entered the AGI era. Unpacking that claim is a better lesson in evaluating AI than the claim itself.",
+    "sections": [
+      {
+        "label": "What Was Claimed",
+        "hash": "claim"
+      },
+      {
+        "label": "The Harness Gap",
+        "hash": "harness"
+      },
+      {
+        "label": "The Rest of the Scoreboard",
+        "hash": "scoreboard"
+      },
+      {
+        "label": "The Monitoring Problem",
+        "hash": "monitoring"
+      },
+      {
+        "label": "Reading an AGI Claim",
+        "hash": "checklist"
+      }
+    ],
+    "keywords": []
   },
   {
     "path": "/models/anthropic",
