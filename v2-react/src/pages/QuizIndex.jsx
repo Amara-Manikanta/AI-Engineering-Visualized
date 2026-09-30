@@ -140,7 +140,7 @@ export default function QuizIndex() {
           is loaded automatically. Questions you add here are saved in this browser; export them to make them
           permanent.
         </p>
-        <QuestionEditor text={custom} onChange={setCustom} topicNames={all.map((q) => q.topic)} />
+        <QuestionEditor text={custom} onChange={setCustom} topicNames={[...new Set(all.map((q) => q.topic))]} />
 
         {errors.length > 0 && (
           <div className="mt-5 rounded-xl border border-amber-500/30 bg-amber-500/[0.08] p-4">
