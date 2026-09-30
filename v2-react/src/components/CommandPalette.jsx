@@ -86,7 +86,7 @@ const QUICK_LINKS = [
   { path: "/agents", label: "AI Agent Architecture" },
   { path: "/python", label: "Python Master Guide" },
   { path: "/ml/transformers", label: "Transformers" },
-  { path: "/genai/agi", label: "AGI & GPT-6 Astra" },
+  { path: "/mcp", label: "Model Context Protocol" },
 ];
 
 export default function CommandPalette() {
