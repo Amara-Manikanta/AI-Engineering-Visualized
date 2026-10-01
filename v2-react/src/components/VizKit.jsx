@@ -39,7 +39,7 @@ export function Button({ tone = "indigo", onClick, children, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors disabled:opacity-40 ${t.btn}`}
+      className={`px-3.5 py-1.5 min-h-9 rounded-lg text-xs font-semibold border transition-colors disabled:opacity-40 ${t.btn}`}
     >
       {children}
     </button>
@@ -61,6 +61,7 @@ export function Slider({ label, value, min, max, step = 1, onChange, format, ton
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
+        aria-valuetext={format ? String(format(value)) : undefined}
         className={`w-full mt-1.5 ${t.accent}`}
       />
     </label>
@@ -75,7 +76,8 @@ export function Segmented({ options, value, onChange, tone = "indigo" }) {
         <button
           key={o.v}
           onClick={() => onChange(o.v)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+          aria-pressed={value === o.v}
+          className={`px-3 py-1.5 min-h-9 rounded-lg text-xs font-semibold border transition-colors ${
             value === o.v ? t.btn : "border-white/10 bg-white/5 text-gray-400 hover:text-gray-200"
           }`}
         >

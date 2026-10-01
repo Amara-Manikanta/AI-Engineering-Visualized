@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Panel, Slider, Segmented, Metric, Button } from "../VizKit";
 import { rng, randn, fmt, pct } from "../../lib/stats";
+import useReducedMotion from "../../lib/useReducedMotion";
 
 /* Interactive pieces for the MoE section of the Model Types page. */
 
@@ -59,7 +60,8 @@ export function RouterDemo() {
   const [k, setK] = useState(2);
   const [collapsed, setCollapsed] = useState(false);
   const [cur, setCur] = useState(0);
-  const [auto, setAuto] = useState(true);
+  const reduced = useReducedMotion();
+  const [auto, setAuto] = useState(!reduced);
 
   useEffect(() => {
     if (!auto) return undefined;

@@ -5,6 +5,7 @@ import KnowledgeCheck from "../components/KnowledgeCheck";
 import { questionsFor } from "../data/quizBank";
 import { Panel, Slider, Metric, Card, Note, Section, Button } from "../components/VizKit";
 import { rng, spearman, fmt, pct } from "../lib/stats";
+import useReducedMotion from "../lib/useReducedMotion";
 
 export const SEARCH_KEYWORDS = [
   "RLHF", "rlhl", "reinforcement learning from human feedback", "reward model", "preference data",
@@ -48,7 +49,8 @@ const STAGES = [
 
 function Pipeline() {
   const [i, setI] = useState(0);
-  const [auto, setAuto] = useState(true);
+  const reduced = useReducedMotion();
+  const [auto, setAuto] = useState(!reduced);
   useEffect(() => {
     if (!auto) return undefined;
     const id = setInterval(() => setI((v) => (v + 1) % 3), 3200);

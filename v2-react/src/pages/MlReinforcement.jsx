@@ -5,6 +5,7 @@ import KnowledgeCheck from "../components/KnowledgeCheck";
 import { questionsFor } from "../data/quizBank";
 import { Panel, Slider, Segmented, Metric, Card, Note, Section, Button } from "../components/VizKit";
 import { rng, fmt } from "../lib/stats";
+import useReducedMotion from "../lib/useReducedMotion";
 
 export const SEARCH_KEYWORDS = [
   "reinforcement learning", "RL", "agent", "environment", "reward", "policy", "value function", "Q-value",
@@ -25,10 +26,12 @@ const LOOP = [
 
 function AgentLoop() {
   const [phase, setPhase] = useState(0);
+  const reduced = useReducedMotion();
   useEffect(() => {
+    if (reduced) return undefined;
     const id = setInterval(() => setPhase((p) => (p + 1) % 3), 1400);
     return () => clearInterval(id);
-  }, []);
+  }, [reduced]);
   const hot = (i) => (phase === i ? 1 : 0.25);
   return (
     <Panel tone="indigo" title="The loop every RL problem shares">
@@ -51,10 +54,10 @@ function AgentLoop() {
       </svg>
       <div className="grid grid-cols-3 gap-2 mt-3">
         {LOOP.map((l, i) => (
-          <div key={l.t} className={`rounded-lg border p-2 text-xs transition-colors ${phase === i ? "border-indigo-400/60 bg-indigo-500/15 text-indigo-100" : "border-white/10 bg-white/5 text-gray-500"}`}>
+          <button key={l.t} onClick={() => setPhase(i)} aria-pressed={phase === i} className={`text-left rounded-lg border p-2 text-xs transition-colors ${phase === i ? "border-indigo-400/60 bg-indigo-500/15 text-indigo-100" : "border-white/10 bg-white/5 text-gray-500"}`}>
             <div className="font-semibold uppercase tracking-wide text-[0.6875rem] mb-0.5">{l.t}</div>
             {l.d}
-          </div>
+          </button>
         ))}
       </div>
     </Panel>

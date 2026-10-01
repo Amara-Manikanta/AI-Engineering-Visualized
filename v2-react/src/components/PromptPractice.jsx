@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Panel, Segmented, Metric, Button } from "./VizKit";
 import { SCENARIOS, buildResponse, tier } from "../lib/promptPractice";
+import useReducedMotion from "../lib/useReducedMotion";
 
 /* ---------------------------------------------------------------------------
    Prompt practice. Write a prompt, press Run, and watch a simulated reply type
@@ -19,6 +20,7 @@ export default function PromptPractice() {
   const [attempts, setAttempts] = useState({});
   const [showExample, setShowExample] = useState(false);
   const timers = useRef([]);
+  const reduced = useReducedMotion();
 
   const clear = () => {
     timers.current.forEach((t) => clearInterval(t));
@@ -40,6 +42,14 @@ export default function PromptPractice() {
     clear();
     const r = buildResponse(scenario, prompt);
     setRun({ ...r, id: Date.now() });
+    if (reduced) {
+      // No animation: show the whole checklist and reply at once.
+      setTyped(r.lines.join("\n").length);
+      setTicked(r.ev.total);
+      setAttempts((a) => ({ ...a, [sid]: (a[sid] || 0) + 1 }));
+      setBest((b) => ({ ...b, [sid]: Math.max(b[sid] || 0, r.ev.passed) }));
+      return;
+    }
     setTyped(0);
     setTicked(0);
     setAttempts((a) => ({ ...a, [sid]: (a[sid] || 0) + 1 }));
