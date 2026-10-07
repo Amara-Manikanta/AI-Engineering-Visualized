@@ -210,7 +210,7 @@ export const NAV_LINKS = [
       { name: "Knowledge Checks", path: "/quizzes" },
       { name: "Interactive", path: "/interactive" },
       { name: "Glossary", path: "/glossary" },
-      { name: "Tech Radar & Digest", path: "/newsletter" },
+      { name: "AI Engineering Radar", path: "/radar" },
     ],
   },
   {

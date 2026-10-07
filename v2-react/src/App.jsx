@@ -412,6 +412,7 @@ function App() {
         <Route path="/projects" element={<ProjectsIndex />} />
         <Route path="/resources" element={<ResourcesIndex />} />
         <Route path="/newsletter" element={<NewsletterIndex />} />
+        <Route path="/radar" element={<NewsletterIndex />} />
 
         {/* Catch-all: unknown URLs get a helpful page, not a blank screen */}
         <Route path="*" element={<NotFound />} />

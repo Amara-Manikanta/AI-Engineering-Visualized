@@ -871,7 +871,7 @@ export default function NewsletterIndex() {
       }
     }
 
-    const hashRoute = issueId ? `#/newsletter?issue=${issueId}` : `#/newsletter`;
+    const hashRoute = issueId ? `#/radar?issue=${issueId}` : `#/radar`;
     return `${origin}${path}${hashRoute}`;
   };
 
@@ -882,15 +882,15 @@ export default function NewsletterIndex() {
         subtitle: target.subtitle,
         url: getShareUrl(target.id),
         repoName: target.repoName,
-        text: `Explore ${target.title} (${target.repoName}) in AI Visualised Engineering Digest!`
+        text: `Explore ${target.title} (${target.repoName}) in AI Engineering Radar!`
       });
     } else {
       setShareModalData({
-        title: "AI Visualised Engineering Digest & Tech Radar 2026",
+        title: "AI Engineering Radar 2026",
         subtitle: "Visual breakdowns of edge models, training runtimes, and frontier AI tools",
         url: getShareUrl(null),
-        repoName: "ai-visualised-engineering",
-        text: "Explore AI Visualised Engineering Digest: In-depth visual breakdowns of frontier models, edge runtimes, and developer tooling!"
+        repoName: "ai-engineering-radar",
+        text: "Explore AI Engineering Radar: In-depth visual breakdowns of frontier models, edge runtimes, and developer tooling!"
       });
     }
   };
@@ -1024,7 +1024,7 @@ export default function NewsletterIndex() {
               className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 transition-all hover:-translate-x-0.5"
             >
               <span>←</span>
-              <span>All Newsletters & Radar</span>
+              <span>AI Engineering Radar</span>
             </button>
             <span className="text-gray-600">/</span>
             <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${currentArticle.categoryColor}`}>
@@ -1291,7 +1291,7 @@ export default function NewsletterIndex() {
                   title: currentArticle.title,
                   subtitle: currentArticle.subtitle,
                   url: getShareUrl(currentArticle.id),
-                  text: `Check out ${currentArticle.title} (${currentArticle.repoName}) in AI Visualised Engineering!`
+                  text: `Check out ${currentArticle.title} (${currentArticle.repoName}) in AI Engineering Radar!`
                 })}
                 className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-black hover:bg-neutral-900 border border-white/20 text-white text-xs font-bold transition-all shadow-md"
               >
@@ -1389,7 +1389,7 @@ export default function NewsletterIndex() {
               onClick={returnToAllNewsletters}
               className="text-xs text-indigo-400 hover:text-indigo-300 underline font-bold"
             >
-              Back to Full Newsletter Directory →
+              Back to AI Engineering Radar →
             </button>
           </div>
 
@@ -1432,7 +1432,7 @@ export default function NewsletterIndex() {
           {/* Quick Jump Directory to all 10 Breakouts */}
           <div className="bg-[#111111] border border-white/10 rounded-2xl p-6">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
-              Explore All 10 Breakout Technologies:
+              Explore All 10 Breakout Technologies on AI Engineering Radar:
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2.5">
               {EDITIONS.map((ed) => (
@@ -1459,7 +1459,7 @@ export default function NewsletterIndex() {
             onClick={returnToAllNewsletters}
             className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all"
           >
-            ← Back to All Newsletters & Tech Radar
+            ← Back to AI Engineering Radar
           </button>
         </div>
       </GuideLayout>
@@ -1471,7 +1471,7 @@ export default function NewsletterIndex() {
      ========================================================================= */
   return (
     <GuideLayout
-      title="📰 AI Engineering Digest & Tech Radar"
+      title="📡 AI Engineering Radar"
       intro="Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling."
       toc={toc}
     >
@@ -1486,7 +1486,7 @@ export default function NewsletterIndex() {
           className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-mono text-xs flex items-center gap-2 transition-all hover:border-indigo-400 shadow-sm"
         >
           <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Share Digest to Social Media</span>
+          <span>Share Radar to Social Media</span>
         </button>
       </div>
 
@@ -1765,7 +1765,7 @@ export default function NewsletterIndex() {
         <div className="bg-gradient-to-r from-indigo-950/50 via-[#141414] to-purple-950/40 border border-indigo-500/30 rounded-2xl p-8 text-center relative overflow-hidden shadow-2xl">
           <span className="text-4xl block mb-3">📬</span>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-            Subscribe to AI Visualised Engineering Digest
+            Subscribe to AI Engineering Radar
           </h2>
           <p className="text-gray-300 text-sm max-w-xl mx-auto mb-6 leading-relaxed">
             Curated architectural breakdowns, edge model breakthroughs, and open-source tooling analysis delivered directly to your inbox.
@@ -1790,7 +1790,7 @@ export default function NewsletterIndex() {
             </form>
           ) : (
             <div className="bg-emerald-500/20 border border-emerald-500/40 rounded-xl p-4 max-w-md mx-auto text-emerald-300 text-sm font-bold flex items-center justify-center gap-2">
-              <span>🎉 You're subscribed! Welcome to AI Visualised Engineering.</span>
+              <span>🎉 You're subscribed! Welcome to AI Engineering Radar.</span>
             </div>
           )}
 

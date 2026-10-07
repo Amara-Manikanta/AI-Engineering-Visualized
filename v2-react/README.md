@@ -69,8 +69,8 @@ v2-react/
 │   │   ├── pageOrder.js       # Adjacent page next/previous resolver
 │   │   ├── progress.js        # LocalStorage reading progress state
 │   │   └── stats.js           # Mathematical & statistical helpers for visual labs
-│   ├── pages/                 # 175 interactive guides, visual labs, and newsletter
-│   │   ├── NewsletterIndex.jsx# Tech Radar, Breakout 10 Deep Dives & Social Share
+│   ├── pages/                 # 175 interactive guides, visual labs, and AI Engineering Radar
+│   │   ├── NewsletterIndex.jsx# AI Engineering Radar, Breakout 10 Deep Dives & Social Share
 │   │   └── ...
 │   ├── App.jsx                # Root HashRouter & lazy-loaded route manifest
 │   ├── index.css              # Global styles & Tailwind CSS v4 directives
