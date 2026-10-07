@@ -1,64 +1,213 @@
 # AI Visualised Engineering 🤖
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-6366f1?style=for-the-badge&logo=github)](https://Amara-Manikanta.github.io/ai-engineering-visualized)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+<p align="center">
+  <img src="v2-react/public/model-comparison.png" alt="AI Visualised Engineering Banner" width="100%" style="border-radius: 12px;" />
+</p>
 
-An interactive, visual study site for AI engineering: machine learning, generative AI, RAG, agents, models, cloud and the Python that ties them together. Most guides have a live lab: you move a slider and the maths recomputes in the browser.
+<p align="center">
+  <strong>The open-source visual interactive atlas for modern AI Engineering.</strong><br>
+  Explore machine learning, generative models, RAG pipelines, autonomous agent swarms, cloud infrastructure, and production MLOps through live interactive labs, animated architecture blueprints, and deep-dive technical reviews.
+</p>
 
-## Repository layout
-
-| Path | What it is |
-| --- | --- |
-| [`v2-react/`](v2-react/) | The live site: a React 19 + Vite single-page app. See its [README](v2-react/README.md) for development. |
-| [`notebooks/`](notebooks/) | Jupyter notebooks that accompany the guides (LangChain LCEL, document loaders). |
-| [`legacy/`](legacy/) | The original static HTML version, kept for reference. It is not deployed. |
-
-## What's covered
-
-- **Python**: foundations, data structures, OOP, async and tooling, NumPy/Pandas/scikit-learn, regex, and patterns for AI code.
-- **Machine learning**
-  - *Foundations*: data sourcing, cleaning, EDA and statistics; evaluation metrics, regularisation, optimisation and feature engineering.
-  - *Classical models*: regression, Naive Bayes, KNN, decision trees, SVMs, random forests and XGBoost.
-  - *Unsupervised and applied*: clustering, dimensionality reduction, anomaly detection, time series and recommenders.
-  - *Deep learning*: neural networks, CNNs, RNNs, GANs, transformers, transfer learning and graph neural networks.
-  - *Reinforcement learning and alignment*: reinforcement learning, RLHF, DPO and GRPO.
-- **Generative AI**
-  - *How LLMs work*: tokenization, decoding and reasoning models.
-  - *Adapting models*: PEFT/LoRA, distillation and model merging.
-  - *Efficiency*: quantization, distributed training and serving.
-  - Also multimodal generation, and safety topics including red teaming and governance.
-- **RAG**
-  - *Build the index*: data ingestion with LangChain loaders, chunking, embeddings, indexing and vector databases.
-  - *Query time*: advanced retrieval, late interaction, compression and text-to-SQL.
-  - *Ship it*: evaluation and production.
-  - Eight RAG architecture variants.
-- **Agents**: agent architecture, tool calling, MCP, multi-agent systems, LangChain/LangGraph, framework comparison, agent SDKs and debugging.
-- **Models**: closed and open-weight model families, model types, selection and training.
-- **Cloud and build**: Azure and AWS fundamentals, cloud AI platforms (Bedrock, AI Foundry, Vertex AI), LLM apps in production, MLOps and projects.
-- **Learn**
-  - Learning paths with saved progress, and a topic map of how the guides connect.
-  - Knowledge checks, including mock Claude architect certification questions and interview questions.
-  - A glossary of 180+ terms, and ⌘K search across every page and section.
-
-## Quick start
-
-```bash
-cd v2-react
-npm ci
-npm run dev        # http://localhost:5173
-```
-
-## Deployment
-
-Pushes to `main` build `v2-react/` and deploy it to GitHub Pages (`.github/workflows/deploy.yml`). Pull requests and pushes to other branches run CI (`.github/workflows/ci.yml`). The deploy workflow runs the same four checks before it publishes:
-
-- lint;
-- the content check (routes, links, table-of-contents anchors, quiz data);
-- a check that the search index is up to date;
-- a production build.
+<p align="center">
+  <a href="https://amara-manikanta.github.io/ai-engineering-visualized/#/"><img src="https://img.shields.io/badge/Live%20Platform-GitHub%20Pages-6366f1?style=for-the-badge&logo=github&logoColor=white" alt="Live Demo" /></a>
+  <a href="https://github.com/Amara-Manikanta/ai-engineering-visualized/releases"><img src="https://img.shields.io/badge/macOS%20Desktop%20App-Apple%20Silicon-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS App" /></a>
+  <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite-8.1-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 8" />
+  <img src="https://img.shields.io/badge/TailwindCSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind v4" />
+  <img src="https://img.shields.io/badge/License-MIT-emerald?style=for-the-badge" alt="MIT License" />
+</p>
 
 ---
 
-Built by Amara Manikanta Dileep. © 2026 AI Visualised Engineering
+## 🌟 What Makes AI Visualised Engineering Unique?
+
+Most AI tutorials provide static text or high-level code snippets without showing how mathematical models behave internally. **AI Visualised Engineering** is built around **interactive pedagogy**:
+
+- 🎛️ **Live Parameter Laboratories**: Adjust sliders to see cost surfaces warp, attention weights shift, decision trees branch, and token probabilities recalculate live in your browser.
+- 📐 **Visual Architecture Blueprints**: Monospaced ASCII dataflows, 3D WebGL scene graphs, and system sequence charts revealing internal token routing and memory tiering.
+- 📡 **Tech Radar & 2026 Engineering Digest**: Opinionated tracking of emerging models and runtimes classified into **Adopt**, **Trial**, **Assess**, and **Hold**.
+- 🧠 **54 Interactive Knowledge Checks**: Real-world interview questions, scenario drills, and mock AI Architect certification exams.
+- ⚡ **Zero-Latency ⌘K Global Search**: Client-side fuzzy search indexing over 172 pages, 1,180 sections, and 1,420 keywords in under 5 milliseconds.
+- 🖥️ **Desktop Native Application**: Fully packaged macOS desktop application with native window chrome, dark-mode optimization, and offline capability.
+
+---
+
+## 📰 Tech Radar & Highlighted Breakthroughs
+
+Our dedicated **Newsletter & Tech Radar** features deep architectural breakdowns with official repository links and visual dataflow blueprints:
+
+| Technology | Category | Focus & Key Innovation |
+|---|---|---|
+| [**Needle**](https://github.com/cactus-compute/needle) | Edge & Hardware | **26M Zero-FFN Automation Model**: Eliminates Feed-Forward Networks entirely for 6,000 tok/s prefill & 1,200 tok/s decode on edge microcontrollers. |
+| [**Soup (`soup-cli`)**](https://github.com/MakazhanAlpamys/Soup) | MLOps & Systems | **Layer Streaming on 4GB VRAM**: Streams inactive decoder layers between host RAM and GPU VRAM, allowing 8B LLM fine-tuning on everyday laptops. |
+| [**Freebuff**](https://github.com/CodebuffAI/freebuff) | Developer Tools | **Free Multi-Agent Coding Swarm**: Decomposes coding workflows into specialized AST pickers, planners, diff editors, and reviewers funded via unobtrusive text ads. |
+| [**Papermorph**](https://github.com/DozenTwelve/Papermorph) | Architecture & RAG | **PDF to Interactive Code**: Compiles dense academic research PDFs into narrated, animated HTML5/SVG web experiences and quizzes rather than heavy video diffusion. |
+| [**Human-Atlas**](https://github.com/ashemag/human-atlas) | Spatial & 3D Web | **2,234 Meshes in WebGL Three.js**: High-fidelity 3D anatomical viewer with raycasted organ selection, 15 physiological systems, and exploded views at 60 FPS. |
+| [**Qwen3.8-Flash-Next**](https://huggingface.co/Qwen) | Frontier Models | **180B Sparse MoE (6B Active)**: 3-tier architecture with a 125B MoE backbone, 51B offloadable N-gram table, and 4B Multi-Token Prediction head with 1M context. |
+| [**Tiiny Pocket AI**](https://tiiny.ai) | Edge & Hardware | **80GB Personal AI Supercomputer**: 300g pocket hardware with 80GB LPDDR5X unified memory and TiinyOS running 100B–120B parameter models completely offline. |
+| [**Laya Model**](https://huggingface.co/convaiinnovations/laya) | Frontier Models | **Non-Autoregressive System 1 Decision Layer**: 322M ModernBERT model executing in <10ms to emit calibrated probabilities and choices without slow token generation. |
+| [**Headroom**](https://github.com/headroomlabs-ai/headroom) | Developer Tools | **Context & Token Compression Proxy (MCP)**: Strips 60–95% of token bloat from tool logs and JSON outputs using Rust Token Killer (RTK) and OutputShaper. |
+| [**Colibri**](https://github.com/JustVugg/colibri) | MLOps & Systems | **Pure C MoE Memory Multitiering**: Zero-dependency C runtime streaming 700B+ MoE weights across SSD mmap, system RAM, and GPU VRAM with built-in API daemon. |
+
+---
+
+## 🗺️ Complete Curriculum & Knowledge Map
+
+### 🐍 1. Python for AI & High-Performance Engineering
+- **Python Foundations**: Memory model, variable binding, execution model, garbage collection.
+- **Data Structures**: Hash maps, deque, set operations, algorithmic complexity.
+- **OOP & Advanced Features**: Dunder methods, metaclasses, decorators, generators, context managers.
+- **Async & System Tooling**: `asyncio` event loop, coroutines, thread/process pools, GIL internals.
+- **Data Science Stack**: Vectorized NumPy operations, Pandas indexing, scikit-learn pipelines.
+- **Regular Expressions**: Deterministic finite automata (DFA), lookaheads, tokenization patterns.
+
+### 🤖 2. Machine Learning & Mathematics
+- **Data Foundations & Statistics**: Sourcing, data cleaning, exploratory data analysis (EDA), bivariate analysis, Central Limit Theorem, hypothesis testing.
+- **Foundations**: Supervised vs Unsupervised, feature engineering, evaluation metrics (ROC-AUC, F1, Log Loss), Bias–Variance tradeoff, L1/L2 regularization, optimization (SGD to AdamW).
+- **Classical Models**: Linear & Multiple Regression, Logistic Regression, Naive Bayes, K-Nearest Neighbors (KNN), Decision Trees (Gini/Entropy), Support Vector Machines (SVM).
+- **Ensembles**: Random Forests (Bagging), XGBoost (Gradient Boosting), LightGBM.
+- **Deep Learning**: Perceptrons, Multi-Layer Perceptrons (MLP), Backpropagation, CNNs (Computer Vision), RNNs & LSTMs, Transformers (Self-Attention, Multi-Head Attention), State Space Models (SSM/Mamba), RWKV, GANs, Transfer Learning, Graph Neural Networks (GNN).
+- **Reinforcement Learning & Alignment**: Markov Decision Processes (MDP), PPO, RLHF, Direct Preference Optimization (DPO), Group Relative Policy Optimization (GRPO), Constitutional AI (RLAIF).
+
+### ✨ 3. Generative AI & Frontier Models
+- **How LLMs Work**: Byte-Pair Encoding (BPE), SentencePiece, KV-Cache mechanics, decoding strategies (Top-p, Top-k, Temperature, Speculative Decoding), System 2 reasoning models.
+- **Model Architectures**: Dense LLMs, Vision-Language Models (VLMs), Small Language Models (SLMs), Mixture-of-Experts (MoE), Large Concept Models (LCM), Large Action Models (LAM).
+- **Model Adaptation & PEFT**: Parameter-Efficient Fine-Tuning, LoRA, QLoRA (4-bit NormalFloat), DoRA, Prefix Tuning, (IA)³, Adapter Layers, Model Merging (SLERP, TIES, DARE).
+- **Efficiency & Serving**: Quantization (GPTQ, AWQ, GGUF, FP8/FP4), vLLM Serving (PagedAttention, Chunked Prefill), Tensor Parallelism, Pipeline Parallelism.
+- **Safety & Governance**: Red teaming, prompt injection attacks, jailbreak defenses, guardrail pipelines, responsible AI governance.
+
+### 🔍 4. Retrieval-Augmented Generation (RAG)
+- **Ingestion & Indexing**: Document Loaders (PDF, HTML, Markdown, Audio), Chunking Strategies (Semantic, Recursive, Markdown-aware), Embedding Models, Vector Databases (Pinecone, Qdrant, Chroma, Milvus).
+- **Query-Time Optimization**: Dense vs Sparse Retrieval, Hybrid Search, Cohere/BGE Reranking, Matryoshka Embeddings, Contextual Compression, Text-to-SQL.
+- **8 RAG Architecture Variants**:
+  1. *Naive RAG* (Basic retrieve-and-read)
+  2. *Advanced RAG* (Pre-retrieval routing + post-retrieval reranking)
+  3. *Hybrid RAG* (Dense vector + BM25 keyword fusion)
+  4. *GraphRAG* (Entity-relationship extraction + community summarization)
+  5. *Agentic RAG* (Dynamic query decomposition and iterative tool looping)
+  6. *Corrective RAG (CRAG)* (Confidence evaluation with web search fallback)
+  7. *Self-RAG* (Reflective tokens for retrieval and critique verification)
+  8. *Multimodal RAG* (Interleaved vision, table, and text vector spaces)
+
+### 🕸️ 5. Autonomous Agents & Protocols
+- **Building Blocks**: Function calling, tool dispatch schemas, context engineering, computer use, browser automation, memory structures (short-term buffer vs vector long-term).
+- **Protocols & Standards**: Model Context Protocol (MCP 1.0), Agent-to-Agent (A2A) communication protocol.
+- **Multi-Agent Orchestration**: LangChain, LangGraph (cyclic state machines), AutoGen, CrewAI, multi-agent debate and consensus.
+
+### ☁️ 6. Cloud & Production MLOps
+- **Cloud AI Platforms**: AWS (Bedrock, SageMaker), Azure (Azure OpenAI, AI Foundry), Google Cloud (Vertex AI).
+- **Cloud Infrastructure**: VMs, IAM, Networking, Load Balancers, Object Storage, Containerization (AKS/ECS).
+- **Production Systems**: Latency optimization, cost modeling, LLM-as-a-Judge evals, CI/CD for prompts, drift detection.
+
+---
+
+## 📁 Repository Structure
+
+```text
+ai-engineering-visualized/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml            # Linting (oxlint) + content checks + build validation
+│       └── deploy.yml        # Zero-downtime automated deployment to GitHub Pages
+├── notebooks/                # Accompanying Jupyter notebooks (LangChain LCEL, loaders)
+├── legacy/                   # Archived static HTML prototypes (reference only)
+└── v2-react/                 # Modern React 19 single-page application & Electron source
+    ├── electron/
+    │   ├── main.cjs          # Electron desktop main process (window management & menu)
+    │   └── preload.js        # Context isolation bridge
+    ├── public/
+    │   ├── 404.html          # SPA route redirector for GitHub Pages
+    │   └── favicon.svg       # Brand icon
+    ├── scripts/
+    │   ├── build-search-index.mjs  # Pre-computes searchIndex.json (172+ pages)
+    │   └── check-content.mjs       # Static analyzer for routes, links & quiz integrity
+    ├── src/
+    │   ├── components/       # GuideLayout, GlobalHeader, Footer, VizKit UI lab widgets
+    │   ├── config/           # Navigation trees, topic maps, and learning paths
+    │   ├── data/             # Quiz banks (54 sets), glossary (198 terms), search index
+    │   ├── pages/            # 175 interactive educational guides and labs
+    │   └── App.jsx           # Lazy-loaded HashRouter route definitions
+    └── package.json          # Dependencies and automation scripts
+```
+
+---
+
+## 🚀 Quick Start & Local Development
+
+### Prerequisites
+- **Node.js**: v20 or v22 LTS
+- **npm**: v10+
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Amara-Manikanta/ai-engineering-visualized.git
+cd ai-engineering-visualized/v2-react
+```
+
+### 2. Install Dependencies
+```bash
+npm ci
+```
+
+### 3. Start the Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 🛠️ Build, Lint & Verification Commands
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Starts Vite development server with Hot Module Replacement (HMR). |
+| `npm run build` | Builds search index and compiles the production bundle into `dist/`. |
+| `npm run lint` | Runs `oxlint` with `--deny-warnings` for ultra-fast zero-warning enforcement. |
+| `npm run check` | Static analyzer verifying all 175 routes, internal links, TOC anchors, and quizzes. |
+| `npm run search:index` | Re-indexes all 172 guides and sections into `src/data/searchIndex.json`. |
+| `npm run electron:dev` | Runs Vite dev server concurrently with Electron desktop shell. |
+| `npm run electron:build` | Packages the desktop application for macOS (DMG & Zip). |
+
+---
+
+## 🖥️ macOS Desktop Application
+
+The application is fully configured as a standalone desktop app using Electron:
+
+- **Download Pre-Built App**: Check the [Releases](https://github.com/Amara-Manikanta/ai-engineering-visualized/releases) page for `.dmg` and `.zip` installers.
+- **Build Locally**:
+  ```bash
+  cd v2-react
+  npm run electron:build:mac
+  ```
+  The packaged bundle will be generated in `v2-react/release/mac-arm64/AI Visualised Engineering.app`.
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/amazing-visualizer`).
+3. Ensure all tests and linters pass:
+   ```bash
+   npm run lint && npm run check && npm run build
+   ```
+4. Commit your changes (`git commit -m 'feat: add interactive transformer KV-cache lab'`).
+5. Push to the branch (`git push origin feature/amazing-visualizer`).
+6. Open a Pull Request.
+
+---
+
+## 📜 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  <strong>Built with care by <a href="https://github.com/Amara-Manikanta">Amara Manikanta Dileep</a></strong><br>
+  <em>AI Visualised Engineering — Empowering the next generation of AI systems builders.</em>
+</p>
