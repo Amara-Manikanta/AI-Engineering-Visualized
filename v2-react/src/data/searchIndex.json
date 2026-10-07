@@ -6120,15 +6120,15 @@
   },
   {
     "path": "/newsletter",
-    "title": "📰 Tech Radar & Newsletter",
-    "intro": "Weekly visual breakdowns of frontier AI models, emerging developer tools, research breakthroughs, and production engineering practices.",
+    "title": "📰 AI Engineering Digest & Tech Radar",
+    "intro": "Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling.",
     "sections": [
       {
         "label": "Featured Issue",
         "hash": "featured"
       },
       {
-        "label": "Latest Editions",
+        "label": "Highlighted Technologies",
         "hash": "editions"
       },
       {

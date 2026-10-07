@@ -4,131 +4,532 @@ import GuideLayout from '../components/GuideLayout';
 
 const EDITIONS = [
   {
-    id: 14,
-    title: "DeepSeek-R1 & The Era of Open-Source Reasoning Models",
+    id: 1,
+    title: "Needle: 26M Parameter Zero-FFN Automation Foundation Model for Edge Devices",
+    subtitle: "Eliminating Feed-Forward Networks for 6,000 tok/s Edge Tool Calling",
     date: "Oct 2026",
-    category: "Frontier Models",
-    categoryColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    category: "Edge & Hardware",
+    categoryColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
     readTime: "6 min read",
-    summary: "How DeepSeek achieved GPT-4o and o1 level reasoning at 99% lower training cost using GRPO reinforcement learning without massive SFT datasets.",
+    url: "https://github.com/cactus-compute/needle",
+    repoName: "cactus-compute/needle",
+    summary: "Needle is an open-source 26-million parameter automation foundation model engineered by Cactus Compute specifically for tiny edge devices, microcontrollers, and smartphones. By radically stripping out Feed-Forward Networks (FFNs) entirely and relying solely on a Simple Attention Network with gating mechanisms, Needle shrinks memory footprint to 8–29 MB under 2-bit quantization while delivering blazing inference speeds: 6,000 tokens/sec prefill and 1,200 tokens/sec decode on consumer edge chips.",
+    whyHighlighted: "Why it's highlighted: Needle challenges the prevailing dogma that agentic function calling requires multi-billion parameter LLMs. By proving that a specialized 26M model without FFN bloat can reliably parse schemas, execute function calls, and extract structured data at milliwatt power consumption, it opens the floodgates for true on-device autonomy in robotics, wearables, and offline IoT sensors.",
     takeaways: [
-      "GRPO (Group Relative Policy Optimization) eliminates the separate Critic model, saving 50%+ VRAM.",
-      "Pure RL induces Chain-of-Thought reasoning, self-correction, and verification naturally.",
-      "Distilled 1.5B to 70B open weights perform on par with proprietary reasoning endpoints."
+      "Zero-FFN Architecture: Replaces dense MLP/FFN blocks (which consume 65-75% of model weights) with gated simple linear attention layers.",
+      "Extreme Speed on Consumer Silicon: Reaches 6,000 tok/s prefill and 1,200 tok/s decode on Apple Silicon, Snapdragon, and embedded ARM chips.",
+      "Ultra-Compact 8-29MB Footprint: 2-bit quantized weights fit entirely inside on-chip SRAM or low-cost microcontrollers.",
+      "Tuned for Tool Calling: Pretrained exclusively for function schemas, JSON extraction, and deterministic tool dispatch."
     ],
-    highlights: ["GRPO Algorithm", "Pure RL Training", "Distillation", "Open Weights"],
+    specs: {
+      "Parameters": "26 Million",
+      "Model Size": "8 MB (2-bit) / 29 MB (8-bit)",
+      "Inference Speed": "6,000 tok/s prefill, 1,200 tok/s decode",
+      "Architecture": "Simple Attention Network (No FFNs)",
+      "Target Devices": "Phones, Wearables, ESP32/Cortex-M, Edge Robots"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│              NEEDLE ZERO-FFN ATTENTION PIPELINE             │
+└─────────────────────────────────────────────────────────────┘
+  Input Tokens ──► Token Embedding (26M Total Weights)
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │       Simple Gated Attention Block (Repeated N times)   │
+  │  ┌────────────────────┐       ┌──────────────────────┐  │
+  │  │   Multi-Head QKV   │  ───► │ Gated State Mixer    │  │
+  │  │ Linear Projections │       │ (Learned Gates W_g)  │  │
+  │  └────────────────────┘       └──────────────────────┘  │
+  │               │                           │             │
+  │               └─────────────┬─────────────┘             │
+  │                             ▼                           │
+  │                 [ Residual Add & Norm ]                 │
+  │                             │                           │
+  │     ❌ NO FEED-FORWARD NETWORK (FFN Layer Omitted!)      │
+  │        (Saves ~70% VRAM & Eliminates Matrix Bloat)      │
+  └─────────────────────────────┬───────────────────────────┘
+                                │
+                                ▼
+  Structured Tool Dispatch / JSON Output (1,200 tok/s decode)`,
+    highlights: ["Zero-FFN", "26M Params", "Edge Tool Calling", "2-Bit Quant", "6000 tok/s"],
     featured: true
   },
   {
-    id: 13,
-    title: "Claude Code CLI & Terminal-Native Agentic Engineering",
-    date: "Sep 2026",
+    id: 2,
+    title: "Soup (soup-cli): Fine-Tuning 8B LLMs on 4GB VRAM Laptops via Layer Streaming",
+    subtitle: "Breaking the GPU Training Monopoly with Memory Tiering & Single-Command YAML",
+    date: "Oct 2026",
+    category: "MLOps & Systems",
+    categoryColor: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    readTime: "7 min read",
+    url: "https://github.com/MakazhanAlpamys/Soup",
+    repoName: "MakazhanAlpamys/Soup",
+    summary: "Soup is a groundbreaking open-source CLI tool (soup-cli) created by Makazhan Alpamys that shatters the hardware barriers of post-training. Traditional fine-tuning of an 8-billion parameter model demands 16GB to 24GB of dedicated VRAM even with LoRA. Soup introduces 'Layer Streaming', a technique that keeps inactive transformer decoder layers in standard system RAM and dynamically streams only the currently active forward/backward layers into GPU VRAM just-in-time, allowing an 8B model to be trained on an ordinary 4GB laptop GPU.",
+    whyHighlighted: "Why it's highlighted: Democratizes model training. By consolidating data preparation, hyperparameter configuration, training execution, and evaluation into a single declarative YAML file executed by one command (`soup train`), Soup eliminates multi-GPU cluster dependencies and makes fine-tuning accessible to any developer on everyday consumer laptops.",
+    takeaways: [
+      "Layer Streaming Engine: Only 1-2 transformer layers reside in GPU VRAM simultaneously; inactive weights remain in host DDR4/DDR5 system RAM.",
+      "4GB VRAM Capability: Fine-tunes Llama-3-8B and Qwen-2.5-7B models on entry-level laptop GPUs (RTX 3050/4050 mobile).",
+      "Unified Post-Training Pipeline: End-to-end data formatting, LoRA adapter injection, checkpointing, and evaluation defined in one YAML config.",
+      "Zero Cloud Dependency: Complete privacy and local offline training without renting expensive cloud compute instances."
+    ],
+    specs: {
+      "Supported Models": "Llama-3 8B, Qwen-2.5 7B, Mistral 7B",
+      "Min Hardware": "4 GB VRAM Laptop GPU + 16 GB System RAM",
+      "Core Technique": "Layer Streaming (PCIe Ring Buffer)",
+      "Configuration": "Single YAML declarative spec (`soup-cli`)",
+      "Stack": "Python, PyTorch, C++ Streaming CUDA Kernels"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│                 SOUP LAYER STREAMING RUNTIME                │
+└─────────────────────────────────────────────────────────────┘
+  [ System RAM (DDR5) - Host Memory ]
+  ├── Layer 00  Layer 01  Layer 02  Layer 03  ... Layer 31
+  └── All Inactive Weights & Optimizer States Stored Here
+                         │
+                         ▼  (High-Speed PCIe Async Stream)
+  ┌─────────────────────────────────────────────────────────┐
+  │         GPU VRAM (Only 4GB Required Buffer!)            │
+  │                                                         │
+  │    [ Active Layer L_i Forward/Backward Pass ]           │
+  │         ├── Compute Activation / Gradients              │
+  │         └── Sync Local LoRA Adapter Weights             │
+  │                                                         │
+  │    [ Async Pre-fetch Layer L_{i+1} via CUDA Streams ]   │
+  └─────────────────────────┬───────────────────────────────┘
+                            │
+                            ▼
+      Write-back Gradients to RAM ──► Next Layer Stream`,
+    highlights: ["Layer Streaming", "4GB VRAM Training", "soup-cli", "8B Fine-tuning", "LoRA"],
+    featured: false
+  },
+  {
+    id: 3,
+    title: "Freebuff: Open-Source Multi-Agent Coding Framework Funded by Non-Intrusive Ads",
+    subtitle: "Subscription-Free Agentic Engineering with Specialized Sub-Agent Choreography",
+    date: "Oct 2026",
     category: "Developer Tools",
     categoryColor: "bg-orange-500/20 text-orange-400 border-orange-500/30",
     readTime: "5 min read",
-    summary: "Exploring Anthropic's terminal agent: multi-file AST context indexing, permission safety hooks, subagent spawning, and checkpoint reverts.",
+    url: "https://github.com/CodebuffAI/freebuff",
+    repoName: "CodebuffAI/freebuff",
+    summary: "Freebuff is an open-source, ad-supported multi-agent software engineering framework developed by CodebuffAI. While commercial coding assistants like Cursor and GitHub Copilot require recurring monthly fees or personal API keys, Freebuff unlocks multi-agent coding for everyone by subsidizing model inference with lightweight, non-intrusive text ads. Built as a high-performance TypeScript monorepo running on Bun, it orchestrates specialized sub-agents for file selection, planning, syntax editing, and code review.",
+    whyHighlighted: "Why it's highlighted: Eliminates economic friction in AI developer tooling while advancing multi-agent architecture. Instead of relying on a single monolithic LLM prompt, Freebuff demonstrates how a team of specialized micro-agents running on modern open models can outperform expensive proprietary coding assistants without requiring a credit card.",
     takeaways: [
-      "Project memory files (CLAUDE.md) give instant zero-latency stack context.",
-      "Subagent delegation divides complex refactors into concurrent sub-tasks.",
-      "Automated git checkpoints ensure zero-risk undo capabilities."
+      "Sub-Agent Choreography: Divides complex coding requests across specialized File Pickers, Architecture Planners, Code Editors, and Reviewers.",
+      "Zero Paywall Access: Uses clean text ads in the terminal to subsidize frontier inference tokens (GLM-5.3 Flash, Sol-6.1).",
+      "Bun & TypeScript Runtime: Ultra-fast local execution leveraging `@codebuff/sdk` with native LSP AST symbol parsing.",
+      "Multi-Environment Support: Operates seamlessly in terminal CLI, local web sandboxes, and VS Code extension environments."
     ],
-    highlights: ["Claude Code", "CLI Agents", "CLAUDE.md", "Subagents"],
+    specs: {
+      "Architecture": "Coordinated Sub-Agent Swarm (Picker + Planner + Editor + Reviewer)",
+      "Runtime": "TypeScript / Bun + `@codebuff/sdk`",
+      "Cost Model": "Free & Open-Source (Funded via unobtrusive terminal text ads)",
+      "Supported LLMs": "GLM 5.3 Flash, Sol 6.1, Ollama Local Models",
+      "Integrations": "Terminal CLI, Web Sandbox, Git Checkpoint Reverts"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│             FREEBUFF MULTI-AGENT CHOREOGRAPHY               │
+└─────────────────────────────────────────────────────────────┘
+  Developer Prompt: "Add JWT Auth and Refresh Middleware"
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │                Freebuff Orchestrator                    │
+  └───────┬───────────────────┬───────────────────┬─────────┘
+          │                   │                   │
+          ▼                   ▼                   ▼
+    ┌───────────┐       ┌───────────┐       ┌───────────┐
+    │File Picker│       │ Architecture│     │Research & │
+    │Agent (AST)│       │  Planner  │       │ Docs Agent│
+    └─────┬─────┘       └─────┬─────┘       └─────┬─────┘
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              ▼
+                 ┌─────────────────────────┐
+                 │    Code Editor Agent    │
+                 │ (Atomic unified diffs)  │
+                 └────────────┬────────────┘
+                              ▼
+                 ┌─────────────────────────┐
+                 │  Reviewer / Lint Guard  │
+                 └────────────┬────────────┘
+                              ▼
+                Tested & Verified Pull Request`,
+    highlights: ["Multi-Agent", "Bun Runtime", "No Credit Card", "Ad-Funded", "AST Parsing"],
     featured: false
   },
   {
-    id: 12,
-    title: "Model Context Protocol (MCP) 1.0 Specification",
-    date: "Aug 2026",
+    id: 4,
+    title: "Papermorph: Compiling Academic PDFs into Interactive Animated Web Courses",
+    subtitle: "Rethinking Scientific Publishing via Code Generation Instead of Heavy Diffusion",
+    date: "Oct 2026",
     category: "Architecture & RAG",
-    categoryColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-    readTime: "7 min read",
-    summary: "Replacing 100+ bespoke API integrations with Anthropic's open MCP standard connecting AI hosts to databases, tools, and enterprise servers.",
-    takeaways: [
-      "Decouples LLM application logic from external tool implementation details.",
-      "Standardizes JSON-RPC 2.0 transport over stdio and SSE (Server-Sent Events).",
-      "Enables dynamic server discovery across databases, GitHub, Slack, and local OS."
-    ],
-    highlights: ["MCP Spec", "Tool Protocol", "JSON-RPC", "Context Sharing"],
-    featured: false
-  },
-  {
-    id: 11,
-    title: "vLLM 0.7 & Chunked Prefill Acceleration for Production LLMs",
-    date: "Jul 2026",
-    category: "MLOps & Systems",
-    categoryColor: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    readTime: "4 min read",
-    summary: "How Chunked Prefill and PagedAttention 2.0 eliminate GPU memory fragmentation and double throughput during long-context prompt serving.",
-    takeaways: [
-      "Chunked prefill interleaves long prompt prefill tokens with decode tokens in single batches.",
-      "FP8 and INT4 KV-cache quantization reduces memory footprint by 50%.",
-      "Multi-GPU Tensor Parallelism scaling achieves 2,000+ output tokens per second."
-    ],
-    highlights: ["vLLM 0.7", "PagedAttention", "Chunked Prefill", "FP8 KV-Cache"],
-    featured: false
-  },
-  {
-    id: 10,
-    title: "Microsoft GraphRAG: Combining Knowledge Graphs with Vector Search",
-    date: "Jun 2026",
-    category: "Architecture & RAG",
-    categoryColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    categoryColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
     readTime: "6 min read",
-    summary: "Moving beyond naive vector retrieval by extracting entity-relationship graphs and community summaries for holistic document comprehension.",
+    url: "https://github.com/DozenTwelve/Papermorph",
+    repoName: "DozenTwelve/Papermorph",
+    summary: "Papermorph is an innovative open-source AI transformation engine by DozenTwelve that takes dense, static academic research PDFs (such as arXiv papers) and compiles them into interactive, narrated, and animated web learning experiences. Rather than generating bloated, uneditable video files using diffusion models, Papermorph leverages Claude Opus to extract core equations, generate storyboards, synthesize narration scripts, and emit pure HTML5/SVG/JavaScript animations and interactive knowledge check quizzes.",
+    whyHighlighted: "Why it's highlighted: Scientific publishing has remained trapped in static, two-column black-and-white PDF formats for over three decades. Papermorph demonstrates that generative code synthesis is vastly superior to generative video for technical comprehension: interactive code is lightweight (kilobytes vs gigabytes), searchable, accessible, and provides live parameter exploration.",
     takeaways: [
-      "LLMs extract entities, relations, and claims into a structured Graph Database.",
-      "Hierarchical Community Detection groups related nodes and pre-summarizes topics.",
-      "Global Search handles abstract queries like 'What are the main risks across all contracts?'"
+      "Code Generation over Video Diffusion: Emits pure SVG/Canvas animations and audio narration instead of multi-gigabyte MP4s.",
+      "Automated Pedagogy Pipeline: Extracts foundational concepts, generates storyboard frames, produces scripts, and drafts quizzes.",
+      "Interactive Equation Decompilation: Converts LaTeX math into dynamic sliders and visual geometry visualizations.",
+      "Self-Contained Static Output: Compiles into lightweight static web artifacts ready to host anywhere with zero backend requirements."
     ],
-    highlights: ["GraphRAG", "Knowledge Graphs", "Community Detection", "Global Search"],
+    specs: {
+      "Input Format": "Academic PDFs, arXiv URLs, Whitepapers",
+      "Output Format": "Interactive HTML5/CSS/SVG Web Apps + Narration + Quizzes",
+      "Generation Engine": "Claude Opus structured prompt skills & code synthesis",
+      "Rendering Tech": "SVG, HTML5 Canvas, Web Audio API, Tailwind CSS",
+      "Bandwidth Efficiency": "100x smaller payload than generated video"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│               PAPERMORPH TRANSFORMATION PIPELINE            │
+└─────────────────────────────────────────────────────────────┘
+  Static arXiv PDF (Dense text, equations, static figures)
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │                 Semantic Decomposition                  │
+  │    • LaTeX Equation Parser   • Figure & Caption OCR     │
+  │    • Core Thesis Extraction  • Proof & Lemma Graph      │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │            Curriculum & Storyboard Generator            │
+  │    • Chapter Breakdown       • Narration Voice Script   │
+  │    • Interactive Widget Spec • Checkpoint Quizzes       │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │               Pure Code Compilation Engine              │
+  │    • HTML5 / Canvas Vector Animation Scripts            │
+  │    • Web Audio Narration Synchronization                │
+  │    • Interactive Math Sliders & Parametric Graphs       │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  Deployable Interactive Course (Lightweight Static HTML5)`,
+    highlights: ["PDF to Interactive", "Code-First Visuals", "Research Papers", "Interactive Quizzes"],
     featured: false
   },
   {
-    id: 9,
-    title: "LoRA, QLoRA, and DoRA: Parameter-Efficient Fine-Tuning Demystified",
-    date: "May 2026",
-    category: "MLOps & Systems",
-    categoryColor: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    readTime: "8 min read",
-    summary: "A complete comparative guide to PEFT methods: how 4-bit NormalFloat (NF4) and Weight-Decomposed LoRA enable 70B fine-tuning on consumer GPUs.",
-    takeaways: [
-      "LoRA freezes base weights and trains small A × B low-rank adapter matrices.",
-      "QLoRA quantizes frozen base weights to 4-bit NF4 while keeping adapters in 16-bit BF16.",
-      "DoRA decomposes weights into magnitude and direction for superior learning accuracy."
-    ],
-    highlights: ["LoRA", "QLoRA", "DoRA", "4-bit NF4"],
-    featured: false
-  },
-  {
-    id: 8,
-    title: "OpenAI o3 & System 2 Test-Time Compute Scaling",
-    date: "Apr 2026",
-    category: "Frontier Models",
+    id: 5,
+    title: "Human-Atlas: Web-Based 3D Human Anatomy Explorer Powered by React & Three.js",
+    subtitle: "2,234 Selectable BodyParts3D Meshes with Exploded Views in Pure WebGL",
+    date: "Oct 2026",
+    category: "Architecture & RAG",
     categoryColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
     readTime: "5 min read",
-    summary: "Analyzing the transition from fast completion (System 1) to deliberate step-by-step reasoning (System 2) powered by Process Reward Models (PRMs).",
+    url: "https://github.com/ashemag/human-atlas",
+    repoName: "ashemag/human-atlas",
+    summary: "Human-Atlas is a phenomenal open-source 3D biological exploration application created by ashemag. Built completely on React, TypeScript, and Three.js, it renders an intricate 3D anatomical model of the human body composed of 2,234 individually selectable meshes derived from the BodyParts3D anatomical database. Users can explore 15 discrete physiological systems (skeletal, cardiovascular, nervous, muscular, etc.), toggle an exploded view to study anatomical relationships, and inspect individual organs at 60 FPS in any modern web browser.",
+    whyHighlighted: "Why it's highlighted: Sets a high-water mark for spatial visualization on the web. It demonstrates how modern WebGL optimizations, glTF geometry compression, and declarative React-Three-Fiber scene graphs can deliver medical-grade interactive 3D visualizations without requiring multi-gigabyte desktop software or closed proprietary licenses.",
     takeaways: [
-      "Test-time compute allows models to generate and verify hidden Chain-of-Thought paths.",
-      "Process Reward Models score each intermediate step rather than just the final answer.",
-      "Outperforms standard LLMs on ARC-AGI, Competitive Programming, and PhD math."
+      "2,234 Anatomical Meshes: Full human anatomy modeled with high geometric fidelity sourced from BodyParts3D data.",
+      "15 Organ Systems: Instant toggling and opacity blending across Skeletal, Muscular, Nervous, Circulatory, and Lymphatic systems.",
+      "Exploded View Mode: Algorithmic displacement vectors push anatomical components outward along normal axes to reveal interior structures.",
+      "Zero-Install Client-Side WebGL: Runs entirely in browser memory as a static web application without server-side rendering latency."
     ],
-    highlights: ["System 2", "Test-Time Compute", "PRMs", "o3 Series"],
+    specs: {
+      "Mesh Count": "2,234 selectable anatomical components",
+      "Anatomical Systems": "15 systems (Skeletal, Muscular, Vascular, Neural, etc.)",
+      "Tech Stack": "React, TypeScript, Three.js, WebGL, Vite",
+      "Key Features": "Exploded View, Raycasting Mesh Inspector, System Filters",
+      "Deployment": "100% Client-side static website"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│                HUMAN-ATLAS 3D WEBGL ARCHITECTURE            │
+└─────────────────────────────────────────────────────────────┘
+  Browser Viewport (React Canvas + WebGL 2.0 Context)
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │                 Three.js Scene Graph Engine             │
+  │  ├── Camera Controller (OrbitControls / Smooth Damping) │
+  │  ├── InstancedMesh & DRACO Compressed Geometries        │
+  │  └── Raycaster Selection & Bounding Volume Hierarchy    │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │                15 System Filter Matrices                │
+  │  [Skeletal]  [Muscular]  [Cardiovascular]  [Nervous]... │
+  │        ├── Visibility Masks (Bitwise Layer Toggles)     │
+  │        └── Dynamic Opacity & Material Shader Blending   │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │              Exploded View Vector Engine                │
+  │   Pos_exploded = Pos_original + λ * Vector_Displace_i   │
+  │   (Reveals internal organs with interactive sliders)    │
+  └─────────────────────────────────────────────────────────┘`,
+    highlights: ["Three.js", "WebGL", "2,234 Meshes", "Exploded View", "Human Anatomy"],
+    featured: false
+  },
+  {
+    id: 6,
+    title: "Qwen3.8-Flash-Next: 180B Sparse MoE Model with N-Gram Table & Multi-Token Prediction",
+    subtitle: "Activating Only 6B Parameters per Token with 1M Native Context Window",
+    date: "Sep 2026",
+    category: "Frontier Models",
+    categoryColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
+    readTime: "8 min read",
+    url: "https://huggingface.co/Qwen",
+    repoName: "Qwen / Alibaba Cloud",
+    summary: "Qwen3.8-Flash-Next is Alibaba's cutting-edge 180-billion-parameter Mixture-of-Experts (MoE) experimental preview model. Despite housing 180B parameters on disk, it employs a radical three-part hybrid architecture: a 125B MoE transformer backbone, a 51B N-gram embedding lookup table, and a 4B Multi-Token Prediction (MTP) head. By routing tokens to only top-2 experts per layer, it activates a mere 6B parameters per token during forward passes—delivering frontier coding and reasoning intelligence at high inference speeds with a native 1-million token context window.",
+    whyHighlighted: "Why it's highlighted: Architectural efficiency breakthrough. The 51B N-gram lookup table can be offloaded onto system DDR RAM or NVMe storage while only the active 6B compute path runs on GPU/NPU cores. Enthusiasts have successfully run this 180B-class model on 64GB Apple Silicon Macs, proving that ultra-sparse architectures can outpace dense models while cutting operational serving costs by 80%.",
+    takeaways: [
+      "Ultra-Sparse Activation: Houses 180B parameters overall but computes only ~6B active parameters per token.",
+      "Multi-Token Prediction (MTP): 4B prediction head forecasts 2-4 sequential tokens concurrently, doubling decoding throughput.",
+      "Static N-Gram Embedding Table: 51B parameters dedicated to fast n-gram lookups, offloadable to host RAM or high-speed NVMe.",
+      "1,000,000 Token Context Window: Seamless retrieval across entire software codebases and technical documentation suites."
+    ],
+    specs: {
+      "Total Parameters": "180 Billion (125B MoE + 51B N-gram table + 4B MTP head)",
+      "Active Parameters": "~6 Billion per token",
+      "Context Window": "1,000,000 tokens native",
+      "Routing Strategy": "Top-2 Expert Routing + Multi-Token Prediction",
+      "Local Hardware": "Runnable on 64GB Mac / PC with RAM offloading"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│             QWEN3.8-FLASH-NEXT 3-TIER ARCHITECTURE          │
+└─────────────────────────────────────────────────────────────┘
+  Input Prompt (Up to 1,000,000 Tokens)
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │  Tier 1: 51B N-Gram Lookup Table (Offloadable to RAM)   │
+  │  Rapid phrase & syntax hash table for instant indexing  │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │       Tier 2: 125B Sparse MoE Core Backbone             │
+  │                                                         │
+  │     Expert 1   Expert 2   Expert 3  ...  Expert 64      │
+  │        ▲          ▲                                     │
+  │        └── Router Selects Top-2 Experts ONLY!           │
+  │            (Only ~6B active compute per token!)         │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │  Tier 3: 4B Multi-Token Prediction (MTP) Speculative Head│
+  │  Forecasts Token_{t+1}, Token_{t+2}, Token_{t+3} at once│
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+      Blazing 3x Generation Speed (150+ tok/s Local)`,
+    highlights: ["180B MoE", "6B Active", "1M Context", "Multi-Token Prediction", "N-Gram Table"],
     featured: false
   },
   {
     id: 7,
-    title: "Speculative Decoding: 3x Faster LLM Inference at Zero Accuracy Loss",
-    date: "Mar 2026",
+    title: "Tiiny AI Pocket Lab: World's Smallest 80GB Personal AI Supercomputer",
+    subtitle: "Running 120B Models Offline on 300g Custom Hardware with TiinyOS",
+    date: "Sep 2026",
+    category: "Edge & Hardware",
+    categoryColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    readTime: "6 min read",
+    url: "https://tiiny.ai",
+    repoName: "tiiny.ai",
+    summary: "The Tiiny AI Pocket Lab is a palm-sized personal AI supercomputer manufactured by Tiiny AI. Weighing just 300 grams, this portable hardware unit packs 80GB of high-speed unified LPDDR5X memory, a 12-core ARMv9.2 custom processor with integrated tensor accelerators, and a 1TB high-endurance NVMe SSD. Powered by the proprietary TiinyOS microkernel, it runs massive 70B to 120B parameter language models and autonomous agent workflows entirely locally without internet access, subscription fees, or data leaks.",
+    whyHighlighted: "Why it's highlighted: The pinnacle of sovereign edge AI hardware. While cloud providers charge premium hourly rates and monitor API telemetry, Tiiny Pocket proves that desktop-grade 80GB unified memory bandwidth can fit in a pocket, offering journalists, security researchers, and developers complete data sovereignty and air-gapped agent operations anywhere in the world.",
+    takeaways: [
+      "80GB LPDDR5X Unified Memory: Massive unified memory pool fits large 70B-120B quantized models in memory with zero cloud offloading.",
+      "12-Core ARMv9.2 Silicon: Custom thermal-throttling architecture balances power consumption between 15W and 45W.",
+      "TiinyOS AI Microkernel: Stripped-down Linux OS optimized for zero-overhead direct memory model loading and instant wake.",
+      "Guinness World Record Holder: Formally recognized as the world's smallest personal AI supercomputer (300g form factor)."
+    ],
+    specs: {
+      "Unified Memory": "80 GB LPDDR5X (High-bandwidth unified memory)",
+      "Processor": "12-Core ARMv9.2 with Custom Neural Accelerators",
+      "Storage": "1 TB High-Speed NVMe Gen4 SSD",
+      "Operating System": "TiinyOS (Zero-copy unified memory kernel)",
+      "Form Factor": "Pocket-sized, ~300 grams, 15W-45W power draw"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│                 TIINY POCKET HARDWARE ARCHITECTURE          │
+└─────────────────────────────────────────────────────────────┘
+  Pocket Chassis (Aluminum Unibody, 300g, 15-45W Thermal Design)
+                         │
+  ┌──────────────────────┴──────────────────────────────────┐
+  │                                                         │
+  │  ┌───────────────────────┐   ┌────────────────────────┐ │
+  │  │ 12-Core ARMv9.2 CPU   │   │  80GB LPDDR5X Unified  │ │
+  │  │  + Neural Processing  │◄─►│  High-Bandwidth RAM    │ │
+  │  │  Accelerator Cores    │   │  (Runs 120B Models!)   │ │
+  │  └───────────────────────┘   └────────────────────────┘ │
+  │               ▲                          ▲              │
+  │               │                          │              │
+  │  ┌────────────┴──────────┐   ┌───────────┴────────────┐ │
+  │  │ 1TB High-Endurance    │   │ TiinyOS Microkernel    │ │
+  │  │ NVMe SSD Model Vault  │   │ Direct Memory Access   │ │
+  │  └───────────────────────┘   └────────────────────────┘ │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  100% Air-Gapped Offline Local Agent Gateway (Localhost API)`,
+    highlights: ["80GB RAM", "120B Models Offline", "ARMv9.2", "300g Hardware", "Data Sovereignty"],
+    featured: false
+  },
+  {
+    id: 8,
+    title: "Laya Model: Non-Autoregressive 'System 1' Fast Decision Layer for Agent Routing",
+    subtitle: "ModernBERT-Based Single-Forward-Pass Decisions with Calibrated Probabilities",
+    date: "Aug 2026",
+    category: "Frontier Models",
+    categoryColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
+    readTime: "5 min read",
+    url: "https://huggingface.co/convaiinnovations/laya",
+    repoName: "convaiinnovations/laya",
+    summary: "Laya is an open-source non-autoregressive decision model developed by Convai Innovations. Unlike standard generative LLMs that waste compute by predicting text token-by-token, Laya is designed as a fast 'System 1' cognitive layer built on a ModernBERT-large backbone (~322M-421M parameters). In a single forward pass taking under 10 milliseconds, Laya consumes complex state (support tickets, JSON payloads, tool outputs) and returns structured categorical choices, numerical scores, or calibrated probabilities.",
+    whyHighlighted: "Why it's highlighted: Solves the latency and cost crisis of agent routing. Orchestrating multi-agent systems often wastes 500ms and dollars calling frontier 70B generative models just to answer binary questions like 'Is this query safe?' or 'Which tool should handle this?'. Laya performs these exact decisions in under 10ms with mathematical probability calibration and zero generative hallucination.",
+    takeaways: [
+      "Non-Autoregressive Execution: Evaluates full prompts and questions in a single forward pass without sequential token loops.",
+      "Calibrated Decision Types: Emits discrete Choices, continuous Scores (0-100), and calibrated probabilities (P(true)) directly.",
+      "ModernBERT Backbone: 322M-421M parameter model runs at negligible CPU/GPU cost in local edge or server nodes.",
+      "Frontline Guardrail: Ideal for prompt injection defense, urgency classification, and agentic intent routing before expensive LLMs."
+    ],
+    specs: {
+      "Model Backbone": "ModernBERT-large (~322M to 421M parameters)",
+      "Inference Latency": "< 10 ms (Single forward pass)",
+      "Output Format": "Choice (Enum), Score (Float), Noul (Calibrated Probability)",
+      "Compute Requirements": "Runs on standard CPU or entry-level GPU via ONNX",
+      "License": "Apache 2.0 Open Source"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│                 LAYA DUAL-PROCESS AGENT PIPELINE            │
+└─────────────────────────────────────────────────────────────┘
+  Incoming User Request / Tool Payload
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │      System 1: LAYA (322M ModernBERT Single Pass)       │
+  │                                                         │
+  │  • Intent Choice:   [Billing / Technical / Threat]      │
+  │  • Urgency Score:   [0.94 / 1.0]                        │
+  │  • Safety Valid:    [P(safe) = 0.998]                   │
+  │                                                         │
+  │  ⏱️ Latency: < 10ms  |  💰 Cost: $0.00001               │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+         ┌───────────────┴───────────────┐
+         ▼                               ▼
+  [ Simple Routing Path ]        [ Complex Reasoning Path ]
+  Direct Database Query /        Forward to System 2 Frontier LLM
+  Instant Cached Response        (Only when deliberate CoT needed)
+  (80% of requests handled)      (Saves 80% Token Billing & Latency)`,
+    highlights: ["Non-Autoregressive", "System 1", "ModernBERT", "10ms Latency", "Zero Hallucination"],
+    featured: false
+  },
+  {
+    id: 9,
+    title: "Headroom: Context Compression Proxy & MCP Server for Coding Agents",
+    subtitle: "Slashing Agent Token Bloat by 60–95% with Rust Token Killer & OutputShaper",
+    date: "Aug 2026",
+    category: "Developer Tools",
+    categoryColor: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+    readTime: "6 min read",
+    url: "https://github.com/headroomlabs-ai/headroom",
+    repoName: "headroomlabs-ai/headroom",
+    summary: "Headroom is an essential open-source context compression proxy, SDK, and Model Context Protocol (MCP) server engineered by Headroomlabs AI. As coding agents like Claude Code, Cursor, and Aider run commands and query databases, their context windows become clogged with voluminous JSON outputs, build logs, and duplicate RAG chunks. Headroom acts as an intelligent intermediary, using its 'Rust Token Killer' (RTK) and semantic deduplication algorithms to shrink incoming payloads by 60% to 95% while preserving 100% of functional accuracy.",
+    whyHighlighted: "Why it's highlighted: Direct solution to context degradation and spiraling API costs. Unchecked token accumulation triggers the 'Lost in the Middle' attention failure in LLMs. Headroom prevents context bloat, expands effective conversation depth by 5x, and cuts developer token costs by up to 80% with a drop-in proxy.",
+    takeaways: [
+      "60% to 95% Compression on Structured Data: Flattens verbose JSON, strips repetitive terminal ansi codes, and extracts key log lines.",
+      "Rust Token Killer (RTK): Blazing high-speed native Rust engine parses and optimizes ASTs and prompt tokens in microseconds.",
+      "Universal MCP Server Integration: Plugs into Claude Code, Cursor, Aider, and GitHub Copilot CLI as a standard MCP tool proxy.",
+      "OutputShaper Response Pruning: Trims chatty LLM preambles ('Sure, I can help with that!') on the response side to eliminate wasted tokens."
+    ],
+    specs: {
+      "Compression Ratio": "60-95% on JSON/Logs, ~20% on raw code",
+      "Deployment Options": "MCP Server, HTTP Proxy, Python SDK, TypeScript SDK",
+      "Engine": "Rust Token Killer (RTK) + OutputShaper",
+      "Compatibility": "Claude Code, Cursor, Aider, LangChain, MCP Hosts",
+      "Latency Overhead": "< 2 ms (Native Rust parsing)"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│                 HEADROOM TOKEN COMPRESSION PIPELINE         │
+└─────────────────────────────────────────────────────────────┘
+  Agent Tool Command (e.g. 'cat 500-line package-lock.json' or 'npm test')
+                         │
+                         ▼  (Raw Output: 45,000 Tokens)
+  ┌─────────────────────────────────────────────────────────┐
+  │                 HEADROOM PROXY / MCP SERVER             │
+  │                                                         │
+  │  ┌───────────────────────┐   ┌────────────────────────┐ │
+  │  │ Rust Token Killer     │   │ Schema Flattener       │ │
+  │  │ (Strips ANSI / Whitesp)│  │ (Compresses JSON Trees)│ │
+  │  └───────────────────────┘   └────────────────────────┘ │
+  │               │                          │              │
+  │               └─────────────┬────────────┘              │
+  │                             ▼                           │
+  │        [ Semantic Deduplication & Error Extractor ]     │
+  └─────────────────────────────┬───────────────────────────┘
+                                │
+                                ▼  (Compressed Payload: 3,200 Tokens)
+  LLM Prompt Context (Saves 92% Tokens & Prevents Attention Degradation!)
+                                │
+                                ▼
+  LLM Response ──► [ OutputShaper ] ──► Clean Direct Code Output`,
+    highlights: ["Token Compression", "MCP Server", "Rust Token Killer", "95% Reduction", "Claude Code"],
+    featured: false
+  },
+  {
+    id: 10,
+    title: "Colibri: Pure C Multitiered Inference Engine Running 700B+ MoE Models Locally",
+    subtitle: "Zero-Dependency Expert Streaming Across SSD, System RAM, and GPU VRAM",
+    date: "Jul 2026",
     category: "MLOps & Systems",
     categoryColor: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    readTime: "5 min read",
-    summary: "Pairing a small 1B draft model with a 70B target model to propose and verify candidate tokens in parallel batches.",
+    readTime: "7 min read",
+    url: "https://github.com/JustVugg/colibri",
+    repoName: "JustVugg/colibri",
+    summary: "Colibri is a masterclass in systems engineering created by JustVugg. It is a pure C inference runtime with zero external dependencies designed to run trillion-parameter Mixture-of-Experts (MoE) models—including GLM-5.2 (744B), Inkling (975B), and Kimi K3 (2.8T)—on consumer hardware. Instead of requiring a $200,000 cluster with terabytes of VRAM, Colibri implements 'Memory Multitiering', treating high-speed NVMe SSDs, system DDR RAM, and GPU memory as a unified virtual storage hierarchy, streaming required expert weights on-demand.",
+    whyHighlighted: "Why it's highlighted: Redefines what is computationally possible on consumer machines. By eliminating Python, PyTorch, and heavy CUDA wrappers in favor of hand-optimized pure C and direct OS memory-mapped files (mmap), Colibri allows curious researchers to run and study frontier trillion-parameter models right on their personal workstations.",
     takeaways: [
-      "Draft model generates 5 candidate tokens rapidly in sequence.",
-      "Target 70B model verifies all 5 candidates in a single GPU forward pass.",
-      "Mathematically guarantees identical output distribution to full target model."
+      "Pure C with Zero Dependencies: No Python, no heavy PyTorch wheels; compiles with standard `gcc` or `clang` in seconds.",
+      "Memory Multitiering: Unifies NVMe SSD (Cold Weights), RAM (Hot Expert Cache), and GPU VRAM (Active Compute Buffer).",
+      "Dynamic Expert Streaming: Only reads the specific sparse MoE experts needed for the current token from disk/RAM on the fly.",
+      "OpenAI Compatible Gateway: Built-in minimal HTTP daemon exposes `/v1/chat/completions` for direct compatibility with open-webui and dev tools."
     ],
-    highlights: ["Speculative Decoding", "Draft Models", "Fast Inference", "GPU Parallelism"],
+    specs: {
+      "Supported Models": "GLM-5.2 (744B), Inkling (975B), Kimi K3 (2.8T), Qwen3.8-Flash",
+      "Implementation": "100% Pure C (Zero third-party library dependencies)",
+      "Architecture": "Memory Multitiering with Dynamic MoE Expert Streaming",
+      "Memory Strategy": "mmap Direct I/O with Predictive Read-Ahead Ring Buffers",
+      "API Server": "Built-in lightweight OpenAI-compatible HTTP daemon"
+    },
+    diagram: `┌─────────────────────────────────────────────────────────────┐
+│                 COLIBRI MULTITIERED MOE ENGINE              │
+└─────────────────────────────────────────────────────────────┘
+  Token Generation Loop (Top-K Expert Selection)
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │       Tier 1: NVMe SSD Storage (Cold Weights Tier)      │
+  │    700B - 2.8T Parameter MoE Weights in mmap files      │
+  └──────────────────────┬──────────────────────────────────┘
+                         │  (On-Demand Expert Page Fault Stream)
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │     Tier 2: System RAM (Hot Active Expert LRU Cache)    │
+  │    Predictive pre-fetching loads likely next experts    │
+  └──────────────────────┬──────────────────────────────────┘
+                         │  (Direct Memory Access DMA)
+                         ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │     Tier 3: GPU VRAM / CPU SIMD (Active Compute Core)   │
+  │    Pure C AVX-512 / Metal / CUDA Matrix Multiplication  │
+  └──────────────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+  OpenAI-Compatible Local API Endpoint (/v1/chat/completions)`,
+    highlights: ["Pure C", "700B MoE", "Memory Multitiering", "Zero Dependencies", "Expert Streaming"],
     featured: false
   }
 ];
@@ -138,36 +539,40 @@ const TECH_RADAR = [
     ring: "Adopt",
     color: "border-emerald-500/50 bg-emerald-500/10 text-emerald-400",
     items: [
+      { name: "Headroom MCP", desc: "Token & context compression proxy saving 60-95% payload across coding agents." },
+      { name: "Needle Edge Model", desc: "Sub-30M zero-FFN foundation model for 6000 tok/s on-device tool calling." },
       { name: "MCP Protocol 1.0", desc: "Standardized tool integration across LLM hosts and external servers." },
-      { name: "vLLM & PagedAttention", desc: "Production standard for high-throughput LLM serving." },
-      { name: "LangGraph", desc: "Cyclic state-machine orchestration for multi-agent workflows." },
-      { name: "Qwen2.5-Coder", desc: "Top open-weight coding model family for enterprise self-hosting." }
+      { name: "vLLM Chunked Prefill", desc: "Production standard for high-throughput memory-efficient LLM serving." }
     ]
   },
   {
     ring: "Trial",
     color: "border-cyan-500/50 bg-cyan-500/10 text-cyan-400",
     items: [
-      { name: "DeepSeek-R1 Distillations", desc: "Small 7B/14B models with frontier-level reasoning weights." },
-      { name: "Claude Code CLI", desc: "Terminal-native agentic coding with permission boundaries." },
-      { name: "Hybrid RAG + Reranking", desc: "Dense vector + BM25 keyword search paired with Cohere/BGE reranker." }
+      { name: "Soup (soup-cli)", desc: "Fine-tune 8B models on 4GB VRAM laptops via layer streaming." },
+      { name: "Freebuff Multi-Agent", desc: "Subscription-free open-source agentic coding with sub-agent swarms." },
+      { name: "Laya System 1", desc: "Non-autoregressive 10ms decision layer replacing slow generative LLMs for routing." },
+      { name: "Claude Code CLI", desc: "Terminal-native agentic coding with permission boundaries and AST context." }
     ]
   },
   {
     ring: "Assess",
     color: "border-amber-500/50 bg-amber-500/10 text-amber-400",
     items: [
-      { name: "Speculative Decoding", desc: "Draft + target model acceleration for latency-critical API endpoints." },
-      { name: "GraphRAG Indexing", desc: "Knowledge Graph + Entity extraction for global document queries." },
-      { name: "Native Audio/Video LLMs", desc: "Processing interleaved raw audio/video frames directly in prompt." }
+      { name: "Qwen3.8-Flash-Next", desc: "180B sparse MoE activating only ~6B parameters per token with 1M context." },
+      { name: "Colibri Pure C", desc: "Memory multitiering streaming 700B+ MoE models across SSD, RAM, and GPU." },
+      { name: "Tiiny Pocket AI", desc: "Palm-sized 80GB unified memory supercomputer running 120B models offline." },
+      { name: "Papermorph", desc: "Code-generation pipeline transforming dense PDFs into interactive web lessons." },
+      { name: "Human-Atlas", desc: "Interactive 3D anatomical viewer rendering 2,234 meshes in WebGL." }
     ]
   },
   {
     ring: "Hold",
     color: "border-rose-500/50 bg-rose-500/10 text-rose-400",
     items: [
-      { name: "Pure SFT without DPO/RL", desc: "Supervised fine-tuning alone without preference optimization." },
-      { name: "Raw Uncompressed Context Stuffing", desc: "Feeding 100k+ tokens without chunking or compression." }
+      { name: "Uncompressed Context Bloat", desc: "Feeding raw, unpruned JSON and terminal logs into agent prompts." },
+      { name: "Heavy LLM Routing", desc: "Using expensive 70B generative models for simple classification or guardrails." },
+      { name: "Pure SFT without RL", desc: "Supervised fine-tuning alone without preference optimization." }
     ]
   }
 ];
@@ -179,50 +584,53 @@ export default function NewsletterIndex() {
   const [email, setEmail] = useState("");
   const [expandedEdition, setExpandedEdition] = useState(null);
 
-  const categories = ["All", "Frontier Models", "Developer Tools", "Architecture & RAG", "MLOps & Systems"];
+  const categories = ["All", "Edge & Hardware", "Developer Tools", "Architecture & RAG", "MLOps & Systems", "Frontier Models"];
 
   const filteredEditions = EDITIONS.filter((ed) => {
     const matchesCategory = selectedCategory === "All" || ed.category === selectedCategory;
     const matchesSearch = searchQuery === "" || 
       ed.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ed.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ed.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ed.whyHighlighted.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ed.repoName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ed.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  const featuredIssue = EDITIONS.find(ed => ed.featured);
+  const featuredIssue = EDITIONS.find(ed => ed.featured) || EDITIONS[0];
 
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (email.trim()) {
       setSubscribed(true);
-      localStorage.setItem("mani_notes_newsletter_email", email);
+      localStorage.setItem("ai_engineering_newsletter_email", email);
     }
   };
 
   const toc = [
     { label: "Featured Issue", hash: "featured" },
-    { label: "Latest Editions", hash: "editions" },
+    { label: "Highlighted Technologies", hash: "editions" },
     { label: "AI Tech Radar 2026", hash: "tech-radar" },
     { label: "Subscribe", hash: "subscribe" }
   ];
 
   return (
     <GuideLayout
-      title="📰 Tech Radar & Newsletter"
-      intro="Weekly visual breakdowns of frontier AI models, emerging developer tools, research breakthroughs, and production engineering practices."
+      title="📰 AI Engineering Digest & Tech Radar"
+      intro="Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling."
       toc={toc}
     >
       {/* ====== FEATURED EDITION (HERO SPOTLIGHT) ====== */}
       <section id="featured" className="mb-14 scroll-mt-24">
-        <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-wider text-purple-400">
-          <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse"></span>
-          Featured Issue Spotlight
+        <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-wider text-emerald-400">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Featured Technology Spotlight
         </div>
 
         {featuredIssue && (
-          <div className="bg-gradient-to-br from-purple-950/40 via-[#111111] to-[#0a0a0a] border border-purple-500/30 rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="bg-gradient-to-br from-emerald-950/40 via-[#111111] to-[#0a0a0a] border border-emerald-500/30 rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <span className={`px-3 py-1 rounded-full text-xs font-bold border ${featuredIssue.categoryColor}`}>
@@ -231,38 +639,68 @@ export default function NewsletterIndex() {
               <span className="text-xs text-gray-400 font-mono">Issue #{featuredIssue.id} · {featuredIssue.date} · {featuredIssue.readTime}</span>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4 leading-tight">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2 leading-tight">
               {featuredIssue.title}
             </h2>
+            <p className="text-emerald-400/90 font-mono text-sm mb-4">
+              {featuredIssue.subtitle}
+            </p>
 
-            <p className="text-gray-300 text-base leading-relaxed mb-6">
+            <p className="text-gray-300 text-base leading-relaxed mb-5">
               {featuredIssue.summary}
             </p>
 
+            {/* Why Highlighted Box */}
+            <div className="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-4 mb-6">
+              <h4 className="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>🌟</span> Why This Is Highlighted in 2026:
+              </h4>
+              <p className="text-sm text-gray-200 leading-relaxed">
+                {featuredIssue.whyHighlighted.replace("Why it's highlighted: ", "")}
+              </p>
+            </div>
+
+            {/* Visual Architecture Preview */}
+            <div className="bg-black/70 border border-white/10 rounded-xl p-4 mb-6 font-mono text-xs text-gray-300 overflow-x-auto">
+              <div className="text-[11px] text-gray-500 uppercase tracking-widest font-bold mb-2">Architectural Blueprint Preview:</div>
+              <pre className="text-emerald-400/90 whitespace-pre leading-snug">{featuredIssue.diagram}</pre>
+            </div>
+
             <div className="bg-black/50 border border-white/10 rounded-xl p-5 mb-6 space-y-2">
-              <h4 className="text-sm font-bold text-purple-300 uppercase tracking-wide mb-3">⚡ Key Architectural Takeaways:</h4>
+              <h4 className="text-sm font-bold text-emerald-300 uppercase tracking-wide mb-3">⚡ Key Architectural Takeaways:</h4>
               {featuredIssue.takeaways.map((point, idx) => (
                 <div key={idx} className="flex items-start gap-3 text-sm text-gray-200">
-                  <span className="text-purple-400 font-bold mt-0.5">✓</span>
+                  <span className="text-emerald-400 font-bold mt-0.5">✓</span>
                   <span>{point}</span>
                 </div>
               ))}
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-              <div className="flex flex-wrap gap-2">
-                {featuredIssue.highlights.map((h, idx) => (
-                  <span key={idx} className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-gray-300 font-mono">
-                    #{h}
-                  </span>
-                ))}
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href={featuredIssue.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-mono text-xs flex items-center gap-1.5 transition-all"
+                >
+                  <span>🔗 {featuredIssue.repoName}</span>
+                  <span className="text-emerald-400">↗</span>
+                </a>
+                <div className="flex flex-wrap gap-1.5">
+                  {featuredIssue.highlights.map((h, idx) => (
+                    <span key={idx} className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-gray-300 font-mono">
+                      #{h}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               <button
                 onClick={() => setExpandedEdition(featuredIssue)}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-purple-500/25 flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 flex items-center gap-2"
               >
-                Read Deep Dive <span>→</span>
+                Full Architecture & Specs <span>→</span>
               </button>
             </div>
           </div>
@@ -273,14 +711,14 @@ export default function NewsletterIndex() {
       <section id="editions" className="mb-14 scroll-mt-24">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-1">Newsletter Archive & Issues</h2>
-            <p className="text-sm text-gray-400">Filter by domain or search for specific tools and concepts.</p>
+            <h2 className="text-2xl font-bold text-white mb-1">Highlighted Technologies & Breakdowns</h2>
+            <p className="text-sm text-gray-400">Detailed visual engineering reviews with official repo & project links.</p>
           </div>
 
-          <div className="relative w-full md:w-64">
+          <div className="relative w-full md:w-72">
             <input
               type="text"
-              placeholder="Search editions & topics..."
+              placeholder="Search tools, repos, concepts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
@@ -311,7 +749,7 @@ export default function NewsletterIndex() {
             <motion.div
               key={ed.id}
               whileHover={{ y: -4 }}
-              className="bg-[#111111] border border-white/10 hover:border-white/20 rounded-2xl p-6 flex flex-col justify-between transition-all group"
+              className="bg-[#111111] border border-white/10 hover:border-white/20 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-lg"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
@@ -321,16 +759,43 @@ export default function NewsletterIndex() {
                   <span className="text-xs text-gray-500 font-mono">Issue #{ed.id} · {ed.date}</span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors leading-snug">
                   {ed.title}
                 </h3>
+
+                <p className="text-xs text-indigo-400 font-mono mb-3">
+                  {ed.subtitle}
+                </p>
 
                 <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
                   {ed.summary}
                 </p>
+
+                {/* Highlight callout pill */}
+                <div className="bg-black/40 border border-white/5 rounded-xl p-3 mb-4">
+                  <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wide mb-1 flex items-center gap-1">
+                    <span>💡</span> Why It's Highlighted:
+                  </div>
+                  <p className="text-xs text-gray-300 line-clamp-2">
+                    {ed.whyHighlighted.replace("Why it's highlighted: ", "")}
+                  </p>
+                </div>
               </div>
 
               <div>
+                {/* Official Repository or Website Link */}
+                <div className="mb-4">
+                  <a
+                    href={ed.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-gray-300 hover:text-white transition-colors"
+                  >
+                    <span>📂 {ed.repoName}</span>
+                    <span className="text-indigo-400 text-sm">↗</span>
+                  </a>
+                </div>
+
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {ed.highlights.map((h, i) => (
                     <span key={i} className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-gray-400 border border-white/5">
@@ -345,7 +810,7 @@ export default function NewsletterIndex() {
                     onClick={() => setExpandedEdition(ed)}
                     className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
                   >
-                    View Highlights <span>→</span>
+                    Architecture & Deep Dive <span>→</span>
                   </button>
                 </div>
               </div>
@@ -355,7 +820,7 @@ export default function NewsletterIndex() {
 
         {filteredEditions.length === 0 && (
           <div className="text-center py-16 bg-[#111111] rounded-2xl border border-white/10 text-gray-400">
-            <p className="text-base font-semibold mb-2">No newsletter editions match your filter.</p>
+            <p className="text-base font-semibold mb-2">No technologies match your filter or search query.</p>
             <button
               onClick={() => { setSelectedCategory("All"); setSearchQuery(""); }}
               className="text-xs text-indigo-400 underline font-bold"
@@ -373,7 +838,7 @@ export default function NewsletterIndex() {
           <h2 className="text-2xl font-bold text-white">AI Engineering Tech Radar 2026</h2>
         </div>
         <p className="text-gray-400 text-sm mb-6 max-w-2xl">
-          Our opinionated radar tracking which frameworks, models, and paradigms to Adopt, Trial, Assess, or Hold in production.
+          Our opinionated radar tracking which frameworks, models, runtimes, and engineering paradigms to Adopt, Trial, Assess, or Hold.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -383,7 +848,7 @@ export default function NewsletterIndex() {
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${radar.color}`}>
                   Ring: {radar.ring.toUpperCase()}
                 </span>
-                <span className="text-xs text-gray-500 font-mono">{radar.items.length} Technologies</span>
+                <span className="text-xs text-gray-500 font-mono">{radar.items.length} Tracked Technologies</span>
               </div>
 
               <div className="space-y-3">
@@ -406,10 +871,10 @@ export default function NewsletterIndex() {
         <div className="bg-gradient-to-r from-indigo-950/50 via-[#141414] to-purple-950/40 border border-indigo-500/30 rounded-2xl p-8 text-center relative overflow-hidden shadow-2xl">
           <span className="text-4xl block mb-3">📬</span>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-            Subscribe to Mani Notes Tech Digest
+            Subscribe to AI Visualised Engineering Digest
           </h2>
           <p className="text-gray-300 text-sm max-w-xl mx-auto mb-6 leading-relaxed">
-            Get curated visual architecture breakdowns, tool reviews, and AI engineering field notes delivered straight to your inbox every week.
+            Curated architectural breakdowns, edge model breakthroughs, and open-source tooling analysis delivered directly to your inbox.
           </p>
 
           {!subscribed ? (
@@ -417,7 +882,7 @@ export default function NewsletterIndex() {
               <input
                 type="email"
                 required
-                placeholder="Enter your work email..."
+                placeholder="Enter your email address..."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-[#0a0a0a] border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-400 transition-colors"
@@ -431,7 +896,7 @@ export default function NewsletterIndex() {
             </form>
           ) : (
             <div className="bg-emerald-500/20 border border-emerald-500/40 rounded-xl p-4 max-w-md mx-auto text-emerald-300 text-sm font-bold flex items-center justify-center gap-2">
-              <span>🎉 You're subscribed! Welcome to the Mani Notes digest.</span>
+              <span>🎉 You're subscribed! Welcome to AI Visualised Engineering.</span>
             </div>
           )}
 
@@ -449,7 +914,7 @@ export default function NewsletterIndex() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#121212] border border-white/20 rounded-2xl p-6 md:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto relative shadow-2xl"
+              className="bg-[#121212] border border-white/20 rounded-2xl p-6 md:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
             >
               <button
                 onClick={() => setExpandedEdition(null)}
@@ -462,19 +927,78 @@ export default function NewsletterIndex() {
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${expandedEdition.categoryColor}`}>
                   {expandedEdition.category}
                 </span>
-                <span className="text-xs text-gray-400 font-mono">Issue #{expandedEdition.id} · {expandedEdition.date}</span>
+                <span className="text-xs text-gray-400 font-mono">Issue #{expandedEdition.id} · {expandedEdition.date} · {expandedEdition.readTime}</span>
               </div>
 
-              <h2 className="text-2xl font-extrabold text-white mb-4">
+              <h2 className="text-2xl font-extrabold text-white mb-1">
                 {expandedEdition.title}
               </h2>
+              <p className="text-indigo-400 font-mono text-sm mb-4">
+                {expandedEdition.subtitle}
+              </p>
+
+              {/* Direct Link Banner */}
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 p-3 bg-white/5 border border-white/10 rounded-xl">
+                <div className="flex items-center gap-2 text-xs text-gray-300 font-mono">
+                  <span className="text-emerald-400">●</span>
+                  <span>Official Project / Repo:</span>
+                  <span className="text-white font-bold">{expandedEdition.repoName}</span>
+                </div>
+                <a
+                  href={expandedEdition.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/30"
+                >
+                  <span>Open Official URL</span>
+                  <span>↗</span>
+                </a>
+              </div>
 
               <p className="text-gray-300 text-sm leading-relaxed mb-6">
                 {expandedEdition.summary}
               </p>
 
+              {/* Why Highlighted Section */}
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
+                <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <span>💡</span> Why This Is Highlighted in 2026:
+                </h4>
+                <p className="text-sm text-gray-200 leading-relaxed">
+                  {expandedEdition.whyHighlighted.replace("Why it's highlighted: ", "")}
+                </p>
+              </div>
+
+              {/* Visual Architecture Diagram */}
+              {expandedEdition.diagram && (
+                <div className="mb-6">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span>📐</span> Architectural Flow & Data Pipeline:
+                  </h4>
+                  <div className="bg-black/70 border border-white/10 rounded-xl p-4 font-mono text-xs text-indigo-300 overflow-x-auto shadow-inner">
+                    <pre className="whitespace-pre leading-relaxed">{expandedEdition.diagram}</pre>
+                  </div>
+                </div>
+              )}
+
+              {/* Technical Specifications */}
+              {expandedEdition.specs && (
+                <div className="bg-black/50 border border-white/10 rounded-xl p-4 mb-6">
+                  <h4 className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-3">🛠️ Technical Specifications:</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {Object.entries(expandedEdition.specs).map(([key, val]) => (
+                      <div key={key} className="bg-white/5 rounded-lg p-2 flex flex-col">
+                        <span className="text-gray-400 font-mono text-[10px]">{key}</span>
+                        <span className="text-white font-semibold mt-0.5">{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Key Takeaways */}
               <div className="bg-black/60 border border-white/10 rounded-xl p-5 mb-6 space-y-3">
-                <h4 className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Key Architecture Takeaways:</h4>
+                <h4 className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Key Architectural Takeaways:</h4>
                 {expandedEdition.takeaways.map((point, idx) => (
                   <div key={idx} className="flex items-start gap-3 text-sm text-gray-200">
                     <span className="text-indigo-400 font-bold mt-0.5">✓</span>
@@ -483,20 +1007,31 @@ export default function NewsletterIndex() {
                 ))}
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-white/10">
-                <div className="flex gap-2">
+              <div className="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-white/10">
+                <div className="flex flex-wrap gap-2">
                   {expandedEdition.highlights.map((h, i) => (
                     <span key={i} className="px-2 py-0.5 rounded bg-white/5 text-xs text-gray-400 font-mono border border-white/5">
                       #{h}
                     </span>
                   ))}
                 </div>
-                <button
-                  onClick={() => setExpandedEdition(null)}
-                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors"
-                >
-                  Close Edition
-                </button>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={expandedEdition.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors flex items-center gap-1"
+                  >
+                    <span>Visit {expandedEdition.repoName}</span>
+                    <span>↗</span>
+                  </a>
+                  <button
+                    onClick={() => setExpandedEdition(null)}
+                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
+                  >
+                    Close Edition
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
