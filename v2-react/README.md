@@ -1,4 +1,4 @@
-# AI Engineering Visualized — site source
+# AI Visualised Engineering — site source
 
 React 19, Vite 8, Tailwind CSS v4, framer-motion and React Router (`HashRouter`, so it works on GitHub Pages and in Electron).
 

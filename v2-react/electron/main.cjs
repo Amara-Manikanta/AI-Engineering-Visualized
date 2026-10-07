@@ -9,7 +9,7 @@ function createWindow() {
     height: 880,
     minWidth: 960,
     minHeight: 650,
-    title: 'Mani Notes',
+    title: 'AI Visualised Engineering',
     icon: path.join(__dirname, 'icon.png'),
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 16 },
@@ -56,7 +56,7 @@ function createMenu() {
     ...(isMac
       ? [
           {
-            label: 'Mani Notes',
+            label: 'AI Visualised Engineering',
             submenu: [
               { role: 'about' },
               { type: 'separator' },

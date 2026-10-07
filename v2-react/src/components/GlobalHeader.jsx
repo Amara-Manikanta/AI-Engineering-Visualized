@@ -47,7 +47,7 @@ export default function GlobalHeader() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 text-lg sm:text-xl font-bold hover:opacity-80 transition-opacity shrink-0">
             <span className="text-2xl">🧠</span>
-            <span>Mani <span className="text-indigo-400">Notes</span></span>
+            <span>AI Visualised <span className="text-indigo-400">Engineering</span></span>
           </Link>
 
           {/* Desktop Nav */}
@@ -220,7 +220,7 @@ export default function GlobalHeader() {
 
             {/* Footer */}
             <div className="px-8 py-6 border-t border-white/5 shrink-0">
-              <p className="text-xs text-gray-600 text-center">Mani Notes © 2026</p>
+              <p className="text-xs text-gray-600 text-center">AI Visualised Engineering © 2026</p>
             </div>
           </nav>
         </div>

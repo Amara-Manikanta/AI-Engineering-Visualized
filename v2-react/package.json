@@ -1,5 +1,5 @@
 {
-  "name": "mani-notes",
+  "name": "ai-visualised-engineering",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -39,8 +39,8 @@
     "wait-on": "^8.0.2"
   },
   "build": {
-    "appId": "com.maninotes.app",
-    "productName": "Mani Notes",
+    "appId": "com.aivisualisedengineering.app",
+    "productName": "AI Visualised Engineering",
     "directories": {
       "output": "release"
     },

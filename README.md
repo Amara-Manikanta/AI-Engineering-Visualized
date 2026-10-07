@@ -1,4 +1,4 @@
-# AI Engineering Visualized 🤖
+# AI Visualised Engineering 🤖
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-6366f1?style=for-the-badge&logo=github)](https://Amara-Manikanta.github.io/ai-engineering-visualized)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
@@ -61,4 +61,4 @@ Pushes to `main` build `v2-react/` and deploy it to GitHub Pages (`.github/workf
 
 ---
 
-Built by Amara Manikanta Dileep. © 2026 AI Engineering Visualized
+Built by Amara Manikanta Dileep. © 2026 AI Visualised Engineering
