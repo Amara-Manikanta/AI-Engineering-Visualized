@@ -1482,7 +1482,7 @@ export default function NewsletterIndex() {
 
   const getShareUrl = (issueId = null) => {
     let origin = 'https://amara-manikanta.github.io';
-    let path = '/ai-engineering-visualized/';
+    let path = '/AI-Engineering-Visualized/';
 
     if (typeof window !== 'undefined') {
       const isHttp = window.location.protocol.startsWith('http');

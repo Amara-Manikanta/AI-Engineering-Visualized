@@ -4,18 +4,16 @@
   <meta charset="utf-8">
   <title>AI Visualised Engineering</title>
   <script>
-    // The app uses hash routing (#/newsletter), so GitHub Pages only ever
-    // serves index.html. Someone who types or shares a path-style URL such as
-    // /ai-engineering-visualized/newsletter?issue=1 lands here instead; send them to
-    // the equivalent hash route rather than a dead page.
+    // The app uses hash routing (#/newsletter or #/radar), so GitHub Pages serves index.html.
+    // Someone who types or shares a path-style URL lands here instead; redirect to the equivalent hash route.
     (function (l) {
-      var repo = "/ai-engineering-visualized";
-      var hasRepo = l.pathname.indexOf(repo) === 0;
-      var base = hasRepo ? repo : "";
-      var path = hasRepo ? l.pathname.slice(repo.length) : l.pathname;
-      path = path.replace(/\/index\.html$/, "").replace(/\/+$/, "");
-      var cleanPath = path.indexOf("/") === 0 ? path : "/" + path;
-      var target = base + "/#" + cleanPath + (l.search || "") + (l.hash || "");
+      var match = l.pathname.match(/^(\/(?:AI-Engineering-Visualized|ai-engineering-visualized))/i);
+      var repo = match ? match[1] : "/AI-Engineering-Visualized";
+      var rest = match ? l.pathname.slice(match[1].length) : l.pathname;
+      rest = rest.replace(/\/index\.html$/, "").replace(/\/+$/, "");
+      var cleanPath = rest.indexOf("/") === 0 ? rest : "/" + rest;
+      if (cleanPath === "/") cleanPath = "";
+      var target = repo + "/#" + cleanPath + (l.search || "") + (l.hash || "");
       l.replace(target);
     })(window.location);
   </script>
