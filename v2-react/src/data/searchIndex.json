@@ -6124,24 +6124,28 @@
     "intro": "Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling.",
     "sections": [
       {
-        "label": "Overview & Context",
-        "hash": "overview"
+        "label": "1. The Problem",
+        "hash": "problem"
       },
       {
-        "label": "Why Highlighted",
-        "hash": "why-highlighted"
+        "label": "2. Core Intuition",
+        "hash": "intuition"
       },
       {
-        "label": "Architecture Blueprint",
-        "hash": "architecture"
+        "label": "3. Visual Blueprint",
+        "hash": "visualization"
       },
       {
-        "label": "Technical Specifications",
-        "hash": "specifications"
+        "label": "4. Technical Deep-Dive",
+        "hash": "technical-explanation"
       },
       {
-        "label": "Key Takeaways",
-        "hash": "takeaways"
+        "label": "5. Hands-on Experiment",
+        "hash": "experiment"
+      },
+      {
+        "label": "6. Engineering Takeaway",
+        "hash": "takeaway"
       },
       {
         "label": "Share Breakdown",
