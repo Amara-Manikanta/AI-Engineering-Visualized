@@ -63,8 +63,9 @@ function CopyIcon({ className = "w-4 h-4" }) {
 const EDITIONS = [
   {
     id: 1,
-    title: "Needle: 26M Parameter Zero-FFN Automation Foundation Model for Edge Devices",
-    subtitle: "Eliminating Feed-Forward Networks for 6,000 tok/s Edge Tool Calling",
+    shortName: "Needle (26M Zero-FFN)",
+    title: "Kill the FFN: How Needle Packs 6,000 Tok/s Autonomous Tool Calling into Just 26M Weights",
+    subtitle: "Deleting 70% of standard transformer bloat to turn $5 microcontrollers into microsecond agentic runtimes",
     date: "Oct 2026",
     category: "Edge & Hardware",
     categoryColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
@@ -114,8 +115,9 @@ const EDITIONS = [
   },
   {
     id: 2,
-    title: "Soup (soup-cli): Fine-Tuning 8B LLMs on 4GB VRAM Laptops via Layer Streaming",
-    subtitle: "Breaking the GPU Training Monopoly with Memory Tiering & Single-Command YAML",
+    shortName: "Soup (4GB Layer Streaming)",
+    title: "Cracking the GPU Monopoly: How Soup Fine-Tunes 8B Frontier LLMs on Everyday 4GB Laptops",
+    subtitle: "Bypassing $20K cloud clusters with asynchronous RAM-to-VRAM PCIe layer streaming and declarative YAML",
     date: "Oct 2026",
     category: "MLOps & Systems",
     categoryColor: "bg-blue-500/20 text-blue-400 border-blue-500/30",
@@ -162,8 +164,9 @@ const EDITIONS = [
   },
   {
     id: 3,
-    title: "Freebuff: Open-Source Multi-Agent Coding Framework Funded by Non-Intrusive Ads",
-    subtitle: "Subscription-Free Agentic Engineering with Specialized Sub-Agent Choreography",
+    shortName: "Freebuff (Multi-Agent Swarm)",
+    title: "The Death of $20/mo Coding Seats: Inside Freebuff's Ad-Subsidized Multi-Agent Swarm",
+    subtitle: "Why pay monthly IDE fees? Orchestrating AST pickers, diff planners, and syntax guards funded by unobtrusive terminal ads",
     date: "Oct 2026",
     category: "Developer Tools",
     categoryColor: "bg-orange-500/20 text-orange-400 border-orange-500/30",
@@ -218,8 +221,9 @@ const EDITIONS = [
   },
   {
     id: 4,
-    title: "Papermorph: Compiling Academic PDFs into Interactive Animated Web Courses",
-    subtitle: "Rethinking Scientific Publishing via Code Generation Instead of Heavy Diffusion",
+    shortName: "Papermorph (PDF to Living Code)",
+    title: "Never Read a Static arXiv PDF Again: Papermorph Compiles Research Papers into Living Code",
+    subtitle: "Why code generation crushes video diffusion: turning dense equations and proofs into interactive HTML5 simulators",
     date: "Oct 2026",
     category: "Architecture & RAG",
     categoryColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
@@ -275,8 +279,9 @@ const EDITIONS = [
   },
   {
     id: 5,
-    title: "Human-Atlas: Web-Based 3D Human Anatomy Explorer Powered by React & Three.js",
-    subtitle: "2,234 Selectable BodyParts3D Meshes with Exploded Views in Pure WebGL",
+    shortName: "Human-Atlas (3D WebGL)",
+    title: "2,234 Meshes at 60 FPS: Dissecting the Human Body in Pure WebGL with Human-Atlas",
+    subtitle: "Zero installs, real-time raycasting, and exploded organ physics: pushing browser scene graphs to biomedical CAD fidelity",
     date: "Oct 2026",
     category: "Architecture & RAG",
     categoryColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
@@ -330,8 +335,9 @@ const EDITIONS = [
   },
   {
     id: 6,
-    title: "Qwen3.8-Flash-Next: 180B Sparse MoE Model with N-Gram Table & Multi-Token Prediction",
-    subtitle: "Activating Only 6B Parameters per Token with 1M Native Context Window",
+    shortName: "Qwen3.8-Flash-Next (180B MoE)",
+    title: "180 Billion Weights, Only 6B Active: The Mind-Bending Architecture of Qwen3.8-Flash-Next",
+    subtitle: "The 1M-context titan that runs on consumer hardware: fusing a 51B offloadable N-gram table with multi-token speculative forecasting",
     date: "Sep 2026",
     category: "Frontier Models",
     categoryColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
@@ -387,8 +393,9 @@ const EDITIONS = [
   },
   {
     id: 7,
-    title: "Tiiny AI Pocket Lab: World's Smallest 80GB Personal AI Supercomputer",
-    subtitle: "Running 120B Models Offline on 300g Custom Hardware with TiinyOS",
+    shortName: "Tiiny AI (80GB Pocket Rig)",
+    title: "An 80GB Supercomputer in Your Pocket: Running 120B Models Offline on 300g of Silicon",
+    subtitle: "Total data sovereignty: custom ARMv9 silicon and TiinyOS running sovereign frontier intelligence anywhere at 15 Watts",
     date: "Sep 2026",
     category: "Edge & Hardware",
     categoryColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
@@ -437,8 +444,9 @@ const EDITIONS = [
   },
   {
     id: 8,
-    title: "Laya Model: Non-Autoregressive 'System 1' Fast Decision Layer for Agent Routing",
-    subtitle: "ModernBERT-Based Single-Forward-Pass Decisions with Calibrated Probabilities",
+    shortName: "Laya (Sub-10ms System 1)",
+    title: "Stop Using 70B LLMs as If-Else Routers: Laya's Sub-10ms 'System 1' Decision Engine",
+    subtitle: "Slash 90% off API latency and bills with single-forward-pass ModernBERT probability calibration and zero hallucination",
     date: "Aug 2026",
     category: "Frontier Models",
     categoryColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
@@ -487,8 +495,9 @@ const EDITIONS = [
   },
   {
     id: 9,
-    title: "Headroom: Context Compression Proxy & MCP Server for Coding Agents",
-    subtitle: "Slashing Agent Token Bloat by 60–95% with Rust Token Killer & OutputShaper",
+    shortName: "Headroom (Rust Token Killer)",
+    title: "The Rust Token Killer: Slashing 95% of Agent Context Bloat Before Your LLM Forgets",
+    subtitle: "Curing 'Lost in the Middle' attention failure: how an ultra-fast MCP proxy expands coding agent working memory by 5x",
     date: "Aug 2026",
     category: "Developer Tools",
     categoryColor: "bg-orange-500/20 text-orange-400 border-orange-500/30",
@@ -539,8 +548,9 @@ const EDITIONS = [
   },
   {
     id: 10,
-    title: "Colibri: Pure C Multitiered Inference Engine Running 700B+ MoE Models Locally",
-    subtitle: "Zero-Dependency Expert Streaming Across SSD, System RAM, and GPU VRAM",
+    shortName: "Colibri (Pure C MoE Engine)",
+    title: "Pure C, Zero Dependencies: Streaming 700B+ MoE Models on Consumer Hardware with Colibri",
+    subtitle: "No Python, no PyTorch, no heavy CUDA drivers: unifying NVMe SSDs, RAM, and GPU memory into a virtual compute hierarchy",
     date: "Jul 2026",
     category: "MLOps & Systems",
     categoryColor: "bg-blue-500/20 text-blue-400 border-blue-500/30",
@@ -692,6 +702,7 @@ export default function NewsletterIndex() {
     const matchesSearch = searchQuery === "" || 
       ed.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ed.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (ed.shortName && ed.shortName.toLowerCase().includes(searchQuery.toLowerCase())) ||
       ed.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ed.whyHighlighted.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ed.repoName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -1167,7 +1178,7 @@ export default function NewsletterIndex() {
                   }`}
                 >
                   <div className="font-mono text-[10px] opacity-70 mb-0.5">#{ed.id} · {ed.category}</div>
-                  <div className="font-bold line-clamp-1">{ed.title.split(':')[0]}</div>
+                  <div className="font-bold line-clamp-1">{ed.shortName || ed.title.split(':')[0]}</div>
                 </button>
               ))}
             </div>

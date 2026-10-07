@@ -39,16 +39,16 @@ Our dedicated **Newsletter & Tech Radar** features deep architectural breakdowns
 
 | Technology | Category | Focus & Key Innovation |
 |---|---|---|
-| [**Needle**](https://github.com/cactus-compute/needle) | Edge & Hardware | **26M Zero-FFN Automation Model**: Eliminates Feed-Forward Networks entirely for 6,000 tok/s prefill & 1,200 tok/s decode on edge microcontrollers. |
-| [**Soup (`soup-cli`)**](https://github.com/MakazhanAlpamys/Soup) | MLOps & Systems | **Layer Streaming on 4GB VRAM**: Streams inactive decoder layers between host RAM and GPU VRAM, allowing 8B LLM fine-tuning on everyday laptops. |
-| [**Freebuff**](https://github.com/CodebuffAI/freebuff) | Developer Tools | **Free Multi-Agent Coding Swarm**: Decomposes coding workflows into specialized AST pickers, planners, diff editors, and reviewers funded via unobtrusive text ads. |
-| [**Papermorph**](https://github.com/DozenTwelve/Papermorph) | Architecture & RAG | **PDF to Interactive Code**: Compiles dense academic research PDFs into narrated, animated HTML5/SVG web experiences and quizzes rather than heavy video diffusion. |
-| [**Human-Atlas**](https://github.com/ashemag/human-atlas) | Spatial & 3D Web | **2,234 Meshes in WebGL Three.js**: High-fidelity 3D anatomical viewer with raycasted organ selection, 15 physiological systems, and exploded views at 60 FPS. |
-| [**Qwen3.8-Flash-Next**](https://huggingface.co/Qwen) | Frontier Models | **180B Sparse MoE (6B Active)**: 3-tier architecture with a 125B MoE backbone, 51B offloadable N-gram table, and 4B Multi-Token Prediction head with 1M context. |
-| [**Tiiny Pocket AI**](https://tiiny.ai) | Edge & Hardware | **80GB Personal AI Supercomputer**: 300g pocket hardware with 80GB LPDDR5X unified memory and TiinyOS running 100B–120B parameter models completely offline. |
-| [**Laya Model**](https://huggingface.co/convaiinnovations/laya) | Frontier Models | **Non-Autoregressive System 1 Decision Layer**: 322M ModernBERT model executing in <10ms to emit calibrated probabilities and choices without slow token generation. |
-| [**Headroom**](https://github.com/headroomlabs-ai/headroom) | Developer Tools | **Context & Token Compression Proxy (MCP)**: Strips 60–95% of token bloat from tool logs and JSON outputs using Rust Token Killer (RTK) and OutputShaper. |
-| [**Colibri**](https://github.com/JustVugg/colibri) | MLOps & Systems | **Pure C MoE Memory Multitiering**: Zero-dependency C runtime streaming 700B+ MoE weights across SSD mmap, system RAM, and GPU VRAM with built-in API daemon. |
+| [**Needle**](https://github.com/cactus-compute/needle) | Edge & Hardware | **Kill the FFN (26M Autonomous Edge Model)**: Eliminates Feed-Forward Networks entirely for 6,000 tok/s prefill & 1,200 tok/s decode on edge microcontrollers. |
+| [**Soup (`soup-cli`)**](https://github.com/MakazhanAlpamys/Soup) | MLOps & Systems | **Cracking the GPU Monopoly (4GB Layer Streaming)**: Streams inactive decoder layers between host RAM and GPU VRAM, enabling 8B LLM fine-tuning on consumer laptops. |
+| [**Freebuff**](https://github.com/CodebuffAI/freebuff) | Developer Tools | **The Death of $20/mo Coding Seats (Multi-Agent Swarm)**: Decomposes coding workflows into specialized AST pickers, planners, diff editors, and reviewers funded via unobtrusive text ads. |
+| [**Papermorph**](https://github.com/DozenTwelve/Papermorph) | Architecture & RAG | **Never Read a Static arXiv PDF Again (PDF to Living Code)**: Compiles dense academic research PDFs into narrated, animated HTML5/SVG web experiences rather than heavy video diffusion. |
+| [**Human-Atlas**](https://github.com/ashemag/human-atlas) | Spatial & 3D Web | **2,234 Meshes at 60 FPS (Pure WebGL Anatomy)**: High-fidelity 3D anatomical viewer with raycasted organ selection, 15 physiological systems, and exploded views in Three.js. |
+| [**Qwen3.8-Flash-Next**](https://huggingface.co/Qwen) | Frontier Models | **180B Weights, Only 6B Active (Sparse MoE Titan)**: 3-tier architecture with a 125B MoE backbone, 51B offloadable N-gram table, and 4B Multi-Token Prediction head with 1M context. |
+| [**Tiiny Pocket AI**](https://tiiny.ai) | Edge & Hardware | **An 80GB Supercomputer in Your Pocket (Sovereign Edge Rig)**: 300g pocket hardware with 80GB LPDDR5X unified memory running 100B–120B parameter models completely offline. |
+| [**Laya Model**](https://huggingface.co/convaiinnovations/laya) | Frontier Models | **Stop Using 70B LLMs as If-Else Routers (Sub-10ms System 1)**: 322M ModernBERT model executing in <10ms to emit calibrated probabilities and choices with zero hallucination. |
+| [**Headroom**](https://github.com/headroomlabs-ai/headroom) | Developer Tools | **The Rust Token Killer (95% Context Compression)**: Strips 60–95% of token bloat from tool logs and JSON outputs using Rust Token Killer (RTK) and OutputShaper. |
+| [**Colibri**](https://github.com/JustVugg/colibri) | MLOps & Systems | **Pure C, Zero Dependencies (Trillion-Parameter MoE Streaming)**: Zero-dependency C runtime streaming 700B+ MoE weights across SSD mmap, system RAM, and GPU VRAM. |
 
 ---
 
