@@ -1,6 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+
+// Social Media Icons
+function TwitterIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function LinkedInIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.21a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25.7-.93 1.29-1.63 1.46-.48.12-1.11.22-3.23-.66-2.71-1.12-4.47-3.86-4.61-4.04-.13-.19-1.1-1.47-1.1-2.8 0-1.34.7-2 1-2.27.24-.22.54-.28.72-.28.18 0 .36 0 .52.01.17.01.4.06.62.59.23.55.77 1.88.84 2.02.07.14.11.3.02.48-.09.18-.14.29-.28.45-.14.17-.29.37-.41.5-.14.14-.29.29-.12.58.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.41.29.14.46.12.63-.07.17-.19.74-.86.94-1.16.2-.29.4-.25.68-.14.28.11 1.77.83 2.07.98.3.15.5.23.57.35.08.13.08.73-.17 1.43" />
+    </svg>
+  );
+}
+
+function RedditIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m5.01 4.75c.69 0 1.25.56 1.25 1.25a1.25 1.25 0 0 1-2.22.81c-1.39-.45-3-.45-4.4 0a1.24 1.24 0 0 1-.64-.53l1.86-3.95 3.32.74c.2.98.83 1.68 1.83 1.68m-9.51 5.5c.78 0 1.42.64 1.42 1.42 0 .79-.64 1.43-1.42 1.43-.79 0-1.43-.64-1.43-1.43 0-.78.64-1.42 1.43-1.42m9 0c.78 0 1.42.64 1.42 1.42 0 .79-.64 1.43-1.42 1.43-.78 0-1.42-.64-1.42-1.43 0-.78.64-1.42 1.42-1.42m-4.5 4.75c-1.84 0-3.33-.78-3.33-.78-.17-.11-.22-.33-.11-.5.11-.17.33-.22.5-.11 0 0 1.29.64 2.94.64s2.94-.64 2.94-.64c.17-.11.39-.06.5.11.11.17.06.39-.11.5 0 0-1.49.78-3.33.78" />
+    </svg>
+  );
+}
+
+function TelegramIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.313 4.693c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434" />
+    </svg>
+  );
+}
+
+function ShareIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+    </svg>
+  );
+}
+
+function CopyIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  );
+}
 
 const EDITIONS = [
   {
@@ -65,7 +122,7 @@ const EDITIONS = [
     url: "https://github.com/MakazhanAlpamys/Soup",
     repoName: "MakazhanAlpamys/Soup",
     summary: "Soup is a groundbreaking open-source CLI tool (soup-cli) created by Makazhan Alpamys that shatters the hardware barriers of post-training. Traditional fine-tuning of an 8-billion parameter model demands 16GB to 24GB of dedicated VRAM even with LoRA. Soup introduces 'Layer Streaming', a technique that keeps inactive transformer decoder layers in standard system RAM and dynamically streams only the currently active forward/backward layers into GPU VRAM just-in-time, allowing an 8B model to be trained on an ordinary 4GB laptop GPU.",
-    whyHighlighted: "Why it's highlighted: Democratizes model training. By consolidating data preparation, hyperparameter configuration, training execution, and evaluation into a single declarative YAML file executed by one command (`soup train`), Soup eliminates multi-GPU cluster dependencies and makes fine-tuning accessible to any developer on everyday consumer laptops.",
+    whyHighlighted: "Why it's highlighted: Democratizes model training. By consolidating data preparation, hyperparameter configuration, training execution, and evaluation into a single declarative YAML file executed by one command ('soup train'), Soup eliminates multi-GPU cluster dependencies and makes fine-tuning accessible to any developer on everyday consumer laptops.",
     takeaways: [
       "Layer Streaming Engine: Only 1-2 transformer layers reside in GPU VRAM simultaneously; inactive weights remain in host DDR4/DDR5 system RAM.",
       "4GB VRAM Capability: Fine-tunes Llama-3-8B and Qwen-2.5-7B models on entry-level laptop GPUs (RTX 3050/4050 mobile).",
@@ -76,7 +133,7 @@ const EDITIONS = [
       "Supported Models": "Llama-3 8B, Qwen-2.5 7B, Mistral 7B",
       "Min Hardware": "4 GB VRAM Laptop GPU + 16 GB System RAM",
       "Core Technique": "Layer Streaming (PCIe Ring Buffer)",
-      "Configuration": "Single YAML declarative spec (`soup-cli`)",
+      "Configuration": "Single YAML declarative spec ('soup-cli')",
       "Stack": "Python, PyTorch, C++ Streaming CUDA Kernels"
     },
     diagram: `┌─────────────────────────────────────────────────────────────┐
@@ -117,12 +174,12 @@ const EDITIONS = [
     takeaways: [
       "Sub-Agent Choreography: Divides complex coding requests across specialized File Pickers, Architecture Planners, Code Editors, and Reviewers.",
       "Zero Paywall Access: Uses clean text ads in the terminal to subsidize frontier inference tokens (GLM-5.3 Flash, Sol-6.1).",
-      "Bun & TypeScript Runtime: Ultra-fast local execution leveraging `@codebuff/sdk` with native LSP AST symbol parsing.",
+      "Bun & TypeScript Runtime: Ultra-fast local execution leveraging '@codebuff/sdk' with native LSP AST symbol parsing.",
       "Multi-Environment Support: Operates seamlessly in terminal CLI, local web sandboxes, and VS Code extension environments."
     ],
     specs: {
       "Architecture": "Coordinated Sub-Agent Swarm (Picker + Planner + Editor + Reviewer)",
-      "Runtime": "TypeScript / Bun + `@codebuff/sdk`",
+      "Runtime": "TypeScript / Bun + '@codebuff/sdk'",
       "Cost Model": "Free & Open-Source (Funded via unobtrusive terminal text ads)",
       "Supported LLMs": "GLM 5.3 Flash, Sol 6.1, Ollama Local Models",
       "Integrations": "Terminal CLI, Web Sandbox, Git Checkpoint Reverts"
@@ -343,7 +400,7 @@ const EDITIONS = [
       "80GB LPDDR5X Unified Memory: Massive unified memory pool fits large 70B-120B quantized models in memory with zero cloud offloading.",
       "12-Core ARMv9.2 Silicon: Custom thermal-throttling architecture balances power consumption between 15W and 45W.",
       "TiinyOS AI Microkernel: Stripped-down Linux OS optimized for zero-overhead direct memory model loading and instant wake.",
-      "Guinness World Record Holder: Formally recognized as the world's smallest personal AI supercomputer (300g form factor)."
+      "Guinness World Record Holder: Formally recognized as the world's smallest personal AI supercomputer (300g form factor).",
     ],
     specs: {
       "Unified Memory": "80 GB LPDDR5X (High-bandwidth unified memory)",
@@ -492,10 +549,10 @@ const EDITIONS = [
     summary: "Colibri is a masterclass in systems engineering created by JustVugg. It is a pure C inference runtime with zero external dependencies designed to run trillion-parameter Mixture-of-Experts (MoE) models—including GLM-5.2 (744B), Inkling (975B), and Kimi K3 (2.8T)—on consumer hardware. Instead of requiring a $200,000 cluster with terabytes of VRAM, Colibri implements 'Memory Multitiering', treating high-speed NVMe SSDs, system DDR RAM, and GPU memory as a unified virtual storage hierarchy, streaming required expert weights on-demand.",
     whyHighlighted: "Why it's highlighted: Redefines what is computationally possible on consumer machines. By eliminating Python, PyTorch, and heavy CUDA wrappers in favor of hand-optimized pure C and direct OS memory-mapped files (mmap), Colibri allows curious researchers to run and study frontier trillion-parameter models right on their personal workstations.",
     takeaways: [
-      "Pure C with Zero Dependencies: No Python, no heavy PyTorch wheels; compiles with standard `gcc` or `clang` in seconds.",
+      "Pure C with Zero Dependencies: No Python, no heavy PyTorch wheels; compiles with standard 'gcc' or 'clang' in seconds.",
       "Memory Multitiering: Unifies NVMe SSD (Cold Weights), RAM (Hot Expert Cache), and GPU VRAM (Active Compute Buffer).",
       "Dynamic Expert Streaming: Only reads the specific sparse MoE experts needed for the current token from disk/RAM on the fly.",
-      "OpenAI Compatible Gateway: Built-in minimal HTTP daemon exposes `/v1/chat/completions` for direct compatibility with open-webui and dev tools."
+      "OpenAI Compatible Gateway: Built-in minimal HTTP daemon exposes '/v1/chat/completions' for direct compatibility with open-webui and dev tools."
     ],
     specs: {
       "Supported Models": "GLM-5.2 (744B), Inkling (975B), Kimi K3 (2.8T), Qwen3.8-Flash",
@@ -583,6 +640,25 @@ export default function NewsletterIndex() {
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState("");
   const [expandedEdition, setExpandedEdition] = useState(null);
+  const [shareModalData, setShareModalData] = useState(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  // Sync hash with modal for deep-linked sharing (#issue-1, etc.)
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#issue-')) {
+        const issueId = parseInt(hash.replace('#issue-', ''), 10);
+        const found = EDITIONS.find((ed) => ed.id === issueId);
+        if (found) {
+          setExpandedEdition(found);
+        }
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   const categories = ["All", "Edge & Hardware", "Developer Tools", "Architecture & RAG", "MLOps & Systems", "Frontier Models"];
 
@@ -608,6 +684,107 @@ export default function NewsletterIndex() {
     }
   };
 
+  const getShareUrl = (issueId = null) => {
+    if (typeof window !== 'undefined') {
+      const base = `${window.location.origin}${window.location.pathname}`;
+      return issueId ? `${base}#issue-${issueId}` : base;
+    }
+    return issueId 
+      ? `https://ai-visualised-engineering.web.app/newsletter#issue-${issueId}`
+      : `https://ai-visualised-engineering.web.app/newsletter`;
+  };
+
+  const triggerShare = (target = null) => {
+    if (target) {
+      setShareModalData({
+        title: target.title,
+        subtitle: target.subtitle,
+        url: getShareUrl(target.id),
+        repoName: target.repoName,
+        text: `Explore ${target.title} (${target.repoName}) in AI Visualised Engineering Digest!`
+      });
+    } else {
+      setShareModalData({
+        title: "AI Visualised Engineering Digest & Tech Radar 2026",
+        subtitle: "Visual breakdowns of edge models, training runtimes, and frontier AI tools",
+        url: getShareUrl(null),
+        repoName: "ai-visualised-engineering",
+        text: "Explore AI Visualised Engineering Digest: In-depth visual breakdowns of frontier models, edge runtimes, and developer tooling!"
+      });
+    }
+  };
+
+  const handleShareSocial = (platform, data) => {
+    if (!data) return;
+    const url = data.url;
+    const text = data.text || `${data.title} - ${data.subtitle}`;
+    let shareLink = '';
+
+    switch (platform) {
+      case 'twitter':
+        shareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=AIEngineering,OpenSource,AI`;
+        break;
+      case 'linkedin':
+        shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case 'whatsapp':
+        shareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${text}\n${url}`)}`;
+        break;
+      case 'reddit':
+        shareLink = `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`;
+        break;
+      case 'telegram':
+        shareLink = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+        break;
+      default:
+        break;
+    }
+
+    if (shareLink && typeof window !== 'undefined') {
+      window.open(shareLink, '_blank', 'noopener,noreferrer,width=600,height=520');
+    }
+  };
+
+  const handleDeviceShare = async (data) => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: data.title,
+          text: data.subtitle || data.title,
+          url: data.url
+        });
+      } catch {
+        // User cancelled share
+      }
+    }
+  };
+
+  const handleCopy = async (textToCopy) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    }
+  };
+
+  const handleOpenEdition = (ed) => {
+    setExpandedEdition(ed);
+    if (typeof window !== 'undefined') {
+      window.location.hash = `#issue-${ed.id}`;
+    }
+  };
+
+  const handleCloseEdition = () => {
+    setExpandedEdition(null);
+    if (typeof window !== 'undefined' && window.location.hash.startsWith('#issue-')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  };
+
   const toc = [
     { label: "Featured Issue", hash: "featured" },
     { label: "Highlighted Technologies", hash: "editions" },
@@ -621,6 +798,21 @@ export default function NewsletterIndex() {
       intro="Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling."
       toc={toc}
     >
+      {/* ====== TOP SOCIAL SHARE BAR ====== */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-white/10">
+        <div className="text-xs text-gray-400 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>10 Curated AI Breakthroughs & Architectures for 2026</span>
+        </div>
+        <button
+          onClick={() => triggerShare(null)}
+          className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-mono text-xs flex items-center gap-2 transition-all hover:border-indigo-400 shadow-sm"
+        >
+          <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
+          <span>Share Digest to Social Media</span>
+        </button>
+      </div>
+
       {/* ====== FEATURED EDITION (HERO SPOTLIGHT) ====== */}
       <section id="featured" className="mb-14 scroll-mt-24">
         <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-wider text-emerald-400">
@@ -696,12 +888,21 @@ export default function NewsletterIndex() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setExpandedEdition(featuredIssue)}
-                className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 flex items-center gap-2"
-              >
-                Full Architecture & Specs <span>→</span>
-              </button>
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => triggerShare(featuredIssue)}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-mono text-xs flex items-center gap-1.5 transition-all hover:border-emerald-400"
+                >
+                  <ShareIcon className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Share Issue</span>
+                </button>
+                <button
+                  onClick={() => handleOpenEdition(featuredIssue)}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 flex items-center gap-2"
+                >
+                  Full Architecture & Specs <span>→</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -805,9 +1006,22 @@ export default function NewsletterIndex() {
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                  <span className="text-xs text-gray-500 font-mono">⏱️ {ed.readTime}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500 font-mono">⏱️ {ed.readTime}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        triggerShare(ed);
+                      }}
+                      title="Share to social media"
+                      className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white text-xs font-mono transition-colors flex items-center gap-1.5 border border-white/5"
+                    >
+                      <ShareIcon className="w-3 h-3 text-indigo-400" />
+                      <span>Share</span>
+                    </button>
+                  </div>
                   <button
-                    onClick={() => setExpandedEdition(ed)}
+                    onClick={() => handleOpenEdition(ed)}
                     className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
                   >
                     Architecture & Deep Dive <span>→</span>
@@ -917,7 +1131,7 @@ export default function NewsletterIndex() {
               className="bg-[#121212] border border-white/20 rounded-2xl p-6 md:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
             >
               <button
-                onClick={() => setExpandedEdition(null)}
+                onClick={handleCloseEdition}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold"
               >
                 ✕
@@ -1007,6 +1221,96 @@ export default function NewsletterIndex() {
                 ))}
               </div>
 
+              {/* Social Media Share Strip Inside Modal */}
+              <div className="bg-gradient-to-r from-purple-950/30 via-black to-indigo-950/30 border border-white/10 rounded-xl p-4 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                  <div className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Share This Breakdown to Social Media:</span>
+                  </div>
+                  {copiedLink && (
+                    <span className="text-xs font-bold text-emerald-400 font-mono animate-pulse">
+                      ✓ Link copied to clipboard!
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => handleShareSocial('twitter', {
+                      title: expandedEdition.title,
+                      subtitle: expandedEdition.subtitle,
+                      url: getShareUrl(expandedEdition.id),
+                      text: `Check out ${expandedEdition.title} (${expandedEdition.repoName}) in AI Visualised Engineering!`
+                    })}
+                    className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  >
+                    <TwitterIcon className="w-3.5 h-3.5" />
+                    <span>X (Twitter)</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleShareSocial('linkedin', {
+                      title: expandedEdition.title,
+                      subtitle: expandedEdition.subtitle,
+                      url: getShareUrl(expandedEdition.id),
+                      text: `${expandedEdition.title} - ${expandedEdition.subtitle}`
+                    })}
+                    className="px-3 py-1.5 rounded-lg bg-[#0A66C2]/20 hover:bg-[#0A66C2]/30 border border-[#0A66C2]/50 text-[#70b5f9] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  >
+                    <LinkedInIcon className="w-3.5 h-3.5" />
+                    <span>LinkedIn</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleShareSocial('whatsapp', {
+                      title: expandedEdition.title,
+                      subtitle: expandedEdition.subtitle,
+                      url: getShareUrl(expandedEdition.id),
+                      text: `Look at ${expandedEdition.title} (${expandedEdition.repoName}):`
+                    })}
+                    className="px-3 py-1.5 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#75f1a5] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  >
+                    <WhatsAppIcon className="w-3.5 h-3.5" />
+                    <span>WhatsApp</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleShareSocial('reddit', {
+                      title: expandedEdition.title,
+                      subtitle: expandedEdition.subtitle,
+                      url: getShareUrl(expandedEdition.id),
+                      text: `${expandedEdition.title} - Architectural Breakdown`
+                    })}
+                    className="px-3 py-1.5 rounded-lg bg-[#FF4500]/20 hover:bg-[#FF4500]/30 border border-[#FF4500]/50 text-[#ffa285] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  >
+                    <RedditIcon className="w-3.5 h-3.5" />
+                    <span>Reddit</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleShareSocial('telegram', {
+                      title: expandedEdition.title,
+                      subtitle: expandedEdition.subtitle,
+                      url: getShareUrl(expandedEdition.id),
+                      text: `Architecture Deep Dive: ${expandedEdition.title}`
+                    })}
+                    className="px-3 py-1.5 rounded-lg bg-[#229ED9]/20 hover:bg-[#229ED9]/30 border border-[#229ED9]/50 text-[#78c9f5] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  >
+                    <TelegramIcon className="w-3.5 h-3.5" />
+                    <span>Telegram</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleCopy(getShareUrl(expandedEdition.id))}
+                    className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition-colors ml-auto"
+                  >
+                    <CopyIcon className="w-3.5 h-3.5" />
+                    <span>{copiedLink ? "Copied! ✓" : "Copy Link"}</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-white/10">
                 <div className="flex flex-wrap gap-2">
                   {expandedEdition.highlights.map((h, i) => (
@@ -1026,12 +1330,130 @@ export default function NewsletterIndex() {
                     <span>↗</span>
                   </a>
                   <button
-                    onClick={() => setExpandedEdition(null)}
+                    onClick={handleCloseEdition}
                     className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
                   >
                     Close Edition
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ====== SOCIAL SHARE MODAL ====== */}
+      <AnimatePresence>
+        {shareModalData && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[#141414] border border-white/20 rounded-2xl p-6 max-w-lg w-full relative shadow-2xl"
+            >
+              <button
+                onClick={() => setShareModalData(null)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold"
+              >
+                ✕
+              </button>
+
+              <div className="flex items-center gap-2 mb-2">
+                <span className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400">
+                  <ShareIcon className="w-4 h-4" />
+                </span>
+                <h3 className="text-lg font-bold text-white">Share to Social Media</h3>
+              </div>
+
+              <p className="text-xs text-gray-400 mb-4">
+                Share this technical breakdown with fellow AI engineers and researchers.
+              </p>
+
+              {/* Preview card */}
+              <div className="bg-black/50 border border-white/10 rounded-xl p-3.5 mb-5">
+                <div className="text-xs font-bold text-white mb-1 line-clamp-1">
+                  {shareModalData.title}
+                </div>
+                <div className="text-[11px] text-gray-400 line-clamp-2 mb-2 font-mono">
+                  {shareModalData.subtitle}
+                </div>
+                <div className="text-[10px] text-indigo-400 font-mono truncate">
+                  {shareModalData.url}
+                </div>
+              </div>
+
+              {/* Social Channels */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-5">
+                <button
+                  onClick={() => handleShareSocial('twitter', shareModalData)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-black hover:bg-neutral-900 border border-white/20 text-white text-xs font-bold transition-all shadow-sm"
+                >
+                  <TwitterIcon className="w-4 h-4" />
+                  <span>X (Twitter)</span>
+                </button>
+
+                <button
+                  onClick={() => handleShareSocial('linkedin', shareModalData)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#0A66C2]/20 hover:bg-[#0A66C2]/30 border border-[#0A66C2]/50 text-[#70b5f9] text-xs font-bold transition-all shadow-sm"
+                >
+                  <LinkedInIcon className="w-4 h-4" />
+                  <span>LinkedIn</span>
+                </button>
+
+                <button
+                  onClick={() => handleShareSocial('whatsapp', shareModalData)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#75f1a5] text-xs font-bold transition-all shadow-sm"
+                >
+                  <WhatsAppIcon className="w-4 h-4" />
+                  <span>WhatsApp</span>
+                </button>
+
+                <button
+                  onClick={() => handleShareSocial('reddit', shareModalData)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#FF4500]/20 hover:bg-[#FF4500]/30 border border-[#FF4500]/50 text-[#ffa285] text-xs font-bold transition-all shadow-sm"
+                >
+                  <RedditIcon className="w-4 h-4" />
+                  <span>Reddit</span>
+                </button>
+
+                <button
+                  onClick={() => handleShareSocial('telegram', shareModalData)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#229ED9]/20 hover:bg-[#229ED9]/30 border border-[#229ED9]/50 text-[#78c9f5] text-xs font-bold transition-all shadow-sm"
+                >
+                  <TelegramIcon className="w-4 h-4" />
+                  <span>Telegram</span>
+                </button>
+
+                {typeof navigator !== 'undefined' && navigator.share && (
+                  <button
+                    onClick={() => handleDeviceShare(shareModalData)}
+                    className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 text-purple-300 text-xs font-bold transition-all shadow-sm"
+                  >
+                    <ShareIcon className="w-4 h-4" />
+                    <span>Device Menu</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Direct Link Copy Input */}
+              <div className="bg-black/60 border border-white/10 rounded-xl p-2 flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={shareModalData.url}
+                  className="bg-transparent text-xs text-gray-300 font-mono px-2 py-1 w-full focus:outline-none"
+                />
+                <button
+                  onClick={() => handleCopy(shareModalData.url)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                    copiedLink
+                      ? "bg-emerald-500 text-white"
+                      : "bg-white/10 hover:bg-white/20 text-white"
+                  }`}
+                >
+                  {copiedLink ? "Copied! ✓" : "Copy Link"}
+                </button>
               </div>
             </motion.div>
           </div>
