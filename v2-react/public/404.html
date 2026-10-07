@@ -2,17 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Mani Notes</title>
+  <title>AI Visualised Engineering</title>
   <script>
-    // The app uses hash routing (#/rag/chunking), so GitHub Pages only ever
+    // The app uses hash routing (#/newsletter), so GitHub Pages only ever
     // serves index.html. Someone who types or shares a path-style URL such as
-    // /ai-engineering-visualized/rag/chunking lands here instead; send them to
+    // /ai-engineering-visualized/newsletter?issue=1 lands here instead; send them to
     // the equivalent hash route rather than a dead page.
     (function (l) {
-      var base = "/ai-engineering-visualized";
-      var path = l.pathname.indexOf(base) === 0 ? l.pathname.slice(base.length) : l.pathname;
+      var repo = "/ai-engineering-visualized";
+      var hasRepo = l.pathname.indexOf(repo) === 0;
+      var base = hasRepo ? repo : "";
+      var path = hasRepo ? l.pathname.slice(repo.length) : l.pathname;
       path = path.replace(/\/index\.html$/, "").replace(/\/+$/, "");
-      l.replace(base + "/#" + (path || "/") + (l.search || "") + (l.hash || ""));
+      var cleanPath = path.indexOf("/") === 0 ? path : "/" + path;
+      var target = base + "/#" + cleanPath + (l.search || "") + (l.hash || "");
+      l.replace(target);
     })(window.location);
   </script>
 </head>

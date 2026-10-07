@@ -645,19 +645,45 @@ export default function NewsletterIndex() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedDiagram, setCopiedDiagram] = useState(false);
 
-  // Check if an issue is selected via query param (e.g. ?issue=1)
-  const issueParam = searchParams.get('issue');
-  const activeIssueId = issueParam ? parseInt(issueParam, 10) : null;
+  // Read issue from searchParams (inside hash like #/newsletter?issue=1)
+  // OR from window.location.search (before hash like ?issue=1#/newsletter)
+  // OR from hash anchor (like #issue-1)
+  const getActiveIssueId = () => {
+    const issueP = searchParams.get('issue');
+    if (issueP) {
+      const parsed = parseInt(issueP, 10);
+      if (!isNaN(parsed)) return parsed;
+    }
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryIssue = urlParams.get('issue');
+      if (queryIssue) {
+        const parsed = parseInt(queryIssue, 10);
+        if (!isNaN(parsed)) return parsed;
+      }
+      const hash = window.location.hash;
+      const hashMatch = hash.match(/issue[=-](\d+)/);
+      if (hashMatch) {
+        const parsed = parseInt(hashMatch[1], 10);
+        if (!isNaN(parsed)) return parsed;
+      }
+    }
+    return null;
+  };
+
+  const activeIssueId = getActiveIssueId();
   const currentArticle = activeIssueId ? EDITIONS.find(ed => ed.id === activeIssueId) : null;
 
   // Sync hash with issue param for backward compatibility
   useEffect(() => {
     const hash = window.location.hash;
-    if (hash && hash.startsWith('#issue-') && !issueParam) {
-      const issueId = hash.replace('#issue-', '');
-      setSearchParams({ issue: issueId });
+    if (hash && hash.includes('issue-') && !searchParams.get('issue')) {
+      const match = hash.match(/issue-(\d+)/);
+      if (match) {
+        setSearchParams({ issue: match[1] });
+      }
     }
-  }, [issueParam, setSearchParams]);
+  }, [searchParams, setSearchParams]);
 
   const categories = ["All", "Edge & Hardware", "Developer Tools", "Architecture & RAG", "MLOps & Systems", "Frontier Models"];
 
@@ -684,13 +710,22 @@ export default function NewsletterIndex() {
   };
 
   const getShareUrl = (issueId = null) => {
+    let origin = 'https://amara-manikanta.github.io';
+    let path = '/ai-engineering-visualized/';
+
     if (typeof window !== 'undefined') {
-      const base = `${window.location.origin}${window.location.pathname}`;
-      return issueId ? `${base}?issue=${issueId}` : base;
+      const isHttp = window.location.protocol.startsWith('http');
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+      if (isHttp && !isLocalhost) {
+        origin = window.location.origin;
+        path = window.location.pathname.replace(/\/index\.html$/, '');
+        if (!path.endsWith('/')) path += '/';
+      }
     }
-    return issueId 
-      ? `https://ai-visualised-engineering.web.app/newsletter?issue=${issueId}`
-      : `https://ai-visualised-engineering.web.app/newsletter`;
+
+    const hashRoute = issueId ? `#/newsletter?issue=${issueId}` : `#/newsletter`;
+    return `${origin}${path}${hashRoute}`;
   };
 
   const triggerShare = (target = null) => {
