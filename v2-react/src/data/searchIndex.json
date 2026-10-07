@@ -6124,6 +6124,34 @@
     "intro": "Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling.",
     "sections": [
       {
+        "label": "Overview & Context",
+        "hash": "overview"
+      },
+      {
+        "label": "Why Highlighted",
+        "hash": "why-highlighted"
+      },
+      {
+        "label": "Architecture Blueprint",
+        "hash": "architecture"
+      },
+      {
+        "label": "Technical Specifications",
+        "hash": "specifications"
+      },
+      {
+        "label": "Key Takeaways",
+        "hash": "takeaways"
+      },
+      {
+        "label": "Share Breakdown",
+        "hash": "share-article"
+      },
+      {
+        "label": "Next & Previous",
+        "hash": "related"
+      },
+      {
         "label": "Featured Issue",
         "hash": "featured"
       },

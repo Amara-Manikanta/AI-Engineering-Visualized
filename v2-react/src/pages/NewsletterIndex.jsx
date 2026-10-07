@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
 
@@ -30,7 +31,7 @@ function WhatsAppIcon({ className = "w-4 h-4" }) {
 function RedditIcon({ className = "w-4 h-4" }) {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m5.01 4.75c.69 0 1.25.56 1.25 1.25a1.25 1.25 0 0 1-2.22.81c-1.39-.45-3-.45-4.4 0a1.24 1.24 0 0 1-.64-.53l1.86-3.95 3.32.74c.2.98.83 1.68 1.83 1.68m-9.51 5.5c.78 0 1.42.64 1.42 1.42 0 .79-.64 1.43-1.42 1.43-.79 0-1.43-.64-1.43-1.43 0-.78.64-1.42 1.43-1.42m9 0c.78 0 1.42.64 1.42 1.42 0 .79-.64 1.43-1.42 1.43-.78 0-1.42-.64-1.42-1.43 0-.78.64-1.42 1.42-1.42m-4.5 4.75c-1.84 0-3.33-.78-3.33-.78-.17-.11-.22-.33-.11-.5.11-.17.33-.22.5-.11 0 0 1.29.64 2.94.64s2.94-.64 2.94-.64c.17-.11.39-.06.5.11.11.17.06.39-.11.5 0 0-1.49.78-3.33.78" />
+      <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m5.01 4.75c.69 0 1.25.56 1.25 1.25a1.25 1.25 0 0 1-2.22.81c-1.39-.45-3-.45-4.4 0a1.24 1.24 0 0 1-.64-.53l1.86-3.95 3.32.74c.2.98.83 1.68 1.83 1.68m-9.51 5.5c.78 0 1.42.64 1.42 1.42 0 .79-.64 1.43-1.42 1.43-.79 0-1.43-.64-1.43-1.43 0-.78.64-1.42 1.42-1.42m9 0c.78 0 1.42.64 1.42 1.42 0 .79-.64 1.43-1.42 1.43-.78 0-1.42-.64-1.42-1.43 0-.78.64-1.42 1.42-1.42m-4.5 4.75c-1.84 0-3.33-.78-3.33-.78-.17-.11-.22-.33-.11-.5.11-.17.33-.22.5-.11 0 0 1.29.64 2.94.64s2.94-.64 2.94-.64c.17-.11.39-.06.5.11.11.17.06.39-.11.5 0 0-1.49.78-3.33.78" />
     </svg>
   );
 }
@@ -635,30 +636,28 @@ const TECH_RADAR = [
 ];
 
 export default function NewsletterIndex() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState("");
-  const [expandedEdition, setExpandedEdition] = useState(null);
   const [shareModalData, setShareModalData] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedDiagram, setCopiedDiagram] = useState(false);
 
-  // Sync hash with modal for deep-linked sharing (#issue-1, etc.)
+  // Check if an issue is selected via query param (e.g. ?issue=1)
+  const issueParam = searchParams.get('issue');
+  const activeIssueId = issueParam ? parseInt(issueParam, 10) : null;
+  const currentArticle = activeIssueId ? EDITIONS.find(ed => ed.id === activeIssueId) : null;
+
+  // Sync hash with issue param for backward compatibility
   useEffect(() => {
-    const handleHash = () => {
-      const hash = window.location.hash;
-      if (hash && hash.startsWith('#issue-')) {
-        const issueId = parseInt(hash.replace('#issue-', ''), 10);
-        const found = EDITIONS.find((ed) => ed.id === issueId);
-        if (found) {
-          setExpandedEdition(found);
-        }
-      }
-    };
-    handleHash();
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
-  }, []);
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#issue-') && !issueParam) {
+      const issueId = hash.replace('#issue-', '');
+      setSearchParams({ issue: issueId });
+    }
+  }, [issueParam, setSearchParams]);
 
   const categories = ["All", "Edge & Hardware", "Developer Tools", "Architecture & RAG", "MLOps & Systems", "Frontier Models"];
 
@@ -687,10 +686,10 @@ export default function NewsletterIndex() {
   const getShareUrl = (issueId = null) => {
     if (typeof window !== 'undefined') {
       const base = `${window.location.origin}${window.location.pathname}`;
-      return issueId ? `${base}#issue-${issueId}` : base;
+      return issueId ? `${base}?issue=${issueId}` : base;
     }
     return issueId 
-      ? `https://ai-visualised-engineering.web.app/newsletter#issue-${issueId}`
+      ? `https://ai-visualised-engineering.web.app/newsletter?issue=${issueId}`
       : `https://ai-visualised-engineering.web.app/newsletter`;
   };
 
@@ -771,27 +770,391 @@ export default function NewsletterIndex() {
     }
   };
 
-  const handleOpenEdition = (ed) => {
-    setExpandedEdition(ed);
-    if (typeof window !== 'undefined') {
-      window.location.hash = `#issue-${ed.id}`;
+  const handleCopyDiagram = async (diagramText) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(diagramText);
+        setCopiedDiagram(true);
+        setTimeout(() => setCopiedDiagram(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy diagram', err);
+      }
     }
   };
 
-  const handleCloseEdition = () => {
-    setExpandedEdition(null);
-    if (typeof window !== 'undefined' && window.location.hash.startsWith('#issue-')) {
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
+  const openFreshArticlePage = (ed) => {
+    setSearchParams({ issue: ed.id.toString() });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const toc = [
+  const returnToAllNewsletters = () => {
+    setSearchParams({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Table of Contents for GuideLayout
+  const toc = currentArticle ? [
+    { label: "Overview & Context", hash: "overview" },
+    { label: "Why Highlighted", hash: "why-highlighted" },
+    { label: "Architecture Blueprint", hash: "architecture" },
+    { label: "Technical Specifications", hash: "specifications" },
+    { label: "Key Takeaways", hash: "takeaways" },
+    { label: "Share Breakdown", hash: "share-article" },
+    { label: "Next & Previous", hash: "related" }
+  ] : [
     { label: "Featured Issue", hash: "featured" },
     { label: "Highlighted Technologies", hash: "editions" },
     { label: "AI Tech Radar 2026", hash: "tech-radar" },
     { label: "Subscribe", hash: "subscribe" }
   ];
 
+  /* =========================================================================
+     VIEW 1: FRESH STANDALONE ARTICLE PAGE
+     ========================================================================= */
+  if (currentArticle) {
+    const prevArticle = EDITIONS.find(ed => ed.id === currentArticle.id + 1) || null;
+    const nextArticle = EDITIONS.find(ed => ed.id === currentArticle.id - 1) || null;
+
+    return (
+      <GuideLayout
+        title={currentArticle.title}
+        intro={currentArticle.subtitle}
+        toc={toc}
+      >
+        {/* Breadcrumb & Quick Actions Bar */}
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#111111] border border-white/10 shadow-lg">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={returnToAllNewsletters}
+              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 transition-all hover:-translate-x-0.5"
+            >
+              <span>←</span>
+              <span>All Newsletters & Radar</span>
+            </button>
+            <span className="text-gray-600">/</span>
+            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${currentArticle.categoryColor}`}>
+              {currentArticle.category}
+            </span>
+            <span className="hidden sm:inline text-xs text-gray-400 font-mono">Issue #{currentArticle.id} · {currentArticle.date}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={currentArticle.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-300 font-mono text-xs flex items-center gap-1.5 transition-all"
+            >
+              <span>📂 {currentArticle.repoName}</span>
+              <span>↗</span>
+            </a>
+            <button
+              onClick={() => triggerShare(currentArticle)}
+              className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-gray-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-all"
+            >
+              <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Share</span>
+            </button>
+          </div>
+        </div>
+
+        {/* SECTION 1: OVERVIEW */}
+        <section id="overview" className="mb-12 scroll-mt-24">
+          <div className="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-indigo-400">
+            <span>📖</span> Executive Overview & Engineering Context
+          </div>
+          <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 md:p-8 relative shadow-xl">
+            <p className="text-gray-200 text-base md:text-lg leading-relaxed mb-6">
+              {currentArticle.summary}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+              <span className="text-xs text-gray-500 font-mono mr-2">Keywords & Tags:</span>
+              {currentArticle.highlights.map((h, idx) => (
+                <span key={idx} className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-gray-300 font-mono">
+                  #{h}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 2: WHY HIGHLIGHTED IN 2026 */}
+        <section id="why-highlighted" className="mb-12 scroll-mt-24">
+          <div className="bg-gradient-to-br from-amber-950/40 via-[#141414] to-[#0e0e0e] border border-amber-500/40 rounded-2xl p-6 md:p-8 relative shadow-2xl overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div className="flex items-center gap-2 text-xs font-bold text-amber-300 uppercase tracking-widest mb-3">
+              <span className="text-base">💡</span> Why This Is Highlighted in 2026:
+            </div>
+
+            <p className="text-amber-100/90 text-base md:text-lg font-medium leading-relaxed">
+              {currentArticle.whyHighlighted.replace("Why it's highlighted: ", "")}
+            </p>
+          </div>
+        </section>
+
+        {/* SECTION 3: ARCHITECTURAL BLUEPRINT */}
+        <section id="architecture" className="mb-12 scroll-mt-24">
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
+              <span>📐</span> Architectural Flow & Data Pipeline
+            </div>
+            <button
+              onClick={() => handleCopyDiagram(currentArticle.diagram)}
+              className="text-xs font-mono text-gray-400 hover:text-white flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 transition-colors"
+            >
+              <CopyIcon className="w-3 h-3" />
+              <span>{copiedDiagram ? "Diagram Copied! ✓" : "Copy ASCII Blueprint"}</span>
+            </button>
+          </div>
+
+          <div className="bg-black/90 border border-white/15 rounded-2xl p-5 md:p-6 overflow-hidden shadow-2xl relative">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10 text-xs text-gray-500 font-mono">
+              <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+              <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+              <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+              <span className="ml-2 text-gray-400">{currentArticle.repoName} — architecture-blueprint.txt</span>
+            </div>
+            <div className="overflow-x-auto font-mono text-xs md:text-sm text-emerald-400/90 leading-relaxed">
+              <pre className="whitespace-pre">{currentArticle.diagram}</pre>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 4: TECHNICAL SPECIFICATIONS */}
+        {currentArticle.specs && (
+          <section id="specifications" className="mb-12 scroll-mt-24">
+            <div className="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-cyan-400">
+              <span>🛠️</span> Technical Specifications & Hardware Matrix
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {Object.entries(currentArticle.specs).map(([label, value]) => (
+                <div key={label} className="bg-[#121212] border border-white/10 rounded-xl p-4 flex flex-col justify-between shadow-md">
+                  <span className="text-gray-400 font-mono text-xs mb-1">{label}</span>
+                  <span className="text-white font-bold text-sm">{value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* SECTION 5: KEY TAKEAWAYS */}
+        <section id="takeaways" className="mb-12 scroll-mt-24">
+          <div className="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-indigo-400">
+            <span>⚡</span> Architectural Decisions & Engineering Takeaways
+          </div>
+
+          <div className="bg-black/60 border border-white/10 rounded-2xl p-6 md:p-8 space-y-4 shadow-xl">
+            {currentArticle.takeaways.map((point, idx) => (
+              <div key={idx} className="flex items-start gap-3.5 text-sm md:text-base text-gray-200">
+                <span className="text-indigo-400 font-bold mt-0.5 text-base">✓</span>
+                <span className="leading-relaxed">{point}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 6: SOCIAL MEDIA SHARE STRIP */}
+        <section id="share-article" className="mb-12 scroll-mt-24">
+          <div className="bg-gradient-to-r from-purple-950/40 via-[#131313] to-indigo-950/40 border border-white/15 rounded-2xl p-6 md:p-8 shadow-2xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <ShareIcon className="w-4 h-4 text-indigo-400" />
+                <span>Share This Engineering Breakdown with Your Network</span>
+              </div>
+              {copiedLink && (
+                <span className="text-xs font-bold text-emerald-400 font-mono animate-pulse">
+                  ✓ Permlink copied to clipboard!
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-5">
+              <button
+                onClick={() => handleShareSocial('twitter', {
+                  title: currentArticle.title,
+                  subtitle: currentArticle.subtitle,
+                  url: getShareUrl(currentArticle.id),
+                  text: `Check out ${currentArticle.title} (${currentArticle.repoName}) in AI Visualised Engineering!`
+                })}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-black hover:bg-neutral-900 border border-white/20 text-white text-xs font-bold transition-all shadow-md"
+              >
+                <TwitterIcon className="w-4 h-4" />
+                <span>X / Twitter</span>
+              </button>
+
+              <button
+                onClick={() => handleShareSocial('linkedin', {
+                  title: currentArticle.title,
+                  subtitle: currentArticle.subtitle,
+                  url: getShareUrl(currentArticle.id),
+                  text: `${currentArticle.title} - ${currentArticle.subtitle}`
+                })}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0A66C2]/20 hover:bg-[#0A66C2]/30 border border-[#0A66C2]/50 text-[#70b5f9] text-xs font-bold transition-all shadow-md"
+              >
+                <LinkedInIcon className="w-4 h-4" />
+                <span>LinkedIn</span>
+              </button>
+
+              <button
+                onClick={() => handleShareSocial('whatsapp', {
+                  title: currentArticle.title,
+                  subtitle: currentArticle.subtitle,
+                  url: getShareUrl(currentArticle.id),
+                  text: `Explore ${currentArticle.title} (${currentArticle.repoName}):`
+                })}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#75f1a5] text-xs font-bold transition-all shadow-md"
+              >
+                <WhatsAppIcon className="w-4 h-4" />
+                <span>WhatsApp</span>
+              </button>
+
+              <button
+                onClick={() => handleShareSocial('reddit', {
+                  title: currentArticle.title,
+                  subtitle: currentArticle.subtitle,
+                  url: getShareUrl(currentArticle.id),
+                  text: `${currentArticle.title} - Visual Engineering Breakdown`
+                })}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF4500]/20 hover:bg-[#FF4500]/30 border border-[#FF4500]/50 text-[#ffa285] text-xs font-bold transition-all shadow-md"
+              >
+                <RedditIcon className="w-4 h-4" />
+                <span>Reddit</span>
+              </button>
+
+              <button
+                onClick={() => handleShareSocial('telegram', {
+                  title: currentArticle.title,
+                  subtitle: currentArticle.subtitle,
+                  url: getShareUrl(currentArticle.id),
+                  text: `Architecture Deep Dive: ${currentArticle.title}`
+                })}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#229ED9]/20 hover:bg-[#229ED9]/30 border border-[#229ED9]/50 text-[#78c9f5] text-xs font-bold transition-all shadow-md"
+              >
+                <TelegramIcon className="w-4 h-4" />
+                <span>Telegram</span>
+              </button>
+
+              <button
+                onClick={() => handleCopy(getShareUrl(currentArticle.id))}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-gray-200 text-xs font-bold transition-all shadow-md"
+              >
+                <CopyIcon className="w-4 h-4" />
+                <span>{copiedLink ? "Copied! ✓" : "Copy Link"}</span>
+              </button>
+            </div>
+
+            <div className="bg-black/60 border border-white/10 rounded-xl p-2.5 flex items-center gap-2">
+              <input
+                type="text"
+                readOnly
+                value={getShareUrl(currentArticle.id)}
+                className="bg-transparent text-xs text-gray-300 font-mono px-2 py-1 w-full focus:outline-none"
+              />
+              <button
+                onClick={() => handleCopy(getShareUrl(currentArticle.id))}
+                className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                  copiedLink
+                    ? "bg-emerald-500 text-white"
+                    : "bg-indigo-600 hover:bg-indigo-500 text-white"
+                }`}
+              >
+                {copiedLink ? "Copied! ✓" : "Copy Permlink"}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 7: RELATED & ADJACENT EDITIONS */}
+        <section id="related" className="mb-14 scroll-mt-24">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <h3 className="text-lg font-bold text-white">Next & Previous Editions</h3>
+            <button
+              onClick={returnToAllNewsletters}
+              className="text-xs text-indigo-400 hover:text-indigo-300 underline font-bold"
+            >
+              Back to Full Newsletter Directory →
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            {prevArticle ? (
+              <div
+                onClick={() => openFreshArticlePage(prevArticle)}
+                className="bg-[#121212] border border-white/10 hover:border-white/25 rounded-2xl p-5 cursor-pointer transition-all hover:-translate-y-1 group"
+              >
+                <div className="text-[11px] text-gray-500 font-mono mb-1">← PREVIOUS EDITION #{prevArticle.id}</div>
+                <h4 className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors line-clamp-1 mb-1">
+                  {prevArticle.title}
+                </h4>
+                <p className="text-xs text-gray-400 line-clamp-2">{prevArticle.subtitle}</p>
+              </div>
+            ) : (
+              <div className="bg-[#0e0e0e] border border-white/5 rounded-2xl p-5 text-gray-600 text-xs font-mono">
+                You are viewing the latest technology edition.
+              </div>
+            )}
+
+            {nextArticle ? (
+              <div
+                onClick={() => openFreshArticlePage(nextArticle)}
+                className="bg-[#121212] border border-white/10 hover:border-white/25 rounded-2xl p-5 cursor-pointer transition-all hover:-translate-y-1 group text-right"
+              >
+                <div className="text-[11px] text-gray-500 font-mono mb-1">NEXT EDITION #{nextArticle.id} →</div>
+                <h4 className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors line-clamp-1 mb-1">
+                  {nextArticle.title}
+                </h4>
+                <p className="text-xs text-gray-400 line-clamp-2">{nextArticle.subtitle}</p>
+              </div>
+            ) : (
+              <div className="bg-[#0e0e0e] border border-white/5 rounded-2xl p-5 text-gray-600 text-xs font-mono text-right">
+                End of current issue sequence.
+              </div>
+            )}
+          </div>
+
+          {/* Quick Jump Directory to all 10 Breakouts */}
+          <div className="bg-[#111111] border border-white/10 rounded-2xl p-6">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+              Explore All 10 Breakout Technologies:
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2.5">
+              {EDITIONS.map((ed) => (
+                <button
+                  key={ed.id}
+                  onClick={() => openFreshArticlePage(ed)}
+                  className={`text-left p-3 rounded-xl border text-xs transition-all ${
+                    ed.id === currentArticle.id
+                      ? "bg-white text-black font-bold border-white"
+                      : "bg-black/50 text-gray-300 border-white/5 hover:border-white/20 hover:text-white"
+                  }`}
+                >
+                  <div className="font-mono text-[10px] opacity-70 mb-0.5">#{ed.id} · {ed.category}</div>
+                  <div className="font-bold line-clamp-1">{ed.title.split(':')[0]}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Floating Return Button */}
+        <div className="mt-12 text-center">
+          <button
+            onClick={returnToAllNewsletters}
+            className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all"
+          >
+            ← Back to All Newsletters & Tech Radar
+          </button>
+        </div>
+      </GuideLayout>
+    );
+  }
+
+  /* =========================================================================
+     VIEW 2: NEWSLETTER INDEX & TECH RADAR ARCHIVE
+     ========================================================================= */
   return (
     <GuideLayout
       title="📰 AI Engineering Digest & Tech Radar"
@@ -897,10 +1260,10 @@ export default function NewsletterIndex() {
                   <span>Share Issue</span>
                 </button>
                 <button
-                  onClick={() => handleOpenEdition(featuredIssue)}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 flex items-center gap-2"
+                  onClick={() => openFreshArticlePage(featuredIssue)}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 flex items-center gap-2 cursor-pointer"
                 >
-                  Full Architecture & Specs <span>→</span>
+                  Full Architecture & Specs (Fresh Page) <span>→</span>
                 </button>
               </div>
             </div>
@@ -960,7 +1323,10 @@ export default function NewsletterIndex() {
                   <span className="text-xs text-gray-500 font-mono">Issue #{ed.id} · {ed.date}</span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors leading-snug">
+                <h3
+                  onClick={() => openFreshArticlePage(ed)}
+                  className="text-lg font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors leading-snug cursor-pointer"
+                >
                   {ed.title}
                 </h3>
 
@@ -1021,8 +1387,8 @@ export default function NewsletterIndex() {
                     </button>
                   </div>
                   <button
-                    onClick={() => handleOpenEdition(ed)}
-                    className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
+                    onClick={() => openFreshArticlePage(ed)}
+                    className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     Architecture & Deep Dive <span>→</span>
                   </button>
@@ -1119,228 +1485,6 @@ export default function NewsletterIndex() {
           </p>
         </div>
       </section>
-
-      {/* ====== EXPAND MODAL FOR EDITION DETAILS ====== */}
-      <AnimatePresence>
-        {expandedEdition && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#121212] border border-white/20 rounded-2xl p-6 md:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
-            >
-              <button
-                onClick={handleCloseEdition}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold"
-              >
-                ✕
-              </button>
-
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${expandedEdition.categoryColor}`}>
-                  {expandedEdition.category}
-                </span>
-                <span className="text-xs text-gray-400 font-mono">Issue #{expandedEdition.id} · {expandedEdition.date} · {expandedEdition.readTime}</span>
-              </div>
-
-              <h2 className="text-2xl font-extrabold text-white mb-1">
-                {expandedEdition.title}
-              </h2>
-              <p className="text-indigo-400 font-mono text-sm mb-4">
-                {expandedEdition.subtitle}
-              </p>
-
-              {/* Direct Link Banner */}
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 p-3 bg-white/5 border border-white/10 rounded-xl">
-                <div className="flex items-center gap-2 text-xs text-gray-300 font-mono">
-                  <span className="text-emerald-400">●</span>
-                  <span>Official Project / Repo:</span>
-                  <span className="text-white font-bold">{expandedEdition.repoName}</span>
-                </div>
-                <a
-                  href={expandedEdition.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/30"
-                >
-                  <span>Open Official URL</span>
-                  <span>↗</span>
-                </a>
-              </div>
-
-              <p className="text-gray-300 text-sm leading-relaxed mb-6">
-                {expandedEdition.summary}
-              </p>
-
-              {/* Why Highlighted Section */}
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
-                <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <span>💡</span> Why This Is Highlighted in 2026:
-                </h4>
-                <p className="text-sm text-gray-200 leading-relaxed">
-                  {expandedEdition.whyHighlighted.replace("Why it's highlighted: ", "")}
-                </p>
-              </div>
-
-              {/* Visual Architecture Diagram */}
-              {expandedEdition.diagram && (
-                <div className="mb-6">
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <span>📐</span> Architectural Flow & Data Pipeline:
-                  </h4>
-                  <div className="bg-black/70 border border-white/10 rounded-xl p-4 font-mono text-xs text-indigo-300 overflow-x-auto shadow-inner">
-                    <pre className="whitespace-pre leading-relaxed">{expandedEdition.diagram}</pre>
-                  </div>
-                </div>
-              )}
-
-              {/* Technical Specifications */}
-              {expandedEdition.specs && (
-                <div className="bg-black/50 border border-white/10 rounded-xl p-4 mb-6">
-                  <h4 className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-3">🛠️ Technical Specifications:</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    {Object.entries(expandedEdition.specs).map(([key, val]) => (
-                      <div key={key} className="bg-white/5 rounded-lg p-2 flex flex-col">
-                        <span className="text-gray-400 font-mono text-[10px]">{key}</span>
-                        <span className="text-white font-semibold mt-0.5">{val}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Key Takeaways */}
-              <div className="bg-black/60 border border-white/10 rounded-xl p-5 mb-6 space-y-3">
-                <h4 className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Key Architectural Takeaways:</h4>
-                {expandedEdition.takeaways.map((point, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-sm text-gray-200">
-                    <span className="text-indigo-400 font-bold mt-0.5">✓</span>
-                    <span>{point}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Social Media Share Strip Inside Modal */}
-              <div className="bg-gradient-to-r from-purple-950/30 via-black to-indigo-950/30 border border-white/10 rounded-xl p-4 mb-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                  <div className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>Share This Breakdown to Social Media:</span>
-                  </div>
-                  {copiedLink && (
-                    <span className="text-xs font-bold text-emerald-400 font-mono animate-pulse">
-                      ✓ Link copied to clipboard!
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => handleShareSocial('twitter', {
-                      title: expandedEdition.title,
-                      subtitle: expandedEdition.subtitle,
-                      url: getShareUrl(expandedEdition.id),
-                      text: `Check out ${expandedEdition.title} (${expandedEdition.repoName}) in AI Visualised Engineering!`
-                    })}
-                    className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                  >
-                    <TwitterIcon className="w-3.5 h-3.5" />
-                    <span>X (Twitter)</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleShareSocial('linkedin', {
-                      title: expandedEdition.title,
-                      subtitle: expandedEdition.subtitle,
-                      url: getShareUrl(expandedEdition.id),
-                      text: `${expandedEdition.title} - ${expandedEdition.subtitle}`
-                    })}
-                    className="px-3 py-1.5 rounded-lg bg-[#0A66C2]/20 hover:bg-[#0A66C2]/30 border border-[#0A66C2]/50 text-[#70b5f9] text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                  >
-                    <LinkedInIcon className="w-3.5 h-3.5" />
-                    <span>LinkedIn</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleShareSocial('whatsapp', {
-                      title: expandedEdition.title,
-                      subtitle: expandedEdition.subtitle,
-                      url: getShareUrl(expandedEdition.id),
-                      text: `Look at ${expandedEdition.title} (${expandedEdition.repoName}):`
-                    })}
-                    className="px-3 py-1.5 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#75f1a5] text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                  >
-                    <WhatsAppIcon className="w-3.5 h-3.5" />
-                    <span>WhatsApp</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleShareSocial('reddit', {
-                      title: expandedEdition.title,
-                      subtitle: expandedEdition.subtitle,
-                      url: getShareUrl(expandedEdition.id),
-                      text: `${expandedEdition.title} - Architectural Breakdown`
-                    })}
-                    className="px-3 py-1.5 rounded-lg bg-[#FF4500]/20 hover:bg-[#FF4500]/30 border border-[#FF4500]/50 text-[#ffa285] text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                  >
-                    <RedditIcon className="w-3.5 h-3.5" />
-                    <span>Reddit</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleShareSocial('telegram', {
-                      title: expandedEdition.title,
-                      subtitle: expandedEdition.subtitle,
-                      url: getShareUrl(expandedEdition.id),
-                      text: `Architecture Deep Dive: ${expandedEdition.title}`
-                    })}
-                    className="px-3 py-1.5 rounded-lg bg-[#229ED9]/20 hover:bg-[#229ED9]/30 border border-[#229ED9]/50 text-[#78c9f5] text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                  >
-                    <TelegramIcon className="w-3.5 h-3.5" />
-                    <span>Telegram</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleCopy(getShareUrl(expandedEdition.id))}
-                    className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition-colors ml-auto"
-                  >
-                    <CopyIcon className="w-3.5 h-3.5" />
-                    <span>{copiedLink ? "Copied! ✓" : "Copy Link"}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-white/10">
-                <div className="flex flex-wrap gap-2">
-                  {expandedEdition.highlights.map((h, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded bg-white/5 text-xs text-gray-400 font-mono border border-white/5">
-                      #{h}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-3">
-                  <a
-                    href={expandedEdition.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors flex items-center gap-1"
-                  >
-                    <span>Visit {expandedEdition.repoName}</span>
-                    <span>↗</span>
-                  </a>
-                  <button
-                    onClick={handleCloseEdition}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors"
-                  >
-                    Close Edition
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* ====== SOCIAL SHARE MODAL ====== */}
       <AnimatePresence>
