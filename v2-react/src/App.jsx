@@ -150,6 +150,7 @@ const SystemDesignIndex = lazy(() => import("./pages/SystemDesignIndex"));
 const GlossaryIndex = lazy(() => import("./pages/GlossaryIndex"));
 const ProjectsIndex = lazy(() => import("./pages/ProjectsIndex"));
 const ResourcesIndex = lazy(() => import("./pages/ResourcesIndex"));
+const NewsletterIndex = lazy(() => import("./pages/NewsletterIndex"));
 const AzureIndex = lazy(() => import("./pages/AzureIndex"));
 const AzureBasics = lazy(() => import("./pages/AzureBasics"));
 const AzureInfrastructure = lazy(() => import("./pages/AzureInfrastructure"));
@@ -410,6 +411,7 @@ function App() {
         <Route path="/quizzes" element={<QuizIndex />} />
         <Route path="/projects" element={<ProjectsIndex />} />
         <Route path="/resources" element={<ResourcesIndex />} />
+        <Route path="/newsletter" element={<NewsletterIndex />} />
 
         {/* Catch-all: unknown URLs get a helpful page, not a blank screen */}
         <Route path="*" element={<NotFound />} />

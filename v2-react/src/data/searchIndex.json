@@ -6119,6 +6119,30 @@
     ]
   },
   {
+    "path": "/newsletter",
+    "title": "📰 Tech Radar & Newsletter",
+    "intro": "Weekly visual breakdowns of frontier AI models, emerging developer tools, research breakthroughs, and production engineering practices.",
+    "sections": [
+      {
+        "label": "Featured Issue",
+        "hash": "featured"
+      },
+      {
+        "label": "Latest Editions",
+        "hash": "editions"
+      },
+      {
+        "label": "AI Tech Radar 2026",
+        "hash": "tech-radar"
+      },
+      {
+        "label": "Subscribe",
+        "hash": "subscribe"
+      }
+    ],
+    "keywords": []
+  },
+  {
     "path": "/playgrounds",
     "title": "Interactive",
     "intro": "Every hands-on tool and step-through animation on the site, in one place. Poke at the thing rather than reading about it.",
