@@ -1,0 +1,9 @@
+{
+  "appId": "com.aivisualisedengineering.app",
+  "appName": "AI Visualised Engineering",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "automatic",
+    "scheme": "AI Visualised Engineering"
+  }
+}

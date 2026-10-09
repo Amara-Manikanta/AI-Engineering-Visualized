@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import AddArticleModal from '../components/AddArticleModal';
 
 // Social Media Icons
 function TwitterIcon({ className = "w-4 h-4" }) {
@@ -1527,34 +1528,82 @@ export default function NewsletterIndex() {
   const [copiedDiagram, setCopiedDiagram] = useState(false);
   const [copiedExperiment, setCopiedExperiment] = useState(false);
 
+  // User-created offline articles saved in localStorage
+  const [userArticles, setUserArticles] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ai_radar_user_custom_articles');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error('Failed to parse saved radar articles:', e);
+      return [];
+    }
+  });
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingArticle, setEditingArticle] = useState(null);
+
+  // Combined articles list: User articles first, then builtin curated editions
+  const allArticles = [...userArticles, ...EDITIONS];
+
+  const handleSaveArticle = (articleData) => {
+    let updated;
+    if (articleData.id && userArticles.some(a => a.id.toString() === articleData.id.toString())) {
+      // Editing existing custom article
+      updated = userArticles.map(a => a.id.toString() === articleData.id.toString() ? { ...articleData, isUserCreated: true } : a);
+    } else {
+      // Adding new custom article
+      const newArt = {
+        ...articleData,
+        id: articleData.id || `custom-${Date.now()}`,
+        isUserCreated: true
+      };
+      updated = [newArt, ...userArticles];
+    }
+    setUserArticles(updated);
+    try {
+      localStorage.setItem('ai_radar_user_custom_articles', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to save custom articles to localStorage:', e);
+    }
+    setIsAddModalOpen(false);
+    setEditingArticle(null);
+  };
+
+  const handleDeleteArticle = (articleId) => {
+    if (typeof window !== 'undefined' && window.confirm("Are you sure you want to delete this custom article?")) {
+      const updated = userArticles.filter(a => a.id.toString() !== articleId.toString());
+      setUserArticles(updated);
+      try {
+        localStorage.setItem('ai_radar_user_custom_articles', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to delete custom article from localStorage:', e);
+      }
+      if (activeIssueId && activeIssueId.toString() === articleId.toString()) {
+        returnToAllNewsletters();
+      }
+    }
+  };
+
   // Read issue from searchParams (inside hash like #/newsletter?issue=1)
   // OR from window.location.search (before hash like ?issue=1#/newsletter)
   // OR from hash anchor (like #issue-1)
   const getActiveIssueId = () => {
     const issueP = searchParams.get('issue');
-    if (issueP) {
-      const parsed = parseInt(issueP, 10);
-      if (!isNaN(parsed)) return parsed;
-    }
+    if (issueP) return issueP;
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const queryIssue = urlParams.get('issue');
-      if (queryIssue) {
-        const parsed = parseInt(queryIssue, 10);
-        if (!isNaN(parsed)) return parsed;
-      }
+      if (queryIssue) return queryIssue;
       const hash = window.location.hash;
-      const hashMatch = hash.match(/issue[=-](\d+)/);
-      if (hashMatch) {
-        const parsed = parseInt(hashMatch[1], 10);
-        if (!isNaN(parsed)) return parsed;
-      }
+      const hashMatch = hash.match(/issue[=-]([a-zA-Z0-9_-]+)/);
+      if (hashMatch) return hashMatch[1];
     }
     return null;
   };
 
   const activeIssueId = getActiveIssueId();
-  const currentArticle = activeIssueId ? EDITIONS.find(ed => ed.id === activeIssueId) : null;
+  const currentArticle = activeIssueId
+    ? allArticles.find(ed => ed.id.toString() === activeIssueId.toString())
+    : null;
 
   // Sync hash with issue param for backward compatibility
   useEffect(() => {
@@ -1569,20 +1618,20 @@ export default function NewsletterIndex() {
 
   const categories = ["All", "Edge & Hardware", "Developer Tools", "Architecture & RAG", "MLOps & Systems", "Frontier Models", "Security & Interactive"];
 
-  const filteredEditions = EDITIONS.filter((ed) => {
+  const filteredEditions = allArticles.filter((ed) => {
     const matchesCategory = selectedCategory === "All" || ed.category === selectedCategory;
     const matchesSearch = searchQuery === "" || 
       ed.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ed.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (ed.subtitle && ed.subtitle.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (ed.shortName && ed.shortName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      ed.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ed.whyHighlighted.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ed.repoName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ed.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()));
+      (ed.summary && ed.summary.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (ed.whyHighlighted && ed.whyHighlighted.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (ed.repoName && ed.repoName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (ed.highlights && ed.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase())));
     return matchesCategory && matchesSearch;
   });
 
-  const featuredIssue = EDITIONS.find(ed => ed.featured) || EDITIONS[0];
+  const featuredIssue = allArticles.find(ed => ed.featured) || allArticles[0];
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -1743,8 +1792,9 @@ export default function NewsletterIndex() {
      VIEW 1: FRESH STANDALONE ARTICLE PAGE
      ========================================================================= */
   if (currentArticle) {
-    const prevArticle = EDITIONS.find(ed => ed.id === currentArticle.id + 1) || null;
-    const nextArticle = EDITIONS.find(ed => ed.id === currentArticle.id - 1) || null;
+    const currentIndex = allArticles.findIndex(ed => ed.id.toString() === currentArticle.id.toString());
+    const prevArticle = currentIndex > 0 ? allArticles[currentIndex - 1] : null;
+    const nextArticle = currentIndex >= 0 && currentIndex < allArticles.length - 1 ? allArticles[currentIndex + 1] : null;
 
     return (
       <GuideLayout
@@ -1766,10 +1816,38 @@ export default function NewsletterIndex() {
             <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${currentArticle.categoryColor}`}>
               {currentArticle.category}
             </span>
-            <span className="hidden sm:inline text-xs text-gray-400 font-mono">Issue #{currentArticle.id} · {currentArticle.date}</span>
+            {currentArticle.isUserCreated && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                User Custom
+              </span>
+            )}
+            <span className="hidden sm:inline text-xs text-gray-400 font-mono">#{currentArticle.id} · {currentArticle.date}</span>
           </div>
 
           <div className="flex items-center gap-2">
+            {currentArticle.isUserCreated && (
+              <>
+                <button
+                  onClick={() => {
+                    setEditingArticle(currentArticle);
+                    setIsAddModalOpen(true);
+                  }}
+                  className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-mono text-xs flex items-center gap-1.5 transition-all"
+                  title="Edit this custom article"
+                >
+                  <span>✏️</span>
+                  <span>Edit</span>
+                </button>
+                <button
+                  onClick={() => handleDeleteArticle(currentArticle.id)}
+                  className="px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 font-mono text-xs flex items-center gap-1.5 transition-all"
+                  title="Delete this custom article"
+                >
+                  <span>🗑️</span>
+                  <span>Delete</span>
+                </button>
+              </>
+            )}
             <a
               href={currentArticle.url}
               target="_blank"
@@ -2165,18 +2243,29 @@ export default function NewsletterIndex() {
             )}
           </div>
 
-          {/* Quick Jump Directory to all 21 Breakouts */}
+          {/* Quick Jump Directory to all Breakouts */}
           <div className="bg-[#111111] border border-white/10 rounded-2xl p-6">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
-              Explore All 21 Breakout Technologies on AI Engineering Radar:
-            </h4>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Explore All {allArticles.length} Breakout Technologies on AI Engineering Radar:
+              </h4>
+              <button
+                onClick={() => {
+                  setEditingArticle(null);
+                  setIsAddModalOpen(true);
+                }}
+                className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-300 font-mono text-xs flex items-center gap-1 transition-all"
+              >
+                <span>+ Add Article</span>
+              </button>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2.5">
-              {EDITIONS.map((ed) => (
+              {allArticles.map((ed) => (
                 <button
                   key={ed.id}
                   onClick={() => openFreshArticlePage(ed)}
                   className={`text-left p-3 rounded-xl border text-xs transition-all ${
-                    ed.id === currentArticle.id
+                    ed.id.toString() === currentArticle.id.toString()
                       ? "bg-white text-black font-bold border-white"
                       : "bg-black/50 text-gray-300 border-white/5 hover:border-white/20 hover:text-white"
                   }`}
@@ -2198,6 +2287,18 @@ export default function NewsletterIndex() {
             ← Back to AI Engineering Radar
           </button>
         </div>
+
+        {/* Edit / Add Article Modal */}
+        <AddArticleModal
+          isOpen={isAddModalOpen}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            setEditingArticle(null);
+          }}
+          onSave={handleSaveArticle}
+          existingArticle={editingArticle}
+          nextIssueId={allArticles.length + 1}
+        />
       </GuideLayout>
     );
   }
@@ -2211,19 +2312,31 @@ export default function NewsletterIndex() {
       intro="Visual deep-dives, architectural breakdowns, and repository links for breakout AI technologies, edge models, training runtimes, and developer tooling."
       toc={toc}
     >
-      {/* ====== TOP SOCIAL SHARE BAR ====== */}
+      {/* ====== TOP SOCIAL SHARE & ADD ARTICLE BAR ====== */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-white/10">
         <div className="text-xs text-gray-400 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>21 Curated AI Breakthroughs & Architectures for 2026</span>
+          <span>{allArticles.length} AI Breakthroughs & Architectures for 2026 {userArticles.length > 0 && `(${userArticles.length} Custom)`}</span>
         </div>
-        <button
-          onClick={() => triggerShare(null)}
-          className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-mono text-xs flex items-center gap-2 transition-all hover:border-indigo-400 shadow-sm"
-        >
-          <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Share Radar to Social Media</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => {
+              setEditingArticle(null);
+              setIsAddModalOpen(true);
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md hover:shadow-indigo-500/25 cursor-pointer"
+          >
+            <span className="text-base leading-none font-bold">+</span>
+            <span>Add Article</span>
+          </button>
+          <button
+            onClick={() => triggerShare(null)}
+            className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-mono text-xs flex items-center gap-2 transition-all hover:border-indigo-400 shadow-sm"
+          >
+            <ShareIcon className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Share Radar</span>
+          </button>
+        </div>
       </div>
 
       {/* ====== FEATURED EDITION (HERO SPOTLIGHT) ====== */}
@@ -2367,10 +2480,44 @@ export default function NewsletterIndex() {
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${ed.categoryColor}`}>
-                    {ed.category}
-                  </span>
-                  <span className="text-xs text-gray-500 font-mono">Issue #{ed.id} · {ed.date}</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${ed.categoryColor}`}>
+                      {ed.category}
+                    </span>
+                    {ed.isUserCreated && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        Custom
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {ed.isUserCreated && (
+                      <>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingArticle(ed);
+                            setIsAddModalOpen(true);
+                          }}
+                          className="text-amber-400 hover:text-amber-300 text-xs font-mono px-1.5 py-0.5 rounded hover:bg-white/10"
+                          title="Edit custom article"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteArticle(ed.id);
+                          }}
+                          className="text-rose-400 hover:text-rose-300 text-xs font-mono px-1.5 py-0.5 rounded hover:bg-white/10"
+                          title="Delete custom article"
+                        >
+                          🗑️
+                        </button>
+                      </>
+                    )}
+                    <span className="text-xs text-gray-500 font-mono">#{ed.id} · {ed.date}</span>
+                  </div>
                 </div>
 
                 <h3
@@ -2653,6 +2800,18 @@ export default function NewsletterIndex() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Edit / Add Article Modal */}
+      <AddArticleModal
+        isOpen={isAddModalOpen}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingArticle(null);
+        }}
+        onSave={handleSaveArticle}
+        existingArticle={editingArticle}
+        nextIssueId={allArticles.length + 1}
+      />
     </GuideLayout>
   );
 }

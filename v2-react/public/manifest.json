@@ -1,0 +1,19 @@
+{
+  "short_name": "AI Engineering",
+  "name": "AI Visualised Engineering",
+  "description": "Interactive, visual offline guides to RAG, AI agents, MCP, LLMs, transformers, ML and Python.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "orientation": "portrait-primary",
+  "scope": "./"
+}

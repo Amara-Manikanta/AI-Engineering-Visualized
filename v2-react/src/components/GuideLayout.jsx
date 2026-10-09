@@ -7,6 +7,7 @@ import { AZURE_LINKS, AWS_LINKS } from "../config/navigation";
 import { PYTHON_LINKS } from "../config/pythonNavigation";
 import { neighbours, sectionFor } from "../lib/pageOrder";
 import { useReadPages, setRead } from "../lib/progress";
+import UserTopicNotes from "./UserTopicNotes";
 
 const cleanName = (n) => n.replace(/^·\s*/, "");
 
@@ -199,6 +200,9 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
           <div className="space-y-8 lg:space-y-12">
             {children}
           </div>
+
+          {/* User Custom Points & Notes (Offline Persistent) */}
+          <UserTopicNotes pagePath={location.pathname + location.hash} toc={toc} />
 
           {/* Progress + reading order */}
           <div className="mt-14 pt-6 border-t border-white/10">
