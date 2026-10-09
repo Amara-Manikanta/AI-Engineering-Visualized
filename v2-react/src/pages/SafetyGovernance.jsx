@@ -235,7 +235,7 @@ export default function SafetyGovernance() {
         <WatermarkLab />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           <Card title="Content credentials (C2PA)" tone="amber"><p>Cryptographically signed metadata that records how a file was created and edited. Robust when preserved, but easily stripped by re-encoding or screenshots.</p></Card>
-          <Card title="Invisible watermarks" tone="indigo"><p>Signals embedded in the pixels, audio or token choices themselves (for example Google's SynthID). They survive more transformations than metadata, but not all — use both, and never treat absence as proof of human origin.</p></Card>
+          <Card title="Invisible watermarks (Google SynthID)" tone="indigo"><p>Signals embedded in the pixels, audio or token choices themselves (such as Google DeepMind's SynthID). They survive more transformations than metadata without warping text quality or perplexity. <a href="#/radar?issue=21" className="text-indigo-400 hover:underline font-semibold block mt-1.5">Read our deep dive: Google SynthID in AI Engineering Radar →</a></p></Card>
         </div>
       </Section>
 
