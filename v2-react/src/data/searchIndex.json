@@ -3035,39 +3035,35 @@
   },
   {
     "path": "/ml",
-    "title": "Machine Learning Engineering: The Core Blueprint",
-    "intro": "From statistical learning theory and empirical loss optimization to self-supervised foundation pretraining and reinforcement alignment. Your comprehensive engineering masterguide.",
+    "title": "Introduction to Machine Learning",
+    "intro": "Understand the core fundamentals: how machines learn from data, the three core paradigms (supervised, unsupervised, and reinforcement learning), the end-to-end production lifecycle, and real-world applications & limitations.",
     "sections": [
       {
-        "label": "What is Machine Learning?",
+        "label": "Introduction to Machine Learning",
         "hash": "what-is-ml"
       },
       {
-        "label": "The 4 Core Paradigms",
-        "hash": "four-paradigms"
+        "label": "Traditional vs ML Mindset",
+        "hash": "traditional-vs-ml"
       },
       {
-        "label": "Mathematical Formulation",
-        "hash": "math-optimization"
+        "label": "Types of ML (Core Paradigms)",
+        "hash": "types-of-ml"
       },
       {
-        "label": "Bias-Variance Tradeoff",
-        "hash": "bias-variance"
+        "label": "The ML Workflow & Lifecycle",
+        "hash": "ml-lifecycle"
       },
       {
-        "label": "Production ML Workflow",
-        "hash": "ml-workflow"
+        "label": "Real-World Applications",
+        "hash": "applications"
       },
       {
-        "label": "Model Evaluation Metrics",
-        "hash": "evaluation-metrics"
+        "label": "Limitations & Pitfalls",
+        "hash": "limitations"
       },
       {
-        "label": "End-to-End Python Pipeline",
-        "hash": "python-blueprint"
-      },
-      {
-        "label": "Curriculum & Guides",
+        "label": "Full 37-Topic Learning Roadmap",
         "hash": "curriculum"
       }
     ],
