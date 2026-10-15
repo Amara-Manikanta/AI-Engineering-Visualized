@@ -5224,43 +5224,55 @@
     "intro": "The architectural foundation of modern AI. From mathematical scaled dot-product attention and causal masking to multi-head tensor splitting, RoPE positional rotations, and modern FlashAttention runtimes.",
     "sections": [
       {
-        "label": "Transformer Architecture Blueprint",
+        "label": "1. Why Transformers Won: The Paradigm Shift",
+        "hash": "transformer-intuition"
+      },
+      {
+        "label": "2. Query, Key, Value (QKV): Everyday Mental Model",
+        "hash": "qkv-intuition"
+      },
+      {
+        "label": "3. Interactive Architecture Blueprint",
         "hash": "full-architecture"
       },
       {
-        "label": "Scaled Dot-Product Attention Math",
+        "label": "4. Scaled Dot-Product Step-by-Step Math",
         "hash": "scaled-dot-product"
       },
       {
-        "label": "Interactive Attention Matrix",
+        "label": "5. Attention Heatmap & Winograd Resolver",
         "hash": "attention-matrix"
       },
       {
-        "label": "Multi-Head Attention Tensor Split",
+        "label": "6. Multi-Head Subspace Splitting",
         "hash": "multi-head"
       },
       {
-        "label": "Positional Encoding: Sinusoidal to RoPE",
+        "label": "7. Positional Encoding: Sinusoids to RoPE",
         "hash": "positional-encoding"
       },
       {
-        "label": "The 3 Architectural Families",
+        "label": "8. The 3 Architectural Families",
         "hash": "three-families"
       },
       {
-        "label": "Modern LLM Innovations (2017-2026)",
+        "label": "9. Inference Acceleration: KV Caching & GQA",
+        "hash": "inference-kv-cache"
+      },
+      {
+        "label": "10. Modern LLM Innovations (2017-2026)",
         "hash": "modern-innovations"
       },
       {
-        "label": "Interactive Tokenization & Embeddings",
+        "label": "11. Interactive Tokenization & Embeddings",
         "hash": "tokenization"
       },
       {
-        "label": "PyTorch Implementation Blueprint",
+        "label": "12. PyTorch Implementation Blueprint",
         "hash": "pytorch-code"
       },
       {
-        "label": "Knowledge Check Quiz",
+        "label": "13. Knowledge Check Quiz",
         "hash": "knowledge-check"
       }
     ],

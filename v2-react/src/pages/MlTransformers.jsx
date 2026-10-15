@@ -4,23 +4,53 @@ import GuideLayout from "../components/GuideLayout";
 import KnowledgeCheck from "../components/KnowledgeCheck";
 import { questionsFor } from "../data/quizBank";
 
-const ATTENTION_WORDS = ["The", "animal", "didn't", "cross", "the", "street", "because", "it", "was", "too", "tired"];
-
-// Attention weights from "it" to all other tokens (showing strong coreference to "animal")
-const SAMPLE_ATTENTION_MATRIX = [
-  // The   animal didn't cross  the   street because  it   was   too   tired
-  [0.08, 0.45,  0.03,  0.06,  0.04, 0.12,  0.05,   0.02, 0.04, 0.03, 0.08], // The
-  [0.05, 0.52,  0.02,  0.10,  0.03, 0.14,  0.04,   0.02, 0.03, 0.02, 0.03], // animal
-  [0.04, 0.15,  0.35,  0.22,  0.02, 0.05,  0.05,   0.02, 0.05, 0.02, 0.03], // didn't
-  [0.03, 0.20,  0.15,  0.28,  0.04, 0.18,  0.03,   0.01, 0.03, 0.02, 0.03], // cross
-  [0.02, 0.04,  0.02,  0.08,  0.10, 0.65,  0.02,   0.01, 0.02, 0.01, 0.03], // the
-  [0.03, 0.18,  0.03,  0.22,  0.08, 0.38,  0.02,   0.01, 0.02, 0.01, 0.02], // street
-  [0.02, 0.12,  0.08,  0.10,  0.02, 0.06,  0.28,   0.05, 0.12, 0.05, 0.10], // because
-  [0.03, 0.58,  0.03,  0.04,  0.02, 0.08,  0.06,   0.04, 0.04, 0.02, 0.06], // it -> attends 58% to "animal"!
-  [0.02, 0.15,  0.04,  0.05,  0.02, 0.04,  0.08,   0.12, 0.22, 0.10, 0.16], // was
-  [0.01, 0.08,  0.02,  0.03,  0.01, 0.03,  0.04,   0.04, 0.10, 0.25, 0.39], // too
-  [0.02, 0.42,  0.02,  0.03,  0.01, 0.04,  0.05,   0.08, 0.10, 0.08, 0.15], // tired -> animal was tired
-];
+// Winograd Schema Attention Matrices demonstrating coreference resolution
+const WINOGRAD_DATA = {
+  tired: {
+    label: "Sentence A: ...because it was too tired",
+    adjective: "tired",
+    targetEntity: "animal",
+    targetIdx: 1,
+    words: ["The", "animal", "didn't", "cross", "the", "street", "because", "it", "was", "too", "tired"],
+    matrix: [
+      // The   animal didn't cross  the   street because  it   was   too   tired
+      [0.08, 0.45,  0.03,  0.06,  0.04, 0.12,  0.05,   0.02, 0.04, 0.03, 0.08], // The
+      [0.05, 0.52,  0.02,  0.10,  0.03, 0.14,  0.04,   0.02, 0.03, 0.02, 0.03], // animal
+      [0.04, 0.15,  0.35,  0.22,  0.02, 0.05,  0.05,   0.02, 0.05, 0.02, 0.03], // didn't
+      [0.03, 0.20,  0.15,  0.28,  0.04, 0.18,  0.03,   0.01, 0.03, 0.02, 0.03], // cross
+      [0.02, 0.04,  0.02,  0.08,  0.10, 0.65,  0.02,   0.01, 0.02, 0.01, 0.03], // the
+      [0.03, 0.18,  0.03,  0.22,  0.08, 0.38,  0.02,   0.01, 0.02, 0.01, 0.02], // street
+      [0.02, 0.12,  0.08,  0.10,  0.02, 0.06,  0.28,   0.05, 0.12, 0.05, 0.10], // because
+      [0.03, 0.58,  0.03,  0.04,  0.02, 0.08,  0.06,   0.04, 0.04, 0.02, 0.06], // it -> attends 58% to animal!
+      [0.02, 0.15,  0.04,  0.05,  0.02, 0.04,  0.08,   0.12, 0.22, 0.10, 0.16], // was
+      [0.01, 0.08,  0.02,  0.03,  0.01, 0.03,  0.04,   0.04, 0.10, 0.25, 0.39], // too
+      [0.02, 0.42,  0.02,  0.03,  0.01, 0.04,  0.05,   0.08, 0.10, 0.08, 0.15], // tired -> animal was tired
+    ],
+    explanation: "Because living beings get tired (not streets), the model attends 58% from 'it' to 'animal'. The contextual representation of 'it' is updated with animal features!"
+  },
+  wide: {
+    label: "Sentence B: ...because it was too wide",
+    adjective: "wide",
+    targetEntity: "street",
+    targetIdx: 5,
+    words: ["The", "animal", "didn't", "cross", "the", "street", "because", "it", "was", "too", "wide"],
+    matrix: [
+      // The   animal didn't cross  the   street because  it   was   too   wide
+      [0.08, 0.15,  0.03,  0.08,  0.06, 0.42,  0.04,   0.02, 0.03, 0.02, 0.07], // The
+      [0.05, 0.48,  0.02,  0.14,  0.03, 0.16,  0.03,   0.02, 0.02, 0.02, 0.03], // animal
+      [0.03, 0.12,  0.32,  0.26,  0.02, 0.12,  0.04,   0.02, 0.04, 0.02, 0.03], // didn't
+      [0.02, 0.14,  0.12,  0.30,  0.04, 0.26,  0.03,   0.01, 0.03, 0.02, 0.03], // cross
+      [0.02, 0.04,  0.02,  0.06,  0.10, 0.68,  0.02,   0.01, 0.02, 0.01, 0.02], // the
+      [0.02, 0.10,  0.02,  0.18,  0.07, 0.52,  0.02,   0.01, 0.02, 0.01, 0.03], // street
+      [0.02, 0.08,  0.06,  0.12,  0.02, 0.14,  0.26,   0.05, 0.10, 0.05, 0.10], // because
+      [0.02, 0.09,  0.03,  0.05,  0.03, 0.62,  0.05,   0.03, 0.03, 0.01, 0.04], // it -> attends 62% to street!
+      [0.02, 0.06,  0.03,  0.05,  0.02, 0.18,  0.08,   0.14, 0.20, 0.08, 0.14], // was
+      [0.01, 0.04,  0.02,  0.04,  0.01, 0.12,  0.04,   0.04, 0.10, 0.22, 0.36], // too
+      [0.02, 0.08,  0.02,  0.16,  0.02, 0.54,  0.04,   0.06, 0.08, 0.08, 0.12], // wide -> street was wide
+    ],
+    explanation: "Simply replacing 'tired' with 'wide' causes the model to redirect 62% of 'it' attention to 'street'! Streets have spatial width; animals do not. Attention resolves this ambiguity dynamically!"
+  }
+};
 
 const ARCH_BLOCKS = [
   {
@@ -31,7 +61,7 @@ const ARCH_BLOCKS = [
     formula: "X = Embedding(Tokens) + Positional_Encoding",
     color: "from-blue-600 to-indigo-600",
     border: "border-blue-500/40",
-    role: "Converts discrete vocabulary integer token IDs into rich continuous vector spaces (e.g., d_model = 4096 in Llama 3) where semantic proximity translates to cosine similarity."
+    role: "Converts discrete vocabulary integer token IDs into continuous high-dimensional vector spaces (e.g., d_model = 4096 in Llama 3) where semantic proximity translates to cosine similarity."
   },
   {
     id: "rope-pe",
@@ -41,7 +71,7 @@ const ARCH_BLOCKS = [
     formula: "PE(pos, 2i) = sin(pos / 10000^{2i/d}), PE(pos, 2i+1) = cos(pos / 10000^{2i/d})",
     color: "from-pink-600 to-rose-600",
     border: "border-pink-500/40",
-    role: "Injects sequence order into the set-based self-attention operation. Modern LLMs use RoPE (Rotary Position Embeddings) to rotate Query and Key vectors in complex 2D planes."
+    role: "Injects sequence order into set-based self-attention. Without position, 'Dog bites man' and 'Man bites dog' have identical attention matrices. Modern LLMs use RoPE to rotate Q and K vectors in 2D planes."
   },
   {
     id: "self-attn",
@@ -61,7 +91,7 @@ const ARCH_BLOCKS = [
     formula: "Attention_masked = softmax( (Q K^T / √d_k) + M ) V",
     color: "from-amber-600 to-orange-600",
     border: "border-amber-500/40",
-    role: "Prevents tokens from looking into future sequence positions during autoregressive generation. The upper triangle is set to -∞ so softmax evaluates exactly to 0.0."
+    role: "Prevents tokens from looking into future sequence positions during autoregressive generation. The upper triangle is set to -∞ so softmax evaluates to 0.0."
   },
   {
     id: "cross-attn",
@@ -106,17 +136,26 @@ const ARCH_BLOCKS = [
 ];
 
 export default function MlTransformers() {
-  const [selectedWordIdx, setSelectedWordIdx] = useState(7); // default on "it"
+  const [paradigmMode, setParadigmMode] = useState("transformer");
+  const [wordSenseMode, setWordSenseMode] = useState("river");
+  const [winogradMode, setWinogradMode] = useState("tired");
+  const [selectedWordIdx, setSelectedWordIdx] = useState(7); // "it"
   const [activeArchBlock, setActiveArchBlock] = useState("self-attn");
   const [attnStep, setAttnStep] = useState(1);
-  const [tokText, setTokText] = useState("Self-attention enables massive parallel training.");
-  const [tokens, setTokens] = useState(["Self", "-attention", " enables", " massive", " parallel", " training", "."]);
   const [activeFamily, setActiveFamily] = useState("decoder");
+  const [kvMode, setKvMode] = useState("with-cache");
+  const [tokText, setTokText] = useState("Self-attention enables massive parallel training across GPUs.");
+  const [tokens, setTokens] = useState(["Self", "-attention", " enables", " massive", " parallel", " training", " across", " GPUs", "."]);
 
-  const currentBlock = ARCH_BLOCKS.find(b => b.id === activeArchBlock) || ARCH_BLOCKS[2];
+  const currentBlock = ARCH_BLOCKS.find((b) => b.id === activeArchBlock) || ARCH_BLOCKS[2];
+  const activeWinograd = WINOGRAD_DATA[winogradMode];
 
   const handleTokenize = () => {
-    const rawWords = tokText.split(" ").filter(w => w.trim());
+    if (!tokText.trim()) {
+      setTokens([]);
+      return;
+    }
+    const rawWords = tokText.split(" ").filter((w) => w.trim());
     const result = [];
     rawWords.forEach((w) => {
       if (w.length > 5) {
@@ -130,16 +169,19 @@ export default function MlTransformers() {
   };
 
   const toc = [
-    { label: "Transformer Architecture Blueprint", hash: "full-architecture" },
-    { label: "Scaled Dot-Product Attention Math", hash: "scaled-dot-product" },
-    { label: "Interactive Attention Matrix", hash: "attention-matrix" },
-    { label: "Multi-Head Attention Tensor Split", hash: "multi-head" },
-    { label: "Positional Encoding: Sinusoidal to RoPE", hash: "positional-encoding" },
-    { label: "The 3 Architectural Families", hash: "three-families" },
-    { label: "Modern LLM Innovations (2017-2026)", hash: "modern-innovations" },
-    { label: "Interactive Tokenization & Embeddings", hash: "tokenization" },
-    { label: "PyTorch Implementation Blueprint", hash: "pytorch-code" },
-    { label: "Knowledge Check Quiz", hash: "knowledge-check" },
+    { label: "1. Why Transformers Won: The Paradigm Shift", hash: "transformer-intuition" },
+    { label: "2. Query, Key, Value (QKV): Everyday Mental Model", hash: "qkv-intuition" },
+    { label: "3. Interactive Architecture Blueprint", hash: "full-architecture" },
+    { label: "4. Scaled Dot-Product Step-by-Step Math", hash: "scaled-dot-product" },
+    { label: "5. Attention Heatmap & Winograd Resolver", hash: "attention-matrix" },
+    { label: "6. Multi-Head Subspace Splitting", hash: "multi-head" },
+    { label: "7. Positional Encoding: Sinusoids to RoPE", hash: "positional-encoding" },
+    { label: "8. The 3 Architectural Families", hash: "three-families" },
+    { label: "9. Inference Acceleration: KV Caching & GQA", hash: "inference-kv-cache" },
+    { label: "10. Modern LLM Innovations (2017-2026)", hash: "modern-innovations" },
+    { label: "11. Interactive Tokenization & Embeddings", hash: "tokenization" },
+    { label: "12. PyTorch Implementation Blueprint", hash: "pytorch-code" },
+    { label: "13. Knowledge Check Quiz", hash: "knowledge-check" },
   ];
 
   return (
@@ -169,42 +211,276 @@ export default function MlTransformers() {
             </h1>
 
             <p className="text-gray-300 text-base md:text-lg max-w-3xl leading-relaxed mb-8">
-              Prior to 2017, sequence modeling relied on Recurrent Neural Networks (RNNs) and LSTMs that processed tokens strictly sequentially — creating an un-parallelizable bottleneck and suffering from vanishing gradients over long horizons. 
-              The Transformer replaced recurrence entirely with <strong>Self-Attention</strong>, allowing whole documents to be processed in parallel across GPU clusters.
+              Prior to 2017, natural language processing relied on recurrent networks (RNNs and LSTMs) that read text sequentially — word by word. This created a severe training bottleneck on GPUs and suffered from catastrophic forgetting over long documents. The Transformer replaced recurrence entirely with <strong>Self-Attention</strong>, allowing whole books to be ingested simultaneously across massive GPU clusters.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
               <div className="p-3 rounded-xl bg-black/50 border border-white/10 text-gray-300">
-                <span className="text-indigo-400 block font-bold mb-1">Complexity</span>
-                O(T²) Time / O(T²) Space
+                <span className="text-indigo-400 block font-bold mb-1">Time Complexity</span>
+                O(1) Sequential Path Length
               </div>
               <div className="p-3 rounded-xl bg-black/50 border border-white/10 text-gray-300">
                 <span className="text-emerald-400 block font-bold mb-1">Context Length</span>
                 128K – 1M+ Tokens
               </div>
               <div className="p-3 rounded-xl bg-black/50 border border-white/10 text-gray-300">
-                <span className="text-pink-400 block font-bold mb-1">Key Equation</span>
+                <span className="text-pink-400 block font-bold mb-1">Core Equation</span>
                 softmax(QKᵀ / √d_k) V
               </div>
               <div className="p-3 rounded-xl bg-black/50 border border-white/10 text-gray-300">
-                <span className="text-amber-400 block font-bold mb-1">Primary Dominance</span>
-                LLMs, Vision, Audio, Biology
+                <span className="text-amber-400 block font-bold mb-1">AI Dominance</span>
+                ChatGPT, Claude, Llama 3, Gemini
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 1: INTERACTIVE FULL DUAL-TOWER ARCHITECTURE BLUEPRINT */}
+        {/* SECTION 1: THE PARADIGM SHIFT: WHY RNNS FAILED & TRANSFORMERS WON */}
+        <section id="transformer-intuition" className="scroll-mt-24">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-indigo-400 font-bold block mb-1">
+                  Section 1 · Foundations &amp; History
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">
+                  Why Transformers Won: The Paradigm Shift
+                </h2>
+              </div>
+              <div className="flex gap-2 p-1 bg-black/60 rounded-xl border border-white/10">
+                <button
+                  onClick={() => setParadigmMode("rnn")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    paradigmMode === "rnn" ? "bg-rose-600 text-white shadow" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Sequential RNN / LSTM
+                </button>
+                <button
+                  onClick={() => setParadigmMode("transformer")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    paradigmMode === "transformer" ? "bg-indigo-600 text-white shadow" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Parallel Transformer
+                </button>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-300 leading-relaxed mb-6">
+              To understand the Transformer, you must first understand the fundamental limitation of the models it replaced. Sequence modeling used to depend on step-by-step recurrence.
+            </p>
+
+            {paradigmMode === "rnn" ? (
+              <div className="space-y-6">
+                <div className="p-6 rounded-2xl bg-black/70 border border-rose-500/30">
+                  <div className="text-xs font-mono uppercase text-rose-400 font-bold mb-2">
+                    Recurrent Neural Network (RNN / LSTM): Sequential Bottleneck
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-2 py-6 font-mono text-xs text-gray-300">
+                    <span className="px-3 py-2 rounded-lg bg-white/5 border border-white/10">Token 1: "The"</span>
+                    <span className="text-rose-400">→ h₁ →</span>
+                    <span className="px-3 py-2 rounded-lg bg-white/5 border border-white/10">Token 2: "animal"</span>
+                    <span className="text-rose-400">→ h₂ →</span>
+                    <span className="px-3 py-2 rounded-lg bg-white/5 border border-white/10">Token 3: "was"</span>
+                    <span className="text-rose-400">→ ... →</span>
+                    <span className="px-3 py-2 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold">
+                      Token N: "tired"
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mt-4">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+                      <strong className="text-rose-300 block mb-1">🚨 The Hardware Bottleneck:</strong>
+                      Modern GPUs have thousands of compute cores designed for simultaneous matrix operations. RNNs force GPUs to wait sequentially: Step 50 cannot run until Step 49 finishes!
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+                      <strong className="text-rose-300 block mb-1">📉 Vanishing Information (Amnesia):</strong>
+                      Information from Token 1 must pass through dozens of matrix multiplications and squashing activations to reach Token 100. Long-range context is lost or degraded.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="p-6 rounded-2xl bg-black/70 border border-indigo-500/30">
+                  <div className="text-xs font-mono uppercase text-indigo-400 font-bold mb-2">
+                    Self-Attention (Transformer): Massive Parallel Processing
+                  </div>
+                  <div className="p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/20 text-center font-mono text-xs text-indigo-200 mb-4">
+                    All N tokens enter the GPU at the exact same millisecond: [Batch, Sequence_Length, d_model]
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-xs mb-4">
+                    <div className="p-2.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 text-white font-bold">"The"</div>
+                    <div className="p-2.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 text-white font-bold">"animal"</div>
+                    <div className="p-2.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 text-white font-bold">"cross"</div>
+                    <div className="p-2.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 text-white font-bold">"street"</div>
+                  </div>
+                  <div className="text-center font-mono text-xs text-emerald-400 py-2">
+                    ⚡ Direct O(1) attention connection between EVERY token pair simultaneously!
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 mt-4">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+                      <strong className="text-emerald-300 block mb-1">🚀 100% GPU Cluster Saturation:</strong>
+                      Because all tokens are processed at once, training scales across thousands of GPUs running parallel matrix multiplications. This enabled training on trillions of web tokens.
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+                      <strong className="text-emerald-300 block mb-1">🔗 Zero Memory Degradation:</strong>
+                      Token 1 and Token 100,000 talk to each other directly through a single dot-product calculation. Distance in the sequence no longer degrades signal strength!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* SECTION 2: QUERY, KEY, VALUE (QKV) INTUITION & WORD AMBIGUITY */}
+        <section id="qkv-intuition" className="scroll-mt-24">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
+            <span className="text-xs font-mono uppercase tracking-wider text-purple-400 font-bold block mb-1">
+              Section 2 · The Mental Model
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
+              Query, Key, Value (QKV): Intuition Before The Math
+            </h2>
+            <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+              Before looking at tensor equations, where does the concept of Query, Key, and Value come from? It is borrowed directly from <strong>information retrieval and search engines</strong>.
+            </p>
+
+            {/* The Search Engine Analogy Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+              <div className="p-5 rounded-2xl bg-black/60 border border-indigo-500/30 flex flex-col justify-between">
+                <div>
+                  <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono font-bold text-base mb-3">
+                    Q
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-1">The Query ("What I Want")</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                    Like the text you type into a video search bar: <em>"How to bake sourdough bread"</em>.
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/20 text-[11px] font-mono text-indigo-300">
+                  Role: The current word asks: "What context do I need to understand my meaning?"
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-black/60 border border-emerald-500/30 flex flex-col justify-between">
+                <div>
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono font-bold text-base mb-3">
+                    K
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-1">The Key ("What I Contain")</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                    Like the title, tags, and category labels of every video in the catalog: <em>"Baking Bread"</em>, <em>"Car Engine Repair"</em>.
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/20 text-[11px] font-mono text-emerald-300">
+                  Role: Every candidate word advertises: "Here is the topic and semantic role I represent."
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-black/60 border border-purple-500/30 flex flex-col justify-between">
+                <div>
+                  <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-mono font-bold text-base mb-3">
+                    V
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-1">The Value ("The Actual Content")</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                    Like the actual video footage, audio, and baking steps you watch once the search matches.
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-[11px] font-mono text-purple-300">
+                  Role: The actual information vector that gets blended into the updated word representation.
+                </div>
+              </div>
+            </div>
+
+            {/* Real World Word Ambiguity Interactive Example */}
+            <div className="p-6 rounded-2xl bg-[#0e0e14] border border-white/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-white/10">
+                <div>
+                  <h3 className="text-base font-bold text-white">Interactive Word Sense Disambiguation: "Bank"</h3>
+                  <p className="text-xs text-gray-400">See how Self-Attention changes a word's vector based on its neighbors.</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setWordSenseMode("river")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                      wordSenseMode === "river" ? "bg-cyan-600 text-white" : "bg-black/60 text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Scenario 1: River Bank
+                  </button>
+                  <button
+                    onClick={() => setWordSenseMode("money")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                      wordSenseMode === "money" ? "bg-emerald-600 text-white" : "bg-black/60 text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Scenario 2: Financial Bank
+                  </button>
+                </div>
+              </div>
+
+              {wordSenseMode === "river" ? (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-sm font-mono text-gray-200">
+                    "The fisherman sat on the <span className="text-cyan-400 font-bold bg-cyan-500/20 px-2 py-0.5 rounded">river</span> <span className="text-white font-bold underline decoration-cyan-400">bank</span> to enjoy the cool breeze."
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+                    <div className="p-3 rounded-lg bg-black/60 border border-white/5">
+                      <span className="text-indigo-400 block font-bold mb-1">1. Query (Bank):</span>
+                      "Am I water-related or money-related? What words are nearby?"
+                    </div>
+                    <div className="p-3 rounded-lg bg-black/60 border border-white/5">
+                      <span className="text-emerald-400 block font-bold mb-1">2. Key Match:</span>
+                      Dot product Q(bank) · K(river) produces a massive 88% compatibility score!
+                    </div>
+                    <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-cyan-200">
+                      <span className="text-cyan-400 block font-bold mb-1">3. Resolved Meaning:</span>
+                      Bank's vector absorbs the Value of "river", transforming into a <em>geographical water boundary</em>.
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-sm font-mono text-gray-200">
+                    "I deposited <span className="text-emerald-400 font-bold bg-emerald-500/20 px-2 py-0.5 rounded">₹50,000</span> in the <span className="text-white font-bold underline decoration-emerald-400">bank</span> <span className="text-emerald-400 font-bold bg-emerald-500/20 px-2 py-0.5 rounded">account</span> today."
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+                    <div className="p-3 rounded-lg bg-black/60 border border-white/5">
+                      <span className="text-indigo-400 block font-bold mb-1">1. Query (Bank):</span>
+                      "What words describe my role in this financial transaction?"
+                    </div>
+                    <div className="p-3 rounded-lg bg-black/60 border border-white/5">
+                      <span className="text-emerald-400 block font-bold mb-1">2. Key Match:</span>
+                      Dot products Q(bank) with K(₹50,000) and K(account) match at 92%!
+                    </div>
+                    <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/30 text-emerald-200">
+                      <span className="text-emerald-400 block font-bold mb-1">3. Resolved Meaning:</span>
+                      Bank's vector absorbs financial values, transforming into a <em>commercial banking institution</em>.
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3: INTERACTIVE FULL DUAL-TOWER ARCHITECTURE BLUEPRINT */}
         <section id="full-architecture" className="scroll-mt-24">
           <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">1. Interactive Transformer Architecture Blueprint</h2>
+            <span className="text-xs font-mono uppercase tracking-wider text-indigo-400 font-bold block mb-1">
+              Section 3 · Structural Overview
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Interactive Transformer Architecture Blueprint</h2>
             <p className="text-sm text-gray-400 mt-1">
               Click any block in the architectural diagram below to inspect its tensor dimensions, mathematical formula, and operational role.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Visual Architecture Diagram (Left/Center) */}
+            {/* Visual Architecture Diagram */}
             <div className="lg:col-span-7 p-6 rounded-3xl bg-[#0c0c10] border border-white/10 shadow-2xl flex flex-col items-center">
               <div className="text-xs font-mono uppercase text-gray-400 tracking-wider mb-6 flex items-center justify-between w-full">
                 <span>The Vaswani Dual-Tower Stack</span>
@@ -334,7 +610,7 @@ export default function MlTransformers() {
               </div>
             </div>
 
-            {/* Inspector Panel (Right) */}
+            {/* Inspector Panel */}
             <div className="lg:col-span-5 p-6 rounded-3xl bg-[#111116] border border-white/10 shadow-2xl space-y-5">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div>
@@ -370,12 +646,15 @@ export default function MlTransformers() {
           </div>
         </section>
 
-        {/* SECTION 2: SCALED DOT-PRODUCT ATTENTION DEEP DIVE */}
+        {/* SECTION 4: SCALED DOT-PRODUCT ATTENTION DEEP DIVE */}
         <section id="scaled-dot-product" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-white">2. Scaled Dot-Product Attention: Step-by-Step Matrix Math</h2>
+                <span className="text-xs font-mono uppercase tracking-wider text-pink-400 font-bold block mb-1">
+                  Section 4 · Mathematical Walkthrough
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">Scaled Dot-Product Attention: Step-by-Step Matrix Math</h2>
                 <p className="text-sm text-gray-400 mt-1">Walk through the 6 matrix operations that turn raw tokens into contextual representations.</p>
               </div>
 
@@ -490,16 +769,16 @@ export default function MlTransformers() {
 
                 <div className="flex gap-2 pt-2">
                   <button
-                    onClick={() => setAttnStep(s => Math.max(1, s - 1))}
+                    onClick={() => setAttnStep((s) => Math.max(1, s - 1))}
                     disabled={attnStep === 1}
-                    className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-30 text-white font-mono text-xs"
+                    className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-30 text-white font-mono text-xs cursor-pointer"
                   >
                     ← Previous
                   </button>
                   <button
-                    onClick={() => setAttnStep(s => Math.min(6, s + 1))}
+                    onClick={() => setAttnStep((s) => Math.min(6, s + 1))}
                     disabled={attnStep === 6}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-white font-mono text-xs font-bold"
+                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-white font-mono text-xs font-bold cursor-pointer"
                   >
                     Next Step ({attnStep}/6) →
                   </button>
@@ -539,19 +818,53 @@ export default function MlTransformers() {
           </div>
         </section>
 
-        {/* SECTION 3: INTERACTIVE ATTENTION MATRIX HEATMAP */}
+        {/* SECTION 5: INTERACTIVE ATTENTION MATRIX HEATMAP & WINOGRAD RESOLVER */}
         <section id="attention-matrix" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-              3. Interactive Attention Matrix Heatmap
-            </h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold block mb-1">
+                  Section 5 · Interactive Laboratory
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">
+                  Attention Heatmap &amp; The Winograd Schema
+                </h2>
+              </div>
+
+              {/* Winograd Toggle */}
+              <div className="flex gap-2 p-1 bg-black/60 rounded-xl border border-white/10">
+                <button
+                  onClick={() => {
+                    setWinogradMode("tired");
+                    setSelectedWordIdx(7);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    winogradMode === "tired" ? "bg-indigo-600 text-white" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Sentence A: "...too tired"
+                </button>
+                <button
+                  onClick={() => {
+                    setWinogradMode("wide");
+                    setSelectedWordIdx(7);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    winogradMode === "wide" ? "bg-purple-600 text-white" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Sentence B: "...too wide"
+                </button>
+              </div>
+            </div>
+
             <p className="text-sm text-gray-400 mb-6">
-              Coreference resolution in action: Click any token in the prompt below to see which words it pays attention to. Notice how <span className="text-indigo-400 font-bold">"it"</span> focuses 58% of its attention directly onto <span className="text-emerald-400 font-bold">"animal"</span>!
+              Coreference resolution in action: Click any token in the prompt below to see which words it pays attention to. Notice how switching between <span className="text-indigo-400 font-bold">"tired"</span> and <span className="text-purple-400 font-bold">"wide"</span> redirects the pronoun <span className="text-emerald-400 font-bold">"it"</span> between <span className="text-indigo-400 font-bold">"animal"</span> and <span className="text-purple-400 font-bold">"street"</span>!
             </p>
 
             {/* Token Selector Row */}
             <div className="flex flex-wrap gap-2 mb-8 bg-black/60 p-4 rounded-2xl border border-white/10">
-              {ATTENTION_WORDS.map((w, idx) => (
+              {activeWinograd.words.map((w, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedWordIdx(idx)}
@@ -570,10 +883,10 @@ export default function MlTransformers() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="space-y-2 bg-black/70 p-6 rounded-2xl border border-white/10">
                 <div className="text-xs font-mono text-gray-400 mb-3 uppercase tracking-wider">
-                  Query: "<span className="text-indigo-300 font-bold">{ATTENTION_WORDS[selectedWordIdx]}</span>" attention to all keys:
+                  Query: "<span className="text-indigo-300 font-bold">{activeWinograd.words[selectedWordIdx]}</span>" attention to all keys:
                 </div>
-                {ATTENTION_WORDS.map((w, keyIdx) => {
-                  const weight = SAMPLE_ATTENTION_MATRIX[selectedWordIdx][keyIdx];
+                {activeWinograd.words.map((w, keyIdx) => {
+                  const weight = activeWinograd.matrix[selectedWordIdx][keyIdx];
                   const pct = Math.round(weight * 100);
                   const isTop = weight >= 0.40;
                   return (
@@ -602,29 +915,31 @@ export default function MlTransformers() {
               {/* Explanatory Insight Box */}
               <div className="space-y-4">
                 <div className="p-5 rounded-2xl bg-indigo-950/30 border border-indigo-500/30">
-                  <h4 className="text-sm font-bold text-indigo-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <span>💡</span> Why Self-Attention Resolves Ambiguity
-                  </h4>
+                  <h3 className="text-sm font-bold text-indigo-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span>💡</span> The Winograd Schema Insight
+                  </h3>
                   <p className="text-xs text-gray-300 leading-relaxed">
-                    In the sentence: <em>"The animal didn't cross the street because it was too tired"</em>, a standalone word embedding for "it" is meaningless. 
-                    Self-attention computes that the Query vector for "it" strongly aligns with the Key vector for "animal". The resulting Context vector absorbs the representation of "animal", solving pronoun resolution without any manual rule!
+                    {activeWinograd.explanation}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-black/60 border border-white/10 font-mono text-xs text-gray-400">
-                  <div className="text-emerald-400 font-bold mb-1">Contrast with Recurrent Networks (LSTMs):</div>
-                  An LSTM would have to compress the entire sentence into a single 512-dim hidden state across 8 sequential timesteps. By the time it reached "it", earlier word details often blurred or degraded.
+                  <div className="text-emerald-400 font-bold mb-1">Why Traditional NLP Failed Here:</div>
+                  In traditional rule-based parsers, pronoun resolution required thousands of handwritten grammar rules that frequently broke. Self-attention learns semantic co-occurrence naturally from massive text corpora without human intervention!
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 4: MULTI-HEAD ATTENTION TENSOR SPLIT */}
+        {/* SECTION 6: MULTI-HEAD ATTENTION TENSOR SPLIT */}
         <section id="multi-head" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">4. Multi-Head Attention: Parallel Subspace Projections</h2>
-            <p className="text-sm text-gray-400 mb-6">Why one attention head is never enough: different heads specialize in distinct linguistic and factual relationships.</p>
+            <span className="text-xs font-mono uppercase tracking-wider text-indigo-400 font-bold block mb-1">
+              Section 6 · Expressivity
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">Multi-Head Attention: Parallel Subspace Projections</h2>
+            <p className="text-sm text-gray-400 mb-6">Why one attention head is never enough: different heads specialize in distinct linguistic and factual relationships simultaneously.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               {[
@@ -635,7 +950,7 @@ export default function MlTransformers() {
               ].map((h, i) => (
                 <div key={i} className={`p-4 rounded-2xl bg-black/60 border ${h.color}`}>
                   <div className="font-mono text-xs font-bold uppercase mb-1">{h.head}</div>
-                  <div className="text-sm font-bold text-white mb-1.5">{h.role}</div>
+                  <h3 className="text-sm font-bold text-white mb-1.5">{h.role}</h3>
                   <p className="text-xs text-gray-400 leading-relaxed">{h.desc}</p>
                 </div>
               ))}
@@ -649,11 +964,16 @@ export default function MlTransformers() {
           </div>
         </section>
 
-        {/* SECTION 5: POSITIONAL ENCODINGS (SINUSOIDAL TO ROPE) */}
+        {/* SECTION 7: POSITIONAL ENCODINGS (SINUSOIDAL TO ROPE) */}
         <section id="positional-encoding" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">5. Positional Encoding: From Sinusoids (2017) to RoPE (2026)</h2>
-            <p className="text-sm text-gray-400 mb-6">How modern LLMs encode token position without losing relative distance awareness.</p>
+            <span className="text-xs font-mono uppercase tracking-wider text-rose-400 font-bold block mb-1">
+              Section 7 · Order &amp; Geometry
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">Positional Encoding: Sinusoidal Waves to Modern RoPE</h2>
+            <p className="text-sm text-gray-400 mb-6">
+              Without positional encoding, self-attention is <strong>permutation invariant</strong>: "Dog bites man" and "Man bites dog" have identical pairwise dot products! Position gives each token an address ticket.
+            </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Sinusoidal (Vaswani 2017) */}
@@ -689,14 +1009,17 @@ export default function MlTransformers() {
           </div>
         </section>
 
-        {/* SECTION 6: THE 3 ARCHITECTURAL FAMILIES */}
+        {/* SECTION 8: THE 3 ARCHITECTURAL FAMILIES */}
         <section id="three-families" className="scroll-mt-24">
           <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">6. The 3 Transformer Architectural Families</h2>
-            <p className="text-sm text-gray-400 mt-1">Which architecture powers which task?</p>
+            <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold block mb-1">
+              Section 8 · Architectural Taxonomy
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">The 3 Transformer Architectural Families &amp; Why Decoders Won</h2>
+            <p className="text-sm text-gray-400 mt-1">Which architecture powers which task, and why has Decoder-Only become the foundation standard?</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {[
               {
                 id: "encoder-only",
@@ -750,13 +1073,111 @@ export default function MlTransformers() {
               </div>
             ))}
           </div>
+
+          <div className="p-6 rounded-2xl bg-indigo-950/20 border border-indigo-500/30">
+            <h3 className="text-sm font-bold text-indigo-300 uppercase tracking-wider mb-2">
+              💡 Why Did Decoder-Only Win Foundation Generative AI?
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              In 2018–2020, Encoder-Decoders (T5) and Encoders (BERT) dominated research benchmarks. But Decoder-Only architectures won foundation AI because next-token prediction on raw uncurated internet text provides an infinite self-supervised training signal. Scaling compute and model parameters on causal decoders predictably improves reasoning without any architectural mismatch between pretraining and generation!
+            </p>
+          </div>
         </section>
 
-        {/* SECTION 7: MODERN ARCHITECTURAL INNOVATIONS (2017-2026) */}
+        {/* SECTION 9: INFERENCE ACCELERATION: THE KV CACHE & GQA */}
+        <section id="inference-kv-cache" className="scroll-mt-24">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold block mb-1">
+                  Section 9 · Production Inference Runtime
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">Inference Acceleration: KV Caching &amp; Grouped-Query Attention</h2>
+                <p className="text-sm text-gray-400 mt-1">How production LLM servers generate tokens in real-time without recomputing history.</p>
+              </div>
+
+              <div className="flex gap-2 p-1 bg-black/60 rounded-xl border border-white/10">
+                <button
+                  onClick={() => setKvMode("naive")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    kvMode === "naive" ? "bg-rose-600 text-white" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Without KV Cache (O(T²))
+                </button>
+                <button
+                  onClick={() => setKvMode("with-cache")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    kvMode === "with-cache" ? "bg-emerald-600 text-white" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  With KV Cache (O(T))
+                </button>
+              </div>
+            </div>
+
+            {kvMode === "naive" ? (
+              <div className="p-6 rounded-2xl bg-black/70 border border-rose-500/30 space-y-3 mb-6">
+                <div className="text-xs font-mono uppercase text-rose-400 font-bold">Naive Autoregressive Generation (Quadratic Recomputation)</div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  When generating Token 100, the model re-runs all 99 prior tokens through every layer just to obtain their Key and Value vectors again. Generating a 2,048-token response requires 2,048² = 4.2 million matrix operations! As the response gets longer, latency explodes.
+                </p>
+              </div>
+            ) : (
+              <div className="p-6 rounded-2xl bg-black/70 border border-emerald-500/30 space-y-3 mb-6">
+                <div className="text-xs font-mono uppercase text-emerald-400 font-bold">Production KV Cache (Key-Value Caching in GPU VRAM)</div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  During generation, previous Keys and Values are kept in fast GPU memory. When generating Token 100, we only compute Q, K, V for that single new token, append K and V to the cache, and compute attention against cached vectors. Inference time per token drops from O(T²) to O(T)!
+                </p>
+              </div>
+            )}
+
+            {/* MHA vs MQA vs GQA Comparison Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-black/60 border border-white/10">
+                <div className="text-xs font-mono text-gray-400 uppercase font-bold mb-1">Multi-Head (MHA)</div>
+                <h3 className="text-sm font-bold text-white mb-2">32 Q Heads : 32 KV Heads</h3>
+                <p className="text-xs text-gray-300 leading-relaxed mb-3">
+                  Original Transformer design. Every Query head has its own Key and Value head. Maximum expressivity, but the KV cache consumes massive GPU memory bandwidth.
+                </p>
+                <div className="text-[10px] font-mono text-rose-400 bg-white/5 p-2 rounded">
+                  KV Cache Footprint: 100% (High VRAM)
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-black/60 border border-white/10">
+                <div className="text-xs font-mono text-gray-400 uppercase font-bold mb-1">Multi-Query (MQA)</div>
+                <h3 className="text-sm font-bold text-white mb-2">32 Q Heads : 1 KV Head</h3>
+                <p className="text-xs text-gray-300 leading-relaxed mb-3">
+                  All Query heads share a single Key and Value head. Slashes KV cache memory by 32x, but can cause minor quality degradation on complex reasoning tasks.
+                </p>
+                <div className="text-[10px] font-mono text-amber-400 bg-white/5 p-2 rounded">
+                  KV Cache Footprint: ~3% (Slight Quality Loss)
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-950/30 to-emerald-950/30 border border-emerald-500/40">
+                <div className="text-xs font-mono text-emerald-400 uppercase font-bold mb-1">Grouped-Query (GQA)</div>
+                <h3 className="text-sm font-bold text-white mb-2">32 Q Heads : 8 KV Heads</h3>
+                <p className="text-xs text-gray-200 leading-relaxed mb-3">
+                  Adopted by <strong>Llama 3, Mistral, and DeepSeek</strong>. Each group of 4 Query heads shares 1 KV head. Achieves MHA accuracy while saving 75% memory bandwidth!
+                </p>
+                <div className="text-[10px] font-mono text-emerald-300 bg-emerald-950/60 p-2 rounded border border-emerald-500/30">
+                  KV Cache Footprint: 25% (Industry Standard)
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 10: MODERN ARCHITECTURAL INNOVATIONS (2017-2026) */}
         <section id="modern-innovations" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">7. Modern LLM Architecture Innovations (2017 – 2026)</h2>
-            <p className="text-sm text-gray-400 mb-6">How today's frontier models differ from the original 2017 Transformer specification:</p>
+            <span className="text-xs font-mono uppercase tracking-wider text-purple-400 font-bold block mb-1">
+              Section 10 · Frontier Engineering
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">Modern LLM Architecture Innovations (2017 – 2026)</h2>
+            <p className="text-sm text-gray-400 mb-6">How today's frontier foundation models differ from the original 2017 Transformer paper:</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
@@ -769,7 +1190,7 @@ export default function MlTransformers() {
               ].map((inv, idx) => (
                 <div key={idx} className="p-4 rounded-xl bg-black/60 border border-white/10">
                   <div className="text-[10px] font-mono text-indigo-400 uppercase font-bold mb-1">{inv.origin}</div>
-                  <h4 className="text-sm font-bold text-white mb-1.5">{inv.title}</h4>
+                  <h3 className="text-sm font-bold text-white mb-1.5">{inv.title}</h3>
                   <p className="text-xs text-gray-300 leading-relaxed">{inv.benefit}</p>
                 </div>
               ))}
@@ -777,11 +1198,14 @@ export default function MlTransformers() {
           </div>
         </section>
 
-        {/* SECTION 8: INTERACTIVE TOKENIZATION & EMBEDDINGS */}
+        {/* SECTION 11: INTERACTIVE TOKENIZATION & EMBEDDINGS */}
         <section id="tokenization" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
+            <span className="text-xs font-mono uppercase tracking-wider text-pink-400 font-bold block mb-1">
+              Section 11 · Tokenization &amp; Vectors
+            </span>
             <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-              8. Interactive Tokenization &amp; Embedding Spaces
+              Interactive Tokenization &amp; Embedding Spaces
             </h2>
             <p className="text-sm text-gray-400 mb-6">
               Language models do not see words or letters. Text is split into subword tokens using algorithms like Byte-Pair Encoding (BPE), mapped to vocabulary integers, and projected into continuous vector embeddings.
@@ -847,12 +1271,15 @@ export default function MlTransformers() {
           </div>
         </section>
 
-        {/* SECTION 9: PYTORCH IMPLEMENTATION BLUEPRINT */}
+        {/* SECTION 12: PYTORCH IMPLEMENTATION BLUEPRINT */}
         <section id="pytorch-code" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#0e0e13] border border-white/10 shadow-2xl">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-white">9. Production PyTorch Multi-Head Attention</h2>
+                <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold block mb-1">
+                  Section 12 · Code Implementation
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">Production PyTorch Multi-Head Attention</h2>
                 <p className="text-xs text-gray-400 font-mono mt-1">Clean, vectorized implementation from scratch with full tensor shapes</p>
               </div>
               <span className="px-3 py-1 rounded-full text-xs font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
@@ -926,7 +1353,7 @@ class MultiHeadAttention(nn.Module):
           </div>
         </section>
 
-        {/* SECTION 9: KNOWLEDGE CHECK QUIZ */}
+        {/* SECTION 13: KNOWLEDGE CHECK QUIZ */}
         <section id="knowledge-check" className="scroll-mt-24">
           <KnowledgeCheck questions={questionsFor("transformers")} />
         </section>
