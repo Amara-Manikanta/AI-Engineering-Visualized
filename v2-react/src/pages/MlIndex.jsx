@@ -99,7 +99,7 @@ const LIFECYCLE_STAGES = [
   },
   {
     step: '03',
-    title: 'Data Cleaning & Preprocessing',
+    title: 'Cleaning',
     subtitle: 'Fixing missing values, noise, and outliers',
     icon: '🧹',
     color: 'from-teal-500/20 to-emerald-500/20 border-teal-500/40 text-teal-400',
@@ -279,15 +279,47 @@ export default function MlIndex() {
   const [activeParadigm, setActiveParadigm] = useState('supervised');
   const [activeSupervisedType, setActiveSupervisedType] = useState('classification'); // 'classification' or 'regression'
   const [activeLifecycleIndex, setActiveLifecycleIndex] = useState(0);
+  const [learningRate, setLearningRate] = useState(0.40);
   const [gdStep, setGdStep] = useState(0);
   const [rlStep, setRlStep] = useState(0);
   const [programmingMode, setProgrammingMode] = useState('traditional'); // 'traditional' or 'ml'
 
   const activeStage = LIFECYCLE_STAGES[activeLifecycleIndex];
 
+  // 1D Convex Quadratic Loss: L(theta) = (theta - 2.0)^2
+  // Gradient: dL/dtheta = 2 * (theta - 2.0), optimal theta* = 2.0
+  const targetTheta = 2.0;
+  const initialTheta = -1.2;
+
+  // Mathematically compute step-by-step points from actual gradient formula
+  const gdHistory = [];
+  let tVal = initialTheta;
+  for (let s = 0; s <= 7; s++) {
+    const loss = (tVal - targetTheta) ** 2;
+    const grad = 2 * (tVal - targetTheta);
+    const stepDelta = -learningRate * grad;
+    const nextVal = tVal + stepDelta;
+    const nextLoss = (nextVal - targetTheta) ** 2;
+    gdHistory.push({
+      step: s,
+      theta: tVal,
+      loss: loss,
+      grad: grad,
+      delta: stepDelta,
+      nextTheta: nextVal,
+      nextLoss: nextLoss,
+    });
+    tVal = nextVal;
+  }
+
+  const currentGd = gdHistory[gdStep] || gdHistory[0];
+
+
   const toc = [
     { label: 'Introduction to Machine Learning', hash: 'what-is-ml' },
     { label: 'Traditional vs ML Mindset', hash: 'traditional-vs-ml' },
+    { label: 'Gradient Descent Visualisation', hash: 'gradient-descent' },
+    { label: 'Has the Model Learned? Generalisation', hash: 'training-vs-generalisation' },
     { label: 'Types of ML (Core Paradigms)', hash: 'types-of-ml' },
     { label: 'The ML Workflow & Lifecycle', hash: 'ml-lifecycle' },
     { label: 'Real-World Applications', hash: 'applications' },
@@ -480,80 +512,346 @@ export default function MlIndex() {
                 </p>
               </div>
             </div>
+          </div>
+        </motion.section>
 
-            {/* Interactive Gradient Descent Stepper: How the Machine Adjusts its Parameters */}
-            <div className="mt-8 pt-8 border-t border-white/10">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div>
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <span>⚡ How Does the Machine Actually "Learn"?</span>
-                    <span className="text-xs font-mono font-normal text-indigo-400 px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">Gradient Descent in Action</span>
-                  </h3>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Click the button below to watch the model step-by-step roll down the error bowl to reach the optimal parameter weights.
-                  </p>
+        {/* SECTION: GRADIENT DESCENT VISUALISATION */}
+        <motion.section variants={itemVariants} id="gradient-descent" className="scroll-mt-24">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#101017] border border-white/10 shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+                  <span>Interactive Engine</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setGdStep((s) => (s + 1) % 5)}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg hover:shadow-indigo-500/25"
-                  >
-                    <span>Take Descent Step ({gdStep}/4)</span>
-                    <span>→</span>
-                  </button>
-                  <button
-                    onClick={() => setGdStep(0)}
-                    className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-mono text-xs"
-                  >
-                    Reset
-                  </button>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white">
+                  Gradient Descent Visualisation: Learning by Optimization
+                </h2>
+                <p className="text-sm text-gray-400 mt-1 max-w-3xl">
+                  Watch parameter weights update mathematically step-by-step using the real gradient of a 1D convex loss function: <code className="text-indigo-300 font-mono">L(θ) = (θ - 2.0)²</code>.
+                </p>
+              </div>
+
+              {/* Step Controls */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setGdStep((s) => Math.min(s + 1, 7))}
+                  disabled={gdStep >= 7}
+                  className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg ${
+                    gdStep >= 7
+                      ? 'bg-white/10 text-gray-500 cursor-not-allowed'
+                      : 'bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-indigo-500/25'
+                  }`}
+                >
+                  <span>Take Step ({gdStep}/7)</span>
+                  <span>→</span>
+                </button>
+                <button
+                  onClick={() => setGdStep(0)}
+                  className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-mono text-xs cursor-pointer"
+                >
+                  Reset (t=0)
+                </button>
+              </div>
+            </div>
+
+            {/* Learning Rate Controls */}
+            <div className="mb-6 p-4 rounded-2xl bg-black/40 border border-white/10">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs font-mono uppercase text-gray-400 font-bold block mb-1">
+                    1. Choose Learning Rate (η):
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'Small (η = 0.08)', val: 0.08, desc: 'Slow, cautious descent' },
+                      { label: 'Suitable (η = 0.40)', val: 0.40, desc: 'Fast, stable convergence' },
+                      { label: 'Excessively Large (η = 1.08)', val: 1.08, desc: 'Overshoots & oscillates' },
+                    ].map((btn) => (
+                      <button
+                        key={btn.val}
+                        onClick={() => {
+                          setLearningRate(btn.val);
+                          setGdStep(0);
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                          Math.abs(learningRate - btn.val) < 0.01
+                            ? 'bg-indigo-600 text-white shadow'
+                            : 'bg-white/5 text-gray-400 hover:text-white border border-white/5'
+                        }`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Slider */}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono text-gray-400">Manual η:</span>
+                  <input
+                    type="range"
+                    min="0.04"
+                    max="1.14"
+                    step="0.02"
+                    value={learningRate}
+                    onChange={(e) => {
+                      setLearningRate(parseFloat(e.target.value));
+                      setGdStep(0);
+                    }}
+                    className="w-32 accent-indigo-500 cursor-pointer"
+                  />
+                  <span className="text-xs font-mono font-bold text-indigo-300 w-12 text-right">
+                    {learningRate.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Readouts & Mathematical Values */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-mono text-xs">
+              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                <span className="text-gray-500 block text-[10px] uppercase">Parameter θ</span>
+                <span className="text-white text-sm font-bold">{currentGd.theta.toFixed(3)}</span>
+                <span className="text-[10px] text-gray-500 block mt-0.5">(Optimal θ* = 2.000)</span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                <span className="text-gray-500 block text-[10px] uppercase">Current Loss L(θ)</span>
+                <span className="text-purple-300 text-sm font-bold">{currentGd.loss.toFixed(3)}</span>
+                <span className="text-[10px] text-gray-500 block mt-0.5">L = (θ - 2.0)²</span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                <span className="text-gray-500 block text-[10px] uppercase">Gradient ∇L = 2(θ - 2)</span>
+                <span className={`text-sm font-bold ${currentGd.grad < 0 ? 'text-cyan-400' : 'text-amber-400'}`}>
+                  {currentGd.grad >= 0 ? '+' : ''}{currentGd.grad.toFixed(3)}
+                </span>
+                <span className="text-[10px] text-gray-500 block mt-0.5">
+                  {currentGd.grad < 0 ? 'Slope: downward to right' : 'Slope: downward to left'}
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                <span className="text-gray-500 block text-[10px] uppercase">Step: Δθ = -η · ∇L</span>
+                <span className={`text-sm font-bold ${currentGd.delta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {currentGd.delta >= 0 ? '+' : ''}{currentGd.delta.toFixed(3)}
+                </span>
+                <span className="text-[10px] text-gray-500 block mt-0.5">Next θ = {currentGd.nextTheta.toFixed(3)}</span>
+              </div>
+            </div>
+
+            {/* Visual Loss Bowl + Deep Explanations */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-black/50 p-6 rounded-2xl border border-white/5">
+              {/* SVG Canvas */}
+              <div className="flex flex-col items-center justify-center">
+                <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase tracking-wider">
+                  Loss Curve L(θ) = (θ - 2.0)²
+                </div>
+
+                <svg viewBox="0 0 360 210" className="w-full max-w-[360px] overflow-visible">
+                  {/* Parabolic Loss Curve */}
+                  <path
+                    d={Array.from({ length: 41 }, (_, i) => {
+                      const t = -2.5 + i * (9.0 / 40);
+                      const l = (t - 2.0) ** 2;
+                      const x = 180 + (t - 2.0) * 38;
+                      const y = 175 - Math.min(l, 11.5) * 13;
+                      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+                    }).join(' ')}
+                    fill="none"
+                    stroke="#6366f1"
+                    strokeWidth="3"
+                  />
+
+                  {/* Optimal Minimum Line */}
+                  <line x1="180" y1="30" x2="180" y2="185" stroke="#10b981" strokeDasharray="3,3" strokeWidth="1.5" />
+                  <text x="180" y="200" textAnchor="middle" fill="#10b981" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                    Optimal θ* = 2.0 (L = 0)
+                  </text>
+
+                  {/* Trajectory Trail */}
+                  {gdStep > 0 && (
+                    <polyline
+                      points={gdHistory.slice(0, gdStep + 1).map((h) => {
+                        const clampedT = Math.max(-2.5, Math.min(6.5, h.theta));
+                        const clampedL = Math.min(11.5, (clampedT - 2.0) ** 2);
+                        const x = 180 + (clampedT - 2.0) * 38;
+                        const y = 175 - clampedL * 13;
+                        return `${x.toFixed(1)},${y.toFixed(1)}`;
+                      }).join(' ')}
+                      fill="none"
+                      stroke="#ec4899"
+                      strokeWidth="2"
+                      strokeDasharray="3,3"
+                    />
+                  )}
+
+                  {/* Past Step Markers */}
+                  {gdHistory.slice(0, gdStep + 1).map((h, i) => {
+                    const clampedT = Math.max(-2.5, Math.min(6.5, h.theta));
+                    const clampedL = Math.min(11.5, (clampedT - 2.0) ** 2);
+                    const x = 180 + (clampedT - 2.0) * 38;
+                    const y = 175 - clampedL * 13;
+                    const isCurrent = i === gdStep;
+
+                    return (
+                      <g key={i}>
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r={isCurrent ? '7' : '4'}
+                          fill={isCurrent ? '#ec4899' : '#818cf8'}
+                          stroke={isCurrent ? '#fff' : 'none'}
+                          strokeWidth={isCurrent ? '2' : '0'}
+                        />
+                        <text
+                          x={x}
+                          y={y - 12}
+                          textAnchor="middle"
+                          fill={isCurrent ? '#ec4899' : '#9ca3af'}
+                          fontSize="9"
+                          fontFamily="monospace"
+                          fontWeight="bold"
+                        >
+                          t={h.step}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+
+                <div className="text-[10px] text-gray-500 font-mono mt-3 text-center">
+                  Trajectory: {gdHistory.slice(0, gdStep + 1).map(h => `θ${h.step}=${h.theta.toFixed(2)}`).join(' → ')}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center bg-black/50 p-6 rounded-2xl border border-white/5">
-                <div className="space-y-3 text-xs font-mono">
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/5">
-                    <span className="text-gray-400 block mb-1">// Mathematical Update Formula:</span>
-                    <div className="text-indigo-300 font-bold">θ_new = θ_old - (Learning_Rate · Error_Gradient)</div>
+              {/* Step Explanations & Overshoot Insights */}
+              <div className="space-y-3 text-xs">
+                {/* Step Update Equation */}
+                <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 font-mono">
+                  <div className="text-gray-400 mb-1">// Mathematical Update Calculation:</div>
+                  <div className="text-indigo-300 font-bold">
+                    θ_{gdStep + 1} = {currentGd.theta.toFixed(3)} - ({learningRate.toFixed(2)} · {currentGd.grad >= 0 ? '+' : ''}{currentGd.grad.toFixed(3)}) = {currentGd.nextTheta.toFixed(3)}
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
-                    {gdStep === 0 && <span className="text-pink-400">Step 0 (Random Guess): Error is massive! The model has no idea what it is doing.</span>}
-                    {gdStep === 1 && <span className="text-amber-400">Step 1 (First Adjustment): Steep slope detected! Takes a large corrective leap down.</span>}
-                    {gdStep === 2 && <span className="text-yellow-300">Step 2 (Halfway): Error is shrinking fast. The slope is flattening out.</span>}
-                    {gdStep === 3 && <span className="text-teal-300">Step 3 (Fine-tuning): Approaching the bottom of the error basin. Smaller steps.</span>}
-                    {gdStep === 4 && <span className="text-emerald-400 font-bold">Step 4 (Converged): Reached the minimum possible error (Optimal Weights θ*). Training complete!</span>}
+                  <div className="text-gray-400 mt-1">
+                    Loss: <span className="text-purple-300 font-bold">{currentGd.loss.toFixed(3)}</span> → <span className="text-emerald-300 font-bold">{currentGd.nextLoss.toFixed(3)}</span> (ΔL = {(currentGd.nextLoss - currentGd.loss).toFixed(3)})
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center justify-center">
-                  <svg viewBox="0 0 320 180" className="w-full max-w-[320px] overflow-visible">
-                    {/* Parabolic Loss Curve */}
-                    <path d="M 20 25 Q 160 200 300 25" fill="none" stroke="#6366f1" strokeWidth="3" />
-                    {/* Optimal Minimum Line */}
-                    <line x1="160" y1="112" x2="160" y2="165" stroke="#10b981" strokeDasharray="3,3" strokeWidth="1" />
-                    <text x="160" y="177" textAnchor="middle" fill="#10b981" fontSize="10" fontFamily="monospace">Minimum Error θ*</text>
-
-                    {/* Step Points */}
-                    {[
-                      { x: 35, y: 40, label: 'θ₀ (Bad)' },
-                      { x: 75, y: 82, label: 'θ₁' },
-                      { x: 115, y: 105, label: 'θ₂' },
-                      { x: 142, y: 111, label: 'θ₃' },
-                      { x: 160, y: 112, label: 'θ₄ (Best)' },
-                    ].map((pt, i) => (
-                      <g key={i}>
-                        {i <= gdStep && (
-                          <>
-                            <circle cx={pt.x} cy={pt.y} r={i === gdStep ? "7" : "4"} fill={i === gdStep ? "#ec4899" : "#818cf8"} />
-                            <text x={pt.x} y={pt.y - 12} textAnchor="middle" fill={i === gdStep ? "#ec4899" : "#9ca3af"} fontSize="9" fontFamily="monospace" fontWeight="bold">
-                              {pt.label}
-                            </text>
-                          </>
-                        )}
-                      </g>
-                    ))}
-                  </svg>
+                {/* Why it moves in this direction */}
+                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 leading-relaxed text-gray-300">
+                  <strong className="text-white block mb-1">Why does parameter θ change direction?</strong>
+                  {currentGd.theta < 2.0 ? (
+                    <span>
+                      Since θ ({currentGd.theta.toFixed(2)}) is to the left of 2.0, the slope (gradient) is <span className="text-cyan-400 font-mono font-bold">negative</span> ({currentGd.grad.toFixed(2)}). 
+                      Subtracting a negative gradient results in an <span className="text-emerald-400 font-bold">addition</span> (+{currentGd.delta.toFixed(2)}), pushing θ rightward toward the valley.
+                    </span>
+                  ) : (
+                    <span>
+                      Since θ ({currentGd.theta.toFixed(2)}) is to the right of 2.0, the slope is <span className="text-amber-400 font-mono font-bold">positive</span> ({currentGd.grad.toFixed(2)}). 
+                      Subtracting a positive gradient results in a <span className="text-rose-400 font-bold">reduction</span> ({currentGd.delta.toFixed(2)}), pushing θ leftward toward the valley.
+                    </span>
+                  )}
                 </div>
+
+                {/* Overshooting Alert or Convergence */}
+                {learningRate > 0.6 ? (
+                  <div className="p-3.5 rounded-xl bg-red-950/20 border border-red-500/30 text-rose-200/90 leading-relaxed">
+                    <strong className="text-rose-400 block mb-1">⚠️ Why does it overshoot or diverge?</strong>
+                    With an excessively large learning rate (η = {learningRate.toFixed(2)}), the step size <code className="text-white font-mono">|η · ∇L|</code> is larger than twice the distance to the minimum. The update leaps completely over the valley to the opposite wall. Because η &gt; 1.0, each bounce lands higher than the last, causing wild oscillations or divergence!
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-emerald-200/90 leading-relaxed">
+                    <strong className="text-emerald-400 block mb-1">✅ Stable Convergence</strong>
+                    With a suitable learning rate (η = {learningRate.toFixed(2)}), the update step automatically shrinks as the gradient flattens near the minimum, settling smoothly into the optimal parameter θ* = 2.000.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Note on Real-World Multidimensional Landscapes */}
+            <div className="mt-6 p-4 rounded-2xl bg-indigo-950/20 border border-indigo-500/20 text-xs md:text-sm text-gray-300 leading-relaxed flex items-start gap-3">
+              <span className="text-xl">🌐</span>
+              <div>
+                <strong className="text-white block mb-0.5">Real-World Note: Multidimensional Loss Landscapes</strong>
+                In this visual demonstration, our model has only 1 parameter (θ). In real-world machine learning, models have thousands to billions of parameters! The loss landscape is a high-dimensional surface with hills, ravines, and saddle points. However, the fundamental law remains identical: the algorithm computes partial derivatives for every parameter and takes a step in the direction of steepest descent.
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* SECTION: HAS THE MODEL ACTUALLY LEARNED? (TRAINING VS GENERALISATION) */}
+        <motion.section variants={itemVariants} id="training-vs-generalisation" className="scroll-mt-24">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
+            <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-widest text-purple-400">
+              <span className="w-2 h-2 rounded-full bg-purple-400" />
+              <span>Crucial Conceptual Bridge</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
+              Has the Model Actually Learned? Training vs Generalisation
+            </h2>
+            <p className="text-sm text-gray-300 leading-relaxed mb-6 max-w-4xl">
+              Watching gradient descent reduce loss on training examples is satisfying, but it raises a vital question: <strong className="text-white">is minimizing training error alone enough?</strong>
+              <br /><br />
+              In machine learning, the goal is <span className="text-purple-300 font-semibold underline decoration-purple-500/40">never</span> to merely memorize the data the computer has already seen. The true objective is <strong className="text-white">generalisation</strong>—learning underlying patterns that allow the model to make accurate predictions on new, unseen examples.
+            </p>
+
+            {/* Model A vs Model B Comparison Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Model A Card */}
+              <div className="p-6 rounded-2xl bg-black/50 border border-red-500/30 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-mono font-bold uppercase text-red-400">Model A: The Memorizer (Overfit)</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/10 text-red-300 border border-red-500/20">Poor Generalisation</span>
+                  </div>
+                  <div className="space-y-3 font-mono text-xs mb-4">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center">
+                      <span className="text-gray-400">Training Score:</span>
+                      <span className="text-emerald-400 font-bold text-sm">99.4% (Near Zero Error)</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-red-950/30 border border-red-500/20 flex justify-between items-center">
+                      <span className="text-gray-400">Unseen Test Score:</span>
+                      <span className="text-rose-400 font-bold text-sm">54.2% (Fails on New Data!)</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    <strong className="text-white">What happened:</strong> Model A memorized the exact training examples, including random noise, typos, and flukes—like a student who memorized the answers to practice questions without understanding the concepts. When presented with new questions, it fails.
+                  </p>
+                </div>
+              </div>
+
+              {/* Model B Card */}
+              <div className="p-6 rounded-2xl bg-black/50 border border-emerald-500/30 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-mono font-bold uppercase text-emerald-400">Model B: The Pattern Learner</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Strong Generalisation</span>
+                  </div>
+                  <div className="space-y-3 font-mono text-xs mb-4">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center">
+                      <span className="text-gray-400">Training Score:</span>
+                      <span className="text-emerald-400 font-bold text-sm">91.5%</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/20 flex justify-between items-center">
+                      <span className="text-gray-400">Unseen Test Score:</span>
+                      <span className="text-emerald-400 font-bold text-sm">90.8% (Performs Consistently!)</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    <strong className="text-white">What happened:</strong> Model B captured the true underlying signal and generalized relationships. It doesn't score 100% on the training set, but it performs reliably on brand-new examples in the real world.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Train / Test Split Key Takeaway */}
+            <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 text-xs md:text-sm text-purple-200/90 leading-relaxed flex items-start gap-3">
+              <span className="text-2xl">🔑</span>
+              <div>
+                <strong className="text-white block mb-0.5">The Key Takeaway for Machine Learning Engineers:</strong>
+                Never evaluate a model only on the data it was trained on. In practice, we always split historical data into a <strong>Training Set</strong> (used by the optimization algorithm to learn parameters) and a separate holdout <strong>Test Set</strong> (used as an honest, unbiased exam to measure real-world generalisation).
               </div>
             </div>
           </div>
@@ -591,7 +889,7 @@ export default function MlIndex() {
               </div>
               <div className="font-extrabold text-base text-white">1. Supervised Learning</div>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Learning with a teacher. The dataset provides inputs paired with the correct ground-truth answers.
+                Learns from labelled examples containing inputs and their corresponding target outputs. The model learns a relationship that can be used to predict outputs for new inputs.
               </p>
             </button>
 
@@ -609,7 +907,7 @@ export default function MlIndex() {
               </div>
               <div className="font-extrabold text-base text-white">2. Unsupervised Learning</div>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Finding hidden structure without a teacher. The machine groups similar data points and uncovers patterns on its own.
+                Finds useful structures or patterns in data without predefined target labels. Common tasks include clustering and dimensionality reduction.
               </p>
             </button>
 
@@ -623,11 +921,11 @@ export default function MlIndex() {
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-3xl">🕹️</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Rewards &amp; Penalties</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Reward Optimization</span>
               </div>
               <div className="font-extrabold text-base text-white">3. Reinforcement Learning</div>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Learning by trial and error. An agent interacts with an environment, getting rewarded for good actions and penalized for mistakes.
+                An agent learns a decision-making policy by interacting with an environment and receiving rewards. The goal is to maximise cumulative reward over time.
               </p>
             </button>
           </div>
@@ -898,7 +1196,11 @@ export default function MlIndex() {
               </div>
 
               <p className="text-sm text-gray-300 leading-relaxed mb-6">
-                Reinforcement Learning (RL) has no dataset of correct answers. Instead, like a dog learning tricks with treats, the <strong>Agent</strong> takes <strong>Actions</strong> in an <strong>Environment</strong>, receives <strong>Rewards (+10)</strong> or <strong>Penalties (-10)</strong>, and learns an optimal strategy (<strong className="text-rose-300">Policy</strong>).
+                In Reinforcement Learning (RL), an <strong>Agent</strong> learns a decision-making policy by interacting with an <strong>Environment</strong> and receiving <strong>Rewards</strong>. The goal is to maximise cumulative reward over time.
+                <br /><br />
+                <span className="text-xs text-gray-400 italic">
+                  Note: In reinforcement learning, rewards are not necessarily immediate (they can be delayed across long trajectories), and explicit penalties are not required in every formulation—an agent can learn effectively purely by seeking positive rewards.
+                </span>
               </p>
 
               {/* The Feedback Loop + Interactive Grid */}

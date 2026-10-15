@@ -3047,6 +3047,14 @@
         "hash": "traditional-vs-ml"
       },
       {
+        "label": "Gradient Descent Visualisation",
+        "hash": "gradient-descent"
+      },
+      {
+        "label": "Has the Model Learned? Generalisation",
+        "hash": "training-vs-generalisation"
+      },
+      {
         "label": "Types of ML (Core Paradigms)",
         "hash": "types-of-ml"
       },
