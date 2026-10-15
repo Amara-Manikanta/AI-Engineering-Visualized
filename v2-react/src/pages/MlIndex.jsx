@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import GuideLayout from '../components/GuideLayout';
 
 const containerVariants = {
@@ -12,65 +11,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const TOPICS = [
-  { group: 'Data & Statistics', tone: 'text-teal-400', border: 'hover:border-teal-500/50', items: [
-    { t: 'Data Sourcing', d: 'Where data comes from, representation biases, and sampling strategies.', path: '/ml/data-sourcing', icon: '📥' },
-    { t: 'Data Cleaning', d: 'Handling missing values, deduplication, imputation, and outlier treatment.', path: '/ml/data-cleaning', icon: '🧹' },
-    { t: 'Data Analysis (EDA)', d: 'Measures of central tendency, dispersion, skewness, and kurtosis.', path: '/ml/data-analysis', icon: '🔎' },
-    { t: 'Bivariate Analysis', d: 'Pearson/Spearman correlation, crosstabs, scatter plots, and confounders.', path: '/ml/bivariate-analysis', icon: '🔗' },
-    { t: 'Inferential Statistics', d: 'Confidence intervals, sampling error, standard error, and population inference.', path: '/ml/inferential-statistics', icon: '📏' },
-    { t: 'Central Limit Theorem', d: 'Why sample averages converge to Gaussian distributions regardless of underlying shape.', path: '/ml/central-limit-theorem', icon: '🔔' },
-    { t: 'Hypothesis Testing', d: 'Null/Alternative hypotheses, p-values, Type I/II errors, and A/B test design.', path: '/ml/hypothesis-testing', icon: '⚖️' },
-  ]},
-  { group: 'Foundations & Features', tone: 'text-indigo-400', border: 'hover:border-indigo-500/50', items: [
-    { t: 'Supervised Learning', d: 'Mapping inputs to known outputs with ground-truth labels.', path: '/ml/supervised', icon: '🎯' },
-    { t: 'Unsupervised Learning', d: 'Extracting patterns, clusters, and low-dimensional manifolds without labels.', path: '/ml/unsupervised', icon: '🧭' },
-    { t: 'Feature Engineering', d: 'Scaling, one-hot encoding, interaction terms, target encoding, and embeddings.', path: '/ml/feature-engineering', icon: '⚙️' },
-    { t: 'Dimensionality Reduction', d: 'PCA, t-SNE, UMAP, and curse-of-dimensionality mitigation.', path: '/ml/dimensionality-reduction', icon: '📉' },
-    { t: 'Regularization', d: 'L1 Lasso (sparsity), L2 Ridge (weight decay), and ElasticNet penalties.', path: '/ml/regularization', icon: '🛡️' },
-    { t: 'Optimization & Gradients', d: 'Stochastic Gradient Descent, Momentum, RMSprop, Adam, and learning rate schedules.', path: '/ml/optimization', icon: '⚡' },
-    { t: 'Evaluation Metrics', d: 'Precision, Recall, F1, ROC-AUC, PR-AUC, Log-Loss, MSE, RMSE, and R².', path: '/ml/evaluation-metrics', icon: '📊' },
-  ]},
-  { group: 'Regression', tone: 'text-emerald-400', border: 'hover:border-emerald-500/50', items: [
-    { t: 'Linear Regression', d: 'Ordinary Least Squares, closed-form normal equation, and cost surface.', path: '/ml/linear-regression', icon: '📈' },
-    { t: 'Multiple Linear Regression', d: 'Multi-feature linear combinations, multicollinearity, and VIF diagnosis.', path: '/ml/multiple-regression', icon: '🧮' },
-    { t: 'Time Series Forecasting', d: 'ARIMA, exponential smoothing, seasonality, lag features, and stationarity.', path: '/ml/time-series', icon: '⏱️' },
-  ]},
-  { group: 'Classification', tone: 'text-blue-400', border: 'hover:border-blue-500/50', items: [
-    { t: 'Logistic Regression', d: 'Sigmoid activation, log-odds transformation, and binary cross-entropy loss.', path: '/ml/logistic-regression', icon: '🔀' },
-    { t: 'Naive Bayes', d: "Bayes' theorem with conditional independence assumptions across features.", path: '/ml/naive-bayes', icon: '📨' },
-    { t: 'Decision Trees', d: 'Recursive binary splitting via Gini impurity, Information Gain, and pruning.', path: '/ml/decision-trees', icon: '🌳' },
-    { t: 'k-Nearest Neighbours', d: 'Instance-based lazy learning using Euclidean, Manhattan, and cosine distances.', path: '/ml/knn', icon: '📍' },
-    { t: 'Support Vector Machines', d: 'Maximum-margin hyperplanes, support vectors, and non-linear kernel tricks.', path: '/ml/svm', icon: '📐' },
-  ]},
-  { group: 'Ensembles & Modern Tabular', tone: 'text-amber-400', border: 'hover:border-amber-500/50', items: [
-    { t: 'Random Forests', d: 'Bagging (bootstrap aggregation) and random feature subspace projection.', path: '/ml/random-forests', icon: '🌲' },
-    { t: 'Gradient Boosting & XGBoost', d: 'Sequential residual fitting, second-order Taylor expansion, and regularization.', path: '/ml/xgboost', icon: '🚀' },
-    { t: 'Clustering', d: 'K-Means centroid convergence, Hierarchical agglomeration, and DBSCAN density.', path: '/ml/clustering', icon: '🫧' },
-    { t: 'Anomaly Detection', d: 'Isolation Forests, One-Class SVM, Local Outlier Factor, and autoencoders.', path: '/ml/anomaly-detection', icon: '🚨' },
-    { t: 'Recommendation Systems', d: 'Collaborative filtering, matrix factorization (SVD), and two-tower embeddings.', path: '/ml/recommenders', icon: '🎁' },
-  ]},
-  { group: 'Deep Learning & Sequences', tone: 'text-purple-400', border: 'hover:border-purple-500/50', items: [
-    { t: 'Deep Learning Foundations', d: 'Multi-layer perceptrons, activation functions (ReLU, GELU), and backprop.', path: '/ml/deep-learning', icon: '🧠' },
-    { t: 'CNNs', d: '2D convolutional kernels, feature maps, pooling, and inductive bias for vision.', path: '/ml/cnn', icon: '🖼️' },
-    { t: 'RNNs & LSTMs', d: 'Hidden state recurrence, vanishing gradients, forget gates, and cell states.', path: '/ml/rnn', icon: '🔁' },
-    { t: 'GANs', d: 'Minimax game between generator and discriminator networks.', path: '/ml/gans', icon: '🎭' },
-    { t: 'Graph Neural Networks', d: 'Message passing, node embeddings, and relational graph convolutions.', path: '/ml/graph-neural-networks', icon: '🕸️' },
-    { t: 'NLP Foundations', d: 'Tokenization, TF-IDF, N-grams, Word2Vec, GloVe, and sequence modeling.', path: '/ml/nlp', icon: '💬' },
-    { t: 'Transformers', d: 'Self-attention, Multi-head projections, QKV cross-attention, and LLM backbones.', path: '/ml/transformers', icon: '⚡' },
-    { t: 'Mamba & State Space Models', d: 'Linear-time sequence modeling with selective continuous state spaces.', path: '/ml/mamba', icon: '🐍' },
-    { t: 'RWKV Architecture', d: 'Receptance Weighted Key Value — RNN efficiency with Transformer quality.', path: '/ml/rwkv', icon: '🔄' },
-    { t: 'Transfer Learning', d: 'Pretraining on web-scale datasets followed by task-specific fine-tuning.', path: '/ml/transfer-learning', icon: '🎓' },
-  ]},
-  { group: 'Reinforcement Learning & LLM Alignment', tone: 'text-rose-400', border: 'hover:border-rose-500/50', items: [
-    { t: 'Reinforcement Learning', d: 'Markov Decision Processes, Q-learning, Policy Gradients, and Actor-Critic.', path: '/ml/reinforcement-learning', icon: '🕹️' },
-    { t: 'RLHF', d: 'Reward model training from human pairwise preferences, followed by PPO.', path: '/ml/rlhf', icon: '👍' },
-    { t: 'DPO & Direct Alignment', d: 'Implicit reward derivation eliminating the separate RL policy training loop.', path: '/ml/dpo', icon: '⚖️' },
-    { t: 'GRPO & RLVR', d: 'Group relative policy optimization with verifiable automated reward functions.', path: '/ml/grpo', icon: '🧮' },
-    { t: 'RLAIF & Constitutional AI', d: 'Self-improving alignment steered by structured constitutional principles.', path: '/ml/rlaif', icon: '📜' },
-    { t: 'MLOps & Production Systems', d: 'Model registries, feature stores, CI/CD for ML, data drift, and latency monitoring.', path: '/mlops', icon: '🏭' },
-  ]},
-];
+
 
 const LIFECYCLE_STAGES = [
   {
@@ -324,7 +265,6 @@ export default function MlIndex() {
     { label: 'The ML Workflow & Lifecycle', hash: 'ml-lifecycle' },
     { label: 'Real-World Applications', hash: 'applications' },
     { label: 'Limitations & Pitfalls', hash: 'limitations' },
-    { label: 'Full 37-Topic Learning Roadmap', hash: 'curriculum' },
   ];
 
   return (
@@ -556,33 +496,21 @@ export default function MlIndex() {
               </div>
             </div>
 
-            {/* Intuition First: Everyday Real-World Example */}
+            {/* Intuition: Everyday Real-World Example */}
             <div className="mb-8 p-6 md:p-7 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-[#12121e] to-purple-950/30 border border-indigo-500/30 shadow-lg">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-white/10">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-2xl">💡</span>
-                  <div>
-                    <h3 className="text-base md:text-lg font-bold text-white">
-                      Beginner&apos;s Intuition: What are &quot;Weights&quot; &amp; &quot;Loss&quot; in Real Life?
-                    </h3>
-                    <p className="text-xs text-gray-400">
-                      Before looking at abstract formulas, let&apos;s see how this works with a simple everyday scenario.
-                    </p>
-                  </div>
-                </div>
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 self-start sm:self-auto">
-                  Taxi Fare Example
-                </span>
-              </div>
-
               {/* The Scenario Banner */}
               <div className="p-4 rounded-xl bg-black/40 border border-white/10 text-xs md:text-sm text-gray-300 leading-relaxed mb-5 flex items-start gap-3">
-                <span className="text-2xl">🚕</span>
-                <div>
-                  <strong className="text-white block mb-0.5">The Goal: Predict Taxi Fares</strong>
-                  Suppose you want to build an AI to predict the fare of a taxi ride based on trip distance.
-                  In reality, the taxi company charges <span className="text-emerald-400 font-bold font-mono">$2.00 per mile</span> (so 1 mile = $2.00, 5 miles = $10.00). 
-                  <span className="text-amber-300 font-semibold"> But our AI starts completely blank! It does not know the $2.00 rule.</span>
+                <span className="text-2xl">🚖</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <strong className="text-white text-sm">Example: Predicting Cab / Auto Fares</strong>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                      Real-World Intuition
+                    </span>
+                  </div>
+                  Suppose you want to build an AI to predict the fare of a cab ride based on trip distance in kilometers (km).
+                  In reality, the fare is <span className="text-emerald-400 font-bold font-mono">₹2.00 per km</span> (so 1 km = ₹2.00, 5 km = ₹10.00). 
+                  <span className="text-amber-300 font-semibold"> But our AI starts completely blank! It does not know the ₹2.00 rule.</span>
                 </div>
               </div>
 
@@ -599,10 +527,10 @@ export default function MlIndex() {
                       A <strong className="text-white">weight</strong> (represented by θ) is simply the internal dial the model turns to make predictions:
                     </p>
                     <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-indigo-200 text-center border border-white/5">
-                      Predicted Fare = θ × Miles
+                      Predicted Fare = θ × Distance (km)
                     </div>
                     <p className="text-gray-400 leading-relaxed">
-                      At first, the model sets the dial randomly—say, at <code className="text-rose-300 font-mono">θ = -1.20</code>. For a 1-mile ride, it absurdly predicts <strong className="text-rose-400">-$1.20</strong> (the driver pays you!).
+                      At first, the model sets the dial randomly—say, at <code className="text-rose-300 font-mono">θ = -1.20</code>. For a 1-km ride, it absurdly predicts <strong className="text-rose-400">-₹1.20</strong> (the driver pays you!).
                     </p>
                   </div>
                 </div>
@@ -615,10 +543,10 @@ export default function MlIndex() {
                       <span>2. The Loss (L) = The Mistake Meter</span>
                     </div>
                     <p className="text-gray-400 leading-relaxed">
-                      The <strong className="text-white">loss function</strong> is an error penalty measuring how wrong the model&apos;s prediction was compared to reality ($2.00):
+                      The <strong className="text-white">loss function</strong> is an error penalty measuring how wrong the model&apos;s prediction was compared to reality (₹2.00):
                     </p>
                     <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-purple-200 text-center border border-white/5">
-                      Loss = (Prediction - $2.00)²
+                      Loss = (Prediction - ₹2.00)²
                     </div>
                     <p className="text-gray-400 leading-relaxed">
                       When <code className="text-rose-300 font-mono">θ = -1.20</code>, the error penalty is <strong className="text-rose-400">(-3.20)² = 10.24</strong> (massive mistake).
@@ -635,7 +563,7 @@ export default function MlIndex() {
                       <span>3. Gradient Descent = Rolling Downhill</span>
                     </div>
                     <p className="text-gray-400 leading-relaxed">
-                      The AI cannot see the true rate ($2.00) in advance. It is like a blindfolded hiker in a foggy valley, feeling the slope (gradient) under their boots:
+                      The AI cannot see the true rate (₹2.00) in advance. It is like a blindfolded hiker in a foggy valley, feeling the slope (gradient) under their boots:
                     </p>
                     <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-emerald-200 text-center border border-white/5">
                       New θ = Old θ - (Step × Slope)
@@ -648,27 +576,27 @@ export default function MlIndex() {
               </div>
             </div>
 
-            {/* Live Taxi Fare Simulation Status Bar */}
+            {/* Live Cab Fare Simulation Status Bar */}
             <div className="mb-6 p-4 rounded-2xl bg-black/50 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="text-3xl">🚕</span>
+                <span className="text-3xl">🚖</span>
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 block">
-                    Live Taxi Fare Model Prediction (1-Mile Ride):
+                    Live Cab Fare Model Prediction (1-km Ride):
                   </span>
                   <div className="flex flex-wrap items-center gap-2 mt-0.5">
                     <span className="text-xs text-gray-400">Formula:</span>
                     <code className="text-xs font-mono font-bold text-indigo-300 bg-white/5 px-2 py-0.5 rounded border border-white/10">
-                      Fare = ({currentGd.theta.toFixed(2)}) × 1 mile
+                      Fare = ({currentGd.theta.toFixed(2)}) × 1 km
                     </code>
                     <span className="text-xs text-gray-400">→</span>
                     <span className="text-sm font-mono font-extrabold text-white">
                       Predicted:{' '}
                       <span className={Math.abs(currentGd.theta - 2.0) < 0.05 ? 'text-emerald-400' : 'text-indigo-300'}>
-                        {currentGd.theta >= 0 ? `$${currentGd.theta.toFixed(2)}` : `-$${Math.abs(currentGd.theta).toFixed(2)}`}
+                        {currentGd.theta >= 0 ? `₹${currentGd.theta.toFixed(2)}` : `-₹${Math.abs(currentGd.theta).toFixed(2)}`}
                       </span>
                     </span>
-                    <span className="text-xs text-gray-400">(Actual: <strong className="text-emerald-400">$2.00</strong>)</span>
+                    <span className="text-xs text-gray-400">(Actual: <strong className="text-emerald-400">₹2.00</strong>)</span>
                   </div>
                 </div>
               </div>
@@ -681,11 +609,11 @@ export default function MlIndex() {
                   </span>
                 ) : currentGd.theta < 2.0 ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                    <span>⚠️</span> Underpricing by ${(2.0 - currentGd.theta).toFixed(2)} → Slope pushes dial UP
+                    <span>⚠️</span> Underpricing by ₹{(2.0 - currentGd.theta).toFixed(2)} → Slope pushes dial UP
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                    <span>⚠️</span> Overpricing by ${(currentGd.theta - 2.0).toFixed(2)} → Slope pushes dial DOWN
+                    <span>⚠️</span> Overpricing by ₹{(currentGd.theta - 2.0).toFixed(2)} → Slope pushes dial DOWN
                   </span>
                 )}
               </div>
@@ -750,7 +678,7 @@ export default function MlIndex() {
                 <span className="text-gray-500 block text-[10px] uppercase">Parameter θ (Price Dial)</span>
                 <span className="text-white text-sm font-bold">{currentGd.theta.toFixed(3)}</span>
                 <span className="text-[10px] text-gray-400 block mt-0.5">
-                  {currentGd.theta >= 0 ? `$${currentGd.theta.toFixed(2)}` : `-$${Math.abs(currentGd.theta).toFixed(2)}`}/mi (Target: $2.00)
+                  {currentGd.theta >= 0 ? `₹${currentGd.theta.toFixed(2)}` : `-₹${Math.abs(currentGd.theta).toFixed(2)}`}/km (Target: ₹2.00)
                 </span>
               </div>
 
@@ -803,13 +731,13 @@ export default function MlIndex() {
                   />
 
                   {/* Underpricing / Overpricing Zones */}
-                  <text x="65" y="45" fill="#f59e0b" fontSize="8" fontFamily="monospace">← Underpricing (θ &lt; $2)</text>
-                  <text x="295" y="45" textAnchor="end" fill="#f43f5e" fontSize="8" fontFamily="monospace">Overpricing (θ &gt; $2) →</text>
+                  <text x="65" y="45" fill="#f59e0b" fontSize="8" fontFamily="monospace">← Underpricing (θ &lt; ₹2)</text>
+                  <text x="295" y="45" textAnchor="end" fill="#f43f5e" fontSize="8" fontFamily="monospace">Overpricing (θ &gt; ₹2) →</text>
 
                   {/* Optimal Minimum Line */}
                   <line x1="180" y1="30" x2="180" y2="185" stroke="#10b981" strokeDasharray="3,3" strokeWidth="1.5" />
                   <text x="180" y="200" textAnchor="middle" fill="#10b981" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                    Optimal θ* = 2.0 ($2/mile, 0 error)
+                    Optimal θ* = 2.0 (₹2/km, 0 error)
                   </text>
 
                   {/* Trajectory Trail */}
@@ -886,15 +814,15 @@ export default function MlIndex() {
                   <strong className="text-white block mb-1">Why does parameter θ change direction?</strong>
                   {currentGd.theta < 2.0 ? (
                     <span>
-                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the left of 2.0, the model is <strong className="text-amber-300">underpricing</strong> the ride (${currentGd.theta.toFixed(2)} vs the true $2.00). 
+                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the left of 2.0, the model is <strong className="text-amber-300">underpricing</strong> the ride (₹{currentGd.theta.toFixed(2)} vs the true ₹2.00). 
                       The slope (gradient) is <span className="text-cyan-400 font-mono font-bold">negative</span> ({currentGd.grad.toFixed(2)}). 
-                      Subtracting a negative gradient results in an <span className="text-emerald-400 font-bold">addition</span> (+{currentGd.delta.toFixed(2)}), turning the price dial upward toward the $2.00 valley.
+                      Subtracting a negative gradient results in an <span className="text-emerald-400 font-bold">addition</span> (+{currentGd.delta.toFixed(2)}), turning the price dial upward toward the ₹2.00 valley.
                     </span>
                   ) : (
                     <span>
-                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the right of 2.0, the model is <strong className="text-rose-300">overpricing</strong> the ride (${currentGd.theta.toFixed(2)} vs the true $2.00). 
+                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the right of 2.0, the model is <strong className="text-rose-300">overpricing</strong> the ride (₹{currentGd.theta.toFixed(2)} vs the true ₹2.00). 
                       The slope is <span className="text-amber-400 font-mono font-bold">positive</span> ({currentGd.grad.toFixed(2)}). 
-                      Subtracting a positive gradient results in a <span className="text-rose-400 font-bold">reduction</span> ({currentGd.delta.toFixed(2)}), turning the price dial downward toward the $2.00 valley.
+                      Subtracting a positive gradient results in a <span className="text-rose-400 font-bold">reduction</span> ({currentGd.delta.toFixed(2)}), turning the price dial downward toward the ₹2.00 valley.
                     </span>
                   )}
                 </div>
@@ -908,7 +836,7 @@ export default function MlIndex() {
                 ) : (
                   <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-emerald-200/90 leading-relaxed">
                     <strong className="text-emerald-400 block mb-1">✅ Stable Convergence</strong>
-                    With a suitable learning rate (η = {learningRate.toFixed(2)}), the update step automatically shrinks as the gradient flattens near the minimum, settling smoothly into the optimal parameter θ* = 2.000 ($2.00 / mile).
+                    With a suitable learning rate (η = {learningRate.toFixed(2)}), the update step automatically shrinks as the gradient flattens near the minimum, settling smoothly into the optimal parameter θ* = 2.000 (₹2.00 / km).
                   </div>
                 )}
               </div>
@@ -1561,44 +1489,6 @@ export default function MlIndex() {
                 <div className="p-3 rounded-xl bg-black/60 border border-white/5 text-[11px] text-gray-400">
                   <strong className="text-rose-400 block mb-0.5">Real-world Caution:</strong>
                   {lim.example}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* SECTION 7: FULL CURRICULUM ROADMAP & TOPICS DIRECTORY */}
-        <motion.section variants={itemVariants} id="curriculum" className="scroll-mt-24">
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
-              <span>Full Curriculum</span>
-            </div>
-            <h2 className="text-2xl md:text-4xl font-black text-white">Machine Learning Curriculum &amp; Topic Guides</h2>
-            <p className="text-sm text-gray-400 mt-1">Explore individual algorithms, mathematical formulations, and interactive visual explainers across all 37 topics.</p>
-          </div>
-
-          <div className="space-y-8">
-            {TOPICS.map((group) => (
-              <div key={group.group}>
-                <div className="flex items-center gap-3 mb-3">
-                  <h3 className={`text-sm font-bold uppercase tracking-wider font-mono ${group.tone}`}>{group.group}</h3>
-                  <div className="flex-1 h-px bg-white/10" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {group.items.map((it) => (
-                    <motion.div key={it.path} whileHover={{ y: -3 }}>
-                      <Link
-                        to={it.path}
-                        className={`group block h-full p-4 rounded-xl border border-white/10 bg-white/5 ${group.border} hover:bg-white/[0.08] transition-colors`}
-                      >
-                        <div className="flex items-center gap-2.5 mb-1.5">
-                          <span className="text-xl">{it.icon}</span>
-                          <h4 className="font-semibold text-white text-sm group-hover:text-indigo-300 transition-colors">{it.t}</h4>
-                        </div>
-                        <p className="text-xs text-gray-400 leading-relaxed m-0">{it.d}</p>
-                      </Link>
-                    </motion.div>
-                  ))}
                 </div>
               </div>
             ))}

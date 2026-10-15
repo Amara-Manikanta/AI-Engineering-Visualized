@@ -1,7 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, CheckCircle2, Bookmark, X, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+
+function isAppPlatform() {
+  if (typeof window === 'undefined') return false;
+
+  // 1. MacBook app (Electron)
+  const isElectron = /electron/i.test(navigator.userAgent) || Boolean(window.isElectron);
+  if (isElectron) return true;
+
+  // 2. iPhone app (Capacitor iOS)
+  try {
+    if (Capacitor.isNativePlatform()) return true;
+  } catch {
+    // ignore
+  }
+
+  if (window.Capacitor?.isNativePlatform?.()) return true;
+  if (window.location.protocol === 'capacitor:' || window.location.origin?.includes('capacitor://')) return true;
+
+  return false;
+}
 
 export default function UserTopicNotes({ pagePath, toc = [] }) {
+  const isApp = isAppPlatform();
   const [isOpen, setIsOpen] = useState(false);
   const [notes, setNotes] = useState([]);
   const [newPoint, setNewPoint] = useState('');
@@ -76,6 +98,8 @@ export default function UserTopicNotes({ pagePath, toc = [] }) {
     const updated = notes.map((item) => (item.id === id ? { ...item, completed: !item.completed } : item));
     saveNotes(updated);
   };
+
+  if (!isApp) return null;
 
   return (
     <div className="mt-8 pt-6 border-t border-white/10">
