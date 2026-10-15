@@ -496,6 +496,27 @@ export default function MlIndex() {
               </div>
             </div>
 
+            {/* Small Definition of Gradient Descent */}
+            <div className="mb-6 p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-sm leading-relaxed">
+              <h3 className="text-base font-bold text-white mb-2 flex items-center gap-2">
+                <span className="text-indigo-400">⛰️</span>
+                <span>What is Gradient Descent?</span>
+              </h3>
+              <p className="text-gray-300">
+                <strong className="text-white">Gradient Descent</strong> is an optimization algorithm that trains machine learning models by iteratively tweaking their parameters to minimize prediction errors.
+              </p>
+              <div className="mt-3 flex flex-col sm:flex-row gap-3 text-xs font-mono">
+                <div className="flex-1 p-2.5 rounded-xl bg-black/40 border border-white/5">
+                  <span className="text-indigo-300 font-bold block mb-0.5">1. Gradient (The Slope)</span>
+                  <span className="text-gray-400">Calculates which direction the prediction error is increasing or decreasing.</span>
+                </div>
+                <div className="flex-1 p-2.5 rounded-xl bg-black/40 border border-white/5">
+                  <span className="text-purple-300 font-bold block mb-0.5">2. Descent (Going Downhill)</span>
+                  <span className="text-gray-400">Takes small steps in the opposite direction (downhill) to bring that error to zero.</span>
+                </div>
+              </div>
+            </div>
+
             {/* Intuition: Everyday Real-World Example */}
             <div className="mb-8 p-6 md:p-7 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-[#12121e] to-purple-950/30 border border-indigo-500/30 shadow-lg">
               {/* The Scenario Banner */}
