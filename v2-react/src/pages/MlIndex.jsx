@@ -518,17 +518,18 @@ export default function MlIndex() {
         {/* SECTION: GRADIENT DESCENT VISUALISATION */}
         <motion.section variants={itemVariants} id="gradient-descent" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#101017] border border-white/10 shadow-xl">
+            {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
                   <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-                  <span>Interactive Engine</span>
+                  <span>Interactive Engine &amp; Intuition</span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white">
                   Gradient Descent Visualisation: Learning by Optimization
                 </h2>
                 <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-                  Watch parameter weights update mathematically step-by-step using the real gradient of a 1D convex loss function: <code className="text-indigo-300 font-mono">L(θ) = (θ - 2.0)²</code>.
+                  How does a machine learning model actually learn? By turning internal dials called <strong>weights</strong> to minimize an error score called <strong>loss</strong>. Below is a simple everyday example followed by the mathematical simulation.
                 </p>
               </div>
 
@@ -555,12 +556,147 @@ export default function MlIndex() {
               </div>
             </div>
 
+            {/* Intuition First: Everyday Real-World Example */}
+            <div className="mb-8 p-6 md:p-7 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-[#12121e] to-purple-950/30 border border-indigo-500/30 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">💡</span>
+                  <div>
+                    <h3 className="text-base md:text-lg font-bold text-white">
+                      Beginner&apos;s Intuition: What are &quot;Weights&quot; &amp; &quot;Loss&quot; in Real Life?
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      Before looking at abstract formulas, let&apos;s see how this works with a simple everyday scenario.
+                    </p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 self-start sm:self-auto">
+                  Taxi Fare Example
+                </span>
+              </div>
+
+              {/* The Scenario Banner */}
+              <div className="p-4 rounded-xl bg-black/40 border border-white/10 text-xs md:text-sm text-gray-300 leading-relaxed mb-5 flex items-start gap-3">
+                <span className="text-2xl">🚕</span>
+                <div>
+                  <strong className="text-white block mb-0.5">The Goal: Predict Taxi Fares</strong>
+                  Suppose you want to build an AI to predict the fare of a taxi ride based on trip distance.
+                  In reality, the taxi company charges <span className="text-emerald-400 font-bold font-mono">$2.00 per mile</span> (so 1 mile = $2.00, 5 miles = $10.00). 
+                  <span className="text-amber-300 font-semibold"> But our AI starts completely blank! It does not know the $2.00 rule.</span>
+                </div>
+              </div>
+
+              {/* 3 Step Intuition Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                {/* 1. Weight */}
+                <div className="p-4 rounded-xl bg-black/60 border border-indigo-500/20 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 font-bold text-indigo-300 mb-2">
+                      <span className="text-lg">🎛️</span>
+                      <span>1. The Weight (θ) = The Tunable Dial</span>
+                    </div>
+                    <p className="text-gray-400 leading-relaxed">
+                      A <strong className="text-white">weight</strong> (represented by θ) is simply the internal dial the model turns to make predictions:
+                    </p>
+                    <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-indigo-200 text-center border border-white/5">
+                      Predicted Fare = θ × Miles
+                    </div>
+                    <p className="text-gray-400 leading-relaxed">
+                      At first, the model sets the dial randomly—say, at <code className="text-rose-300 font-mono">θ = -1.20</code>. For a 1-mile ride, it absurdly predicts <strong className="text-rose-400">-$1.20</strong> (the driver pays you!).
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2. Loss */}
+                <div className="p-4 rounded-xl bg-black/60 border border-purple-500/20 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 font-bold text-purple-300 mb-2">
+                      <span className="text-lg">📉</span>
+                      <span>2. The Loss (L) = The Mistake Meter</span>
+                    </div>
+                    <p className="text-gray-400 leading-relaxed">
+                      The <strong className="text-white">loss function</strong> is an error penalty measuring how wrong the model&apos;s prediction was compared to reality ($2.00):
+                    </p>
+                    <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-purple-200 text-center border border-white/5">
+                      Loss = (Prediction - $2.00)²
+                    </div>
+                    <p className="text-gray-400 leading-relaxed">
+                      When <code className="text-rose-300 font-mono">θ = -1.20</code>, the error penalty is <strong className="text-rose-400">(-3.20)² = 10.24</strong> (massive mistake).
+                      When <code className="text-emerald-300 font-mono">θ = 2.00</code>, the error penalty is <strong className="text-emerald-400 font-mono">(0.00)² = 0.00</strong> (perfection!).
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Gradient Descent */}
+                <div className="p-4 rounded-xl bg-black/60 border border-emerald-500/20 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 font-bold text-emerald-300 mb-2">
+                      <span className="text-lg">🏔️</span>
+                      <span>3. Gradient Descent = Rolling Downhill</span>
+                    </div>
+                    <p className="text-gray-400 leading-relaxed">
+                      The AI cannot see the true rate ($2.00) in advance. It is like a blindfolded hiker in a foggy valley, feeling the slope (gradient) under their boots:
+                    </p>
+                    <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-emerald-200 text-center border border-white/5">
+                      New θ = Old θ - (Step × Slope)
+                    </div>
+                    <p className="text-gray-400 leading-relaxed">
+                      If the slope says &quot;you underpriced&quot;, turn the dial <strong className="text-emerald-400">UP</strong>. If &quot;you overpriced&quot;, turn it <strong className="text-rose-400">DOWN</strong>. It rolls down until the error hits zero!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Taxi Fare Simulation Status Bar */}
+            <div className="mb-6 p-4 rounded-2xl bg-black/50 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">🚕</span>
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 block">
+                    Live Taxi Fare Model Prediction (1-Mile Ride):
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                    <span className="text-xs text-gray-400">Formula:</span>
+                    <code className="text-xs font-mono font-bold text-indigo-300 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                      Fare = ({currentGd.theta.toFixed(2)}) × 1 mile
+                    </code>
+                    <span className="text-xs text-gray-400">→</span>
+                    <span className="text-sm font-mono font-extrabold text-white">
+                      Predicted:{' '}
+                      <span className={Math.abs(currentGd.theta - 2.0) < 0.05 ? 'text-emerald-400' : 'text-indigo-300'}>
+                        {currentGd.theta >= 0 ? `$${currentGd.theta.toFixed(2)}` : `-$${Math.abs(currentGd.theta).toFixed(2)}`}
+                      </span>
+                    </span>
+                    <span className="text-xs text-gray-400">(Actual: <strong className="text-emerald-400">$2.00</strong>)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div>
+                {Math.abs(currentGd.theta - 2.0) < 0.05 ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    <span>🎯</span> Optimal Rate Found! (Loss = 0.00)
+                  </span>
+                ) : currentGd.theta < 2.0 ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    <span>⚠️</span> Underpricing by ${(2.0 - currentGd.theta).toFixed(2)} → Slope pushes dial UP
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                    <span>⚠️</span> Overpricing by ${(currentGd.theta - 2.0).toFixed(2)} → Slope pushes dial DOWN
+                  </span>
+                )}
+              </div>
+            </div>
+
             {/* Learning Rate Controls */}
             <div className="mb-6 p-4 rounded-2xl bg-black/40 border border-white/10">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <span className="text-xs font-mono uppercase text-gray-400 font-bold block mb-1">
-                    1. Choose Learning Rate (η):
+                    1. Choose Step Size / Learning Rate (η):
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {[
@@ -611,33 +747,35 @@ export default function MlIndex() {
             {/* Interactive Readouts & Mathematical Values */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-mono text-xs">
               <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Parameter θ</span>
+                <span className="text-gray-500 block text-[10px] uppercase">Parameter θ (Price Dial)</span>
                 <span className="text-white text-sm font-bold">{currentGd.theta.toFixed(3)}</span>
-                <span className="text-[10px] text-gray-500 block mt-0.5">(Optimal θ* = 2.000)</span>
+                <span className="text-[10px] text-gray-400 block mt-0.5">
+                  {currentGd.theta >= 0 ? `$${currentGd.theta.toFixed(2)}` : `-$${Math.abs(currentGd.theta).toFixed(2)}`}/mi (Target: $2.00)
+                </span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Current Loss L(θ)</span>
+                <span className="text-gray-500 block text-[10px] uppercase">Current Loss L(θ) (Mistake)</span>
                 <span className="text-purple-300 text-sm font-bold">{currentGd.loss.toFixed(3)}</span>
-                <span className="text-[10px] text-gray-500 block mt-0.5">L = (θ - 2.0)²</span>
+                <span className="text-[10px] text-gray-400 block mt-0.5">L = (θ - 2.0)² error penalty</span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Gradient ∇L = 2(θ - 2)</span>
+                <span className="text-gray-500 block text-[10px] uppercase">Gradient ∇L = 2(θ - 2) (Slope)</span>
                 <span className={`text-sm font-bold ${currentGd.grad < 0 ? 'text-cyan-400' : 'text-amber-400'}`}>
                   {currentGd.grad >= 0 ? '+' : ''}{currentGd.grad.toFixed(3)}
                 </span>
-                <span className="text-[10px] text-gray-500 block mt-0.5">
-                  {currentGd.grad < 0 ? 'Slope: downward to right' : 'Slope: downward to left'}
+                <span className="text-[10px] text-gray-400 block mt-0.5">
+                  {currentGd.grad < 0 ? 'Negative: underpricing (raise θ)' : 'Positive: overpricing (lower θ)'}
                 </span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Step: Δθ = -η · ∇L</span>
+                <span className="text-gray-500 block text-[10px] uppercase">Step: Δθ = -η · ∇L (Dial Turn)</span>
                 <span className={`text-sm font-bold ${currentGd.delta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {currentGd.delta >= 0 ? '+' : ''}{currentGd.delta.toFixed(3)}
                 </span>
-                <span className="text-[10px] text-gray-500 block mt-0.5">Next θ = {currentGd.nextTheta.toFixed(3)}</span>
+                <span className="text-[10px] text-gray-400 block mt-0.5">Next θ = {currentGd.nextTheta.toFixed(3)}</span>
               </div>
             </div>
 
@@ -646,7 +784,7 @@ export default function MlIndex() {
               {/* SVG Canvas */}
               <div className="flex flex-col items-center justify-center">
                 <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase tracking-wider">
-                  Loss Curve L(θ) = (θ - 2.0)²
+                  Loss Curve L(θ) = (θ - 2.0)² (Mistake Landscape)
                 </div>
 
                 <svg viewBox="0 0 360 210" className="w-full max-w-[360px] overflow-visible">
@@ -664,10 +802,14 @@ export default function MlIndex() {
                     strokeWidth="3"
                   />
 
+                  {/* Underpricing / Overpricing Zones */}
+                  <text x="65" y="45" fill="#f59e0b" fontSize="8" fontFamily="monospace">← Underpricing (θ &lt; $2)</text>
+                  <text x="295" y="45" textAnchor="end" fill="#f43f5e" fontSize="8" fontFamily="monospace">Overpricing (θ &gt; $2) →</text>
+
                   {/* Optimal Minimum Line */}
                   <line x1="180" y1="30" x2="180" y2="185" stroke="#10b981" strokeDasharray="3,3" strokeWidth="1.5" />
                   <text x="180" y="200" textAnchor="middle" fill="#10b981" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                    Optimal θ* = 2.0 (L = 0)
+                    Optimal θ* = 2.0 ($2/mile, 0 error)
                   </text>
 
                   {/* Trajectory Trail */}
@@ -744,13 +886,15 @@ export default function MlIndex() {
                   <strong className="text-white block mb-1">Why does parameter θ change direction?</strong>
                   {currentGd.theta < 2.0 ? (
                     <span>
-                      Since θ ({currentGd.theta.toFixed(2)}) is to the left of 2.0, the slope (gradient) is <span className="text-cyan-400 font-mono font-bold">negative</span> ({currentGd.grad.toFixed(2)}). 
-                      Subtracting a negative gradient results in an <span className="text-emerald-400 font-bold">addition</span> (+{currentGd.delta.toFixed(2)}), pushing θ rightward toward the valley.
+                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the left of 2.0, the model is <strong className="text-amber-300">underpricing</strong> the ride (${currentGd.theta.toFixed(2)} vs the true $2.00). 
+                      The slope (gradient) is <span className="text-cyan-400 font-mono font-bold">negative</span> ({currentGd.grad.toFixed(2)}). 
+                      Subtracting a negative gradient results in an <span className="text-emerald-400 font-bold">addition</span> (+{currentGd.delta.toFixed(2)}), turning the price dial upward toward the $2.00 valley.
                     </span>
                   ) : (
                     <span>
-                      Since θ ({currentGd.theta.toFixed(2)}) is to the right of 2.0, the slope is <span className="text-amber-400 font-mono font-bold">positive</span> ({currentGd.grad.toFixed(2)}). 
-                      Subtracting a positive gradient results in a <span className="text-rose-400 font-bold">reduction</span> ({currentGd.delta.toFixed(2)}), pushing θ leftward toward the valley.
+                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the right of 2.0, the model is <strong className="text-rose-300">overpricing</strong> the ride (${currentGd.theta.toFixed(2)} vs the true $2.00). 
+                      The slope is <span className="text-amber-400 font-mono font-bold">positive</span> ({currentGd.grad.toFixed(2)}). 
+                      Subtracting a positive gradient results in a <span className="text-rose-400 font-bold">reduction</span> ({currentGd.delta.toFixed(2)}), turning the price dial downward toward the $2.00 valley.
                     </span>
                   )}
                 </div>
@@ -764,7 +908,7 @@ export default function MlIndex() {
                 ) : (
                   <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-emerald-200/90 leading-relaxed">
                     <strong className="text-emerald-400 block mb-1">✅ Stable Convergence</strong>
-                    With a suitable learning rate (η = {learningRate.toFixed(2)}), the update step automatically shrinks as the gradient flattens near the minimum, settling smoothly into the optimal parameter θ* = 2.000.
+                    With a suitable learning rate (η = {learningRate.toFixed(2)}), the update step automatically shrinks as the gradient flattens near the minimum, settling smoothly into the optimal parameter θ* = 2.000 ($2.00 / mile).
                   </div>
                 )}
               </div>
@@ -775,7 +919,7 @@ export default function MlIndex() {
               <span className="text-xl">🌐</span>
               <div>
                 <strong className="text-white block mb-0.5">Real-World Note: Multidimensional Loss Landscapes</strong>
-                In this visual demonstration, our model has only 1 parameter (θ). In real-world machine learning, models have thousands to billions of parameters! The loss landscape is a high-dimensional surface with hills, ravines, and saddle points. However, the fundamental law remains identical: the algorithm computes partial derivatives for every parameter and takes a step in the direction of steepest descent.
+                In this visual demonstration, our model has only 1 parameter (the price dial θ). In real-world machine learning, models have thousands to billions of parameters! The loss landscape is a complex, high-dimensional surface with hills, ravines, and saddle points. However, the fundamental law remains identical: the algorithm computes partial derivatives for every parameter and takes a step in the direction of steepest descent.
               </div>
             </div>
           </div>
