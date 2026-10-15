@@ -262,7 +262,7 @@ const LIMITATIONS = [
     icon: '⏳',
     badge: 'Temporal Decay',
     color: 'text-cyan-400 border-cyan-500/40',
-    desc: 'Software 1.0 code runs identically for decades. But ML models quietly rot over time because the real world changes. Consumer behavior, financial laws, vocabulary, and medical viruses all evolve, rendering static models obsolete.',
+    desc: 'Traditional rule-based code runs identically for decades. But ML models quietly rot over time because the real world changes. Consumer behavior, financial laws, vocabulary, and medical patterns all evolve, rendering static models obsolete.',
     example: 'E-commerce demand forecasting models broke completely during COVID-19 because consumer shopping habits changed overnight.'
   },
   {
@@ -319,10 +319,10 @@ export default function MlIndex() {
             
             <div className="prose prose-invert max-w-none text-gray-300 text-base md:text-lg leading-relaxed mb-8 space-y-4">
               <p>
-                At its simplest, <strong className="text-white font-semibold">Machine Learning (ML)</strong> is the science of teaching computers how to perform tasks <span className="text-indigo-300 font-semibold underline decoration-indigo-500/50">without explicitly programming them</span> for every single possibility.
+                <strong className="text-white font-semibold">Machine Learning (ML)</strong> is a branch of Artificial Intelligence that enables computers to learn patterns from data and use those patterns to make predictions or decisions on new, unseen examples.
               </p>
               <p className="text-gray-400 text-sm md:text-base">
-                Instead of a software engineer sitting down and writing millions of nested <code className="text-pink-300 bg-pink-950/40 px-1.5 py-0.5 rounded">if / else</code> rules to recognize a cat, spot a fraudulent credit card transaction, or translate a sentence, we feed the machine <strong className="text-white">thousands or millions of examples (data)</strong>. The computer automatically identifies the subtle mathematical patterns, builds an internal model, and improves its accuracy through experience.
+                Instead of manually writing rules for every possible situation, we provide data and a learning algorithm that builds a model. During training, the model adjusts its internal parameters to improve its performance on a specific task.
               </p>
             </div>
 
@@ -332,7 +332,7 @@ export default function MlIndex() {
                 <div className="text-3xl mb-3">📊</div>
                 <h3 className="font-bold text-white text-base mb-1">1. The Data (Experience)</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  The fuel of learning. Whether images, historical stock prices, customer logs, or text passages, data provides the real-world evidence of cause and effect.
+                  Data provides examples from which a model can learn useful patterns and relationships. Depending on the task, it may include images, text, sensor readings, historical prices, or customer records.
                 </p>
               </div>
 
@@ -340,7 +340,7 @@ export default function MlIndex() {
                 <div className="text-3xl mb-3">⚙️</div>
                 <h3 className="font-bold text-white text-base mb-1">2. The Model (Hypothesis)</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  A mathematical function with millions of tunable knobs called <strong className="text-indigo-300 font-mono">weights (θ)</strong>. It takes inputs and calculates an estimated prediction.
+                  A model is a mathematical function with learnable parameters. It transforms inputs into predictions. Simple models may have only a few parameters, while large neural networks can have billions.
                 </p>
               </div>
 
@@ -348,7 +348,7 @@ export default function MlIndex() {
                 <div className="text-3xl mb-3">🎯</div>
                 <h3 className="font-bold text-white text-base mb-1">3. The Loss & Optimizer (Learning)</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  The error gauge. When the model makes a mistake, the <strong className="text-emerald-300">Loss Function</strong> measures how bad the error is, and the <strong className="text-emerald-300">Optimizer (Gradient Descent)</strong> nudges the weights to do better next time.
+                  A loss function measures how well the model's predictions match the target values. During training, an optimisation algorithm updates the model's parameters to reduce the loss (for example, using gradient descent).
                 </p>
               </div>
             </div>
@@ -387,7 +387,7 @@ export default function MlIndex() {
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  Traditional (Software 1.0)
+                  Traditional (Explicit Rules)
                 </button>
                 <button
                   onClick={() => setProgrammingMode('ml')}
@@ -397,8 +397,20 @@ export default function MlIndex() {
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  Machine Learning (Software 2.0)
+                  Machine Learning (Learned Patterns)
                 </button>
+              </div>
+            </div>
+
+            {/* Complementary Note */}
+            <div className="mb-6 p-4 rounded-2xl bg-indigo-950/20 border border-indigo-500/20 text-xs md:text-sm text-gray-300 leading-relaxed flex items-start gap-3">
+              <span className="text-xl">🤝</span>
+              <div>
+                <strong className="text-white block mb-0.5">Complementary Approaches:</strong>
+                Traditional programming and machine learning are complementary approaches. Explicit rules are often preferable when requirements are well-defined, while machine learning is useful when patterns are difficult to specify manually.
+                <span className="text-gray-400 block text-xs mt-1">
+                  (Note: Informal labels like "Software 1.0" and "Software 2.0" are sometimes used as helpful mental analogies for this contrast, rather than formal engineering versions.)
+                </span>
               </div>
             </div>
 
@@ -420,19 +432,19 @@ export default function MlIndex() {
 
                 <div className="space-y-3 font-mono text-xs mb-4">
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
-                    <span className="text-gray-500">1. INPUT:</span> Telemetry Data (e.g. Speed: 95 km/h, Rain: Yes)
+                    <span className="text-gray-500">1. INPUT:</span> Incoming Email (Subject, Sender, Body)
                   </div>
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-amber-300">
-                    <span className="text-gray-500">2. HUMAN RULES:</span> if speed &gt; 80 and rain == True: brake()
+                    <span className="text-gray-500">2. EXPLICIT RULES:</span> if "wire transfer" in body and sender not in address_book: flag_suspicious()
                   </div>
                   <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-bold">
-                    <span className="text-gray-500">3. OUTPUT:</span> Decision: Apply Brakes
+                    <span className="text-gray-500">3. OUTPUT:</span> Deterministic Decision: Flag as Suspicious
                   </div>
                 </div>
 
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  <strong className="text-white">Strength:</strong> 100% deterministic, transparent, and perfect for accounting, payroll, or predictable logic.<br />
-                  <strong className="text-red-400">Limitation:</strong> Completely fails when rules cannot be codified by hand (e.g. detecting a pedestrian in rainy night glare, understanding sarcasm, or recognizing human voices).
+                  <strong className="text-white">When to use:</strong> Ideal when the business logic is strict, clear, and unambiguous (e.g. blocking known blocked domains, tax brackets, or input validation).<br />
+                  <strong className="text-red-400">Trade-off:</strong> Difficult to maintain when edge cases multiply or attackers modify phrasing (e.g. "w-i-r-e transfer"), requiring constant manual updates.
                 </p>
               </div>
 
@@ -452,19 +464,19 @@ export default function MlIndex() {
 
                 <div className="space-y-3 font-mono text-xs mb-4">
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
-                    <span className="text-gray-500">1. INPUT:</span> 100,000 Driving Camera Videos &amp; Sensor Logs
+                    <span className="text-gray-500">1. INPUT:</span> Historical Dataset of Labeled Emails (Legitimate &amp; Phishing)
                   </div>
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-purple-300">
-                    <span className="text-gray-500">2. GROUND TRUTH:</span> Human Driver Steering &amp; Braking Actions
+                    <span className="text-gray-500">2. LEARNING ALGORITHM:</span> Analyzes Vocabulary Frequencies, Headers, and Context
                   </div>
                   <div className="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/40 text-indigo-200 font-bold">
-                    <span className="text-gray-500">3. LEARNED OUTPUT:</span> Trained Weights θ (The Model / Program)
+                    <span className="text-gray-500">3. LEARNED OUTPUT:</span> Trained Model (Estimates Spam Probability: 98.4%)
                   </div>
                 </div>
 
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  <strong className="text-white">Strength:</strong> Automatically finds complex, non-linear relationships in high-dimensional data (pixels, audio, embeddings).<br />
-                  <strong className="text-indigo-400">Generalization:</strong> When shown a brand new street it has never seen, the learned model accurately predicts when to brake.
+                  <strong className="text-white">When to use:</strong> Excels when patterns are nuanced, high-dimensional, or evolving (e.g. natural language, vision, anomaly detection).<br />
+                  <strong className="text-indigo-400">Trade-off:</strong> Requires representative training data, careful evaluation, and ongoing monitoring to catch data drift.
                 </p>
               </div>
             </div>
