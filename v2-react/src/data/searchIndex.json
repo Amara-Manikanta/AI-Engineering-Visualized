@@ -3035,28 +3035,40 @@
   },
   {
     "path": "/ml",
-    "title": "Introduction to Machine Learning",
-    "intro": "The foundation of modern AI. Start here for the landscape, then dive into each algorithm — every topic has its own interactive guide.",
+    "title": "Machine Learning Engineering: The Core Blueprint",
+    "intro": "From statistical learning theory and empirical loss optimization to self-supervised foundation pretraining and reinforcement alignment. Your comprehensive engineering masterguide.",
     "sections": [
       {
-        "label": "Topics in This Section",
-        "hash": "topics"
+        "label": "What is Machine Learning?",
+        "hash": "what-is-ml"
       },
       {
-        "label": "Key Python Libraries",
-        "hash": "key-python-libraries"
+        "label": "The 4 Core Paradigms",
+        "hash": "four-paradigms"
       },
       {
-        "label": "Supervised vs Unsupervised",
-        "hash": "supervised-vs-unsupervised-learning"
+        "label": "Mathematical Formulation",
+        "hash": "math-optimization"
       },
       {
-        "label": "The ML Workflow",
-        "hash": "typical-ml-workflow"
+        "label": "Bias-Variance Tradeoff",
+        "hash": "bias-variance"
       },
       {
-        "label": "Common Challenges",
-        "hash": "common-challenges"
+        "label": "Production ML Workflow",
+        "hash": "ml-workflow"
+      },
+      {
+        "label": "Model Evaluation Metrics",
+        "hash": "evaluation-metrics"
+      },
+      {
+        "label": "End-to-End Python Pipeline",
+        "hash": "python-blueprint"
+      },
+      {
+        "label": "Curriculum & Guides",
+        "hash": "curriculum"
       }
     ],
     "keywords": []
@@ -5208,48 +5220,48 @@
   },
   {
     "path": "/ml/transformers",
-    "title": "Transformers & Gen AI",
-    "intro": "Interactive visual explainer of Generative AI, Transformer architecture, Tokenization, Embeddings, Positional Encoding, Attention, and the full pipeline — inspired by transformer-explainer.",
+    "title": "The Transformer Architecture & Generative AI",
+    "intro": "The architectural foundation of modern AI. From mathematical scaled dot-product attention and causal masking to multi-head tensor splitting, RoPE positional rotations, and modern FlashAttention runtimes.",
     "sections": [
       {
-        "label": "What is Generative AI?",
-        "hash": "genai"
+        "label": "Transformer Architecture Blueprint",
+        "hash": "full-architecture"
       },
       {
-        "label": "AI History Timeline",
-        "hash": "ai-history"
+        "label": "Scaled Dot-Product Attention Math",
+        "hash": "scaled-dot-product"
       },
       {
-        "label": "Types of AI",
-        "hash": "ai-types"
+        "label": "Interactive Attention Matrix",
+        "hash": "attention-matrix"
       },
       {
-        "label": "Language Models",
-        "hash": "language-models"
+        "label": "Multi-Head Attention Tensor Split",
+        "hash": "multi-head"
       },
       {
-        "label": "Transformer Architecture",
-        "hash": "transformer"
-      },
-      {
-        "label": "Tokenization",
-        "hash": "tokenization"
-      },
-      {
-        "label": "Embeddings",
-        "hash": "embeddings"
-      },
-      {
-        "label": "Positional Encoding",
+        "label": "Positional Encoding: Sinusoidal to RoPE",
         "hash": "positional-encoding"
       },
       {
-        "label": "Attention Mechanism",
-        "hash": "attention"
+        "label": "The 3 Architectural Families",
+        "hash": "three-families"
       },
       {
-        "label": "Full Pipeline Walkthrough",
-        "hash": "pipeline-walkthrough"
+        "label": "Modern LLM Innovations (2017-2026)",
+        "hash": "modern-innovations"
+      },
+      {
+        "label": "Interactive Tokenization & Embeddings",
+        "hash": "tokenization"
+      },
+      {
+        "label": "PyTorch Implementation Blueprint",
+        "hash": "pytorch-code"
+      },
+      {
+        "label": "Knowledge Check Quiz",
+        "hash": "knowledge-check"
       }
     ],
     "keywords": []
