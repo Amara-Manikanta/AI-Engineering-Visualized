@@ -415,7 +415,7 @@ function ActivationExplorer() {
     return points;
   }, []);
 
-  const it_toY = (value) => 110 - value * 22;
+  const _toY = (value) => 110 - value * 22;
 
   return (
     <div className="space-y-5 rounded-2xl border border-white/10 bg-white/[0.025] p-4 md:p-6">
