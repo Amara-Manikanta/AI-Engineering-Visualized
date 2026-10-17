@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
@@ -6,7 +7,7 @@ import CodeBlock from '../components/CodeBlock';
 const toc = [
   { label: 'What Is Deep Learning?', hash: 'overview' },
   { label: 'How Deep Learning Learns', hash: 'how-it-works' },
-  { label: 'From Machine Learning to Deep Learning', hash: 'comparison' },
+  { label: 'Machine Learning vs Deep Learning', hash: 'comparison' },
   { label: 'What Is a Neural Network?', hash: 'neural-network' },
   { label: 'Anatomy of a Neural Network', hash: 'anatomy' },
   { label: 'Explore a Single Neuron', hash: 'neuron' },
@@ -64,7 +65,7 @@ function DeepLearningLayers() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.12 }}
-            className="relative rounded-2xl border p-4"
+            className="rounded-2xl border p-4"
             style={{
               borderColor: `${layer.color}55`,
               background: `${layer.color}0d`,
@@ -105,7 +106,6 @@ function NeuralNetworkDiagram() {
 
     return {
       ...layer,
-      layerIndex,
       points: Array.from({ length: layer.nodes }, (_, nodeIndex) => ({
         x: layer.x,
         y: 130 - totalHeight / 2 + nodeIndex * spacing,
@@ -134,19 +134,6 @@ function NeuralNetworkDiagram() {
         role="img"
         aria-label="Neural network with an input layer, two hidden layers, and an output layer"
       >
-        <defs>
-          <marker
-            id="network-arrow"
-            markerWidth="5"
-            markerHeight="5"
-            refX="4"
-            refY="2.5"
-            orient="auto"
-          >
-            <path d="M0,0 L5,2.5 L0,5 Z" fill="#64748b" />
-          </marker>
-        </defs>
-
         {edges.map((edge) => (
           <motion.line
             key={edge.id}
@@ -200,8 +187,8 @@ function NeuralNetworkDiagram() {
       </svg>
 
       <p className="px-3 pb-2 text-center text-xs text-white/45">
-        Every connecting line represents a learnable weight. Each circle
-        represents a neuron.
+        Each circle represents a neuron. Connecting lines represent
+        weights that the network learns during training.
       </p>
     </div>
   );
@@ -225,9 +212,9 @@ function SingleNeuronExplorer() {
         ? Math.tanh(z)
         : 1 / (1 + Math.exp(-z));
 
-  const updateArray = (setter, array, index, value) => {
+  function updateArray(setter, array, index, value) {
     setter(array.map((item, i) => (i === index ? value : item)));
-  };
+  }
 
   return (
     <div className="space-y-5 rounded-2xl border border-white/10 bg-white/[0.025] p-4 md:p-6">
@@ -243,10 +230,11 @@ function SingleNeuronExplorer() {
           viewBox="0 0 440 190"
           className="mx-auto w-full min-w-[330px] max-w-2xl"
           role="img"
-          aria-label="Three inputs connect to one neuron, which produces an output"
+          aria-label="Three inputs connect to a neuron and produce an output"
         >
           {inputs.map((input, i) => {
             const y = 45 + i * 50;
+
             return (
               <g key={i}>
                 <line
@@ -258,37 +246,108 @@ function SingleNeuronExplorer() {
                   strokeWidth="2"
                   strokeOpacity="0.85"
                 />
-                <circle cx="42" cy={y} r="20" fill="#38bdf822" stroke="#38bdf8" />
-                <text x="42" y={y + 4} fill="white" fontSize="12" textAnchor="middle">
+
+                <circle
+                  cx="42"
+                  cy={y}
+                  r="20"
+                  fill="#38bdf822"
+                  stroke="#38bdf8"
+                />
+
+                <text
+                  x="42"
+                  y={y + 4}
+                  fill="white"
+                  fontSize="12"
+                  textAnchor="middle"
+                >
                   {input.toFixed(1)}
                 </text>
-                <text x="137" y={y - 7} fill="#c4b5fd" fontSize="10" textAnchor="middle">
+
+                <text
+                  x="137"
+                  y={y - 7}
+                  fill="#c4b5fd"
+                  fontSize="10"
+                  textAnchor="middle"
+                >
                   w{i + 1}={weights[i].toFixed(1)}
                 </text>
               </g>
             );
           })}
 
-          <circle cx="225" cy="95" r="27" fill="#818cf822" stroke="#a5b4fc" strokeWidth="2" />
-          <text x="225" y="100" fill="white" fontSize="15" textAnchor="middle">Σ</text>
+          <circle
+            cx="225"
+            cy="95"
+            r="27"
+            fill="#818cf822"
+            stroke="#a5b4fc"
+            strokeWidth="2"
+          />
 
-          <line x1="252" y1="95" x2="317" y2="95" stroke="#34d399" strokeWidth="2" />
-          <circle cx="354" cy="95" r="25" fill="#34d39920" stroke="#34d399" strokeWidth="2" />
-          <text x="354" y="99" fill="white" fontSize="12" textAnchor="middle">
+          <text
+            x="225"
+            y="100"
+            fill="white"
+            fontSize="15"
+            textAnchor="middle"
+          >
+            Σ
+          </text>
+
+          <line
+            x1="252"
+            y1="95"
+            x2="317"
+            y2="95"
+            stroke="#34d399"
+            strokeWidth="2"
+          />
+
+          <circle
+            cx="354"
+            cy="95"
+            r="25"
+            fill="#34d39920"
+            stroke="#34d399"
+            strokeWidth="2"
+          />
+
+          <text
+            x="354"
+            y="99"
+            fill="white"
+            fontSize="12"
+            textAnchor="middle"
+          >
             {output.toFixed(2)}
           </text>
-          <text x="354" y="139" fill="#6ee7b7" fontSize="11" textAnchor="middle">
+
+          <text
+            x="354"
+            y="139"
+            fill="#6ee7b7"
+            fontSize="11"
+            textAnchor="middle"
+          >
             Output
           </text>
-          <text x="225" y="145" fill="#a5b4fc" fontSize="11" textAnchor="middle">
+
+          <text
+            x="225"
+            y="145"
+            fill="#a5b4fc"
+            fontSize="11"
+            textAnchor="middle"
+          >
             Bias = {bias.toFixed(1)}
           </text>
         </svg>
       </div>
 
-      <Formula>
-        z = x₁w₁ + x₂w₂ + x₃w₃ + b
-      </Formula>
+      <Formula>z = x₁w₁ + x₂w₂ + x₃w₃ + b</Formula>
 
       <div className="space-y-4">
         {inputs.map((input, i) => (
@@ -302,7 +361,12 @@ function SingleNeuronExplorer() {
                 step="0.1"
                 value={input}
                 onChange={(e) =>
-                  updateArray(inputsSetter, inputs, i, Number(e.target.value))
+                  updateArray(
+                    setInputs,
+                    inputs,
+                    i,
+                    Number(e.target.value)
+                  )
                 }
                 className="mt-2 w-full accent-sky-400"
               />
@@ -317,7 +381,12 @@ function SingleNeuronExplorer() {
                 step="0.1"
                 value={weights[i]}
                 onChange={(e) =>
-                  updateArray(weightsSetter, weights, i, Number(e.target.value))
+                  updateArray(
+                    setWeights,
+                    weights,
+                    i,
+                    Number(e.target.value)
+                  )
                 }
                 className="mt-2 w-full accent-violet-400"
               />
@@ -357,12 +426,18 @@ function SingleNeuronExplorer() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className={cardClass}>
           <p className="text-xs text-white/50">Weighted sum z</p>
-          <p className="mt-2 text-2xl font-semibold text-white">{z.toFixed(3)}</p>
+          <p className="mt-2 text-2xl font-semibold text-white">
+            {z.toFixed(3)}
+          </p>
         </div>
+
         <div className={cardClass}>
           <p className="text-xs text-white/50">Activation</p>
-          <p className="mt-2 text-2xl font-semibold text-violet-300">{activation}</p>
+          <p className="mt-2 text-2xl font-semibold text-violet-300">
+            {activation}
+          </p>
         </div>
+
         <div className={cardClass}>
           <p className="text-xs text-white/50">Neuron output</p>
           <p className="mt-2 text-2xl font-semibold text-emerald-300">
@@ -372,24 +447,17 @@ function SingleNeuronExplorer() {
       </div>
 
       <p className="text-sm leading-6 text-white/60">
-        Change an input, weight, or bias. The weighted sum and neuron output
-        update immediately. This is the basic computation performed by a
-        neuron.
+        Change an input, weight, or bias. The weighted sum and neuron
+        output update immediately. This is a live mathematical
+        demonstration, not a trained model.
       </p>
     </div>
   );
-
-  function inputsSetter(next) {
-    setInputs(next);
-  }
-
-  function weightsSetter(next) {
-    setWeights(next);
-  }
 }
 
 function ActivationExplorer() {
   const [x, setX] = useState(0.5);
+
   const sigmoid = 1 / (1 + Math.exp(-x));
   const relu = Math.max(0, x);
   const tanh = Math.tanh(x);
@@ -401,25 +469,27 @@ function ActivationExplorer() {
   ];
 
   const plot = useMemo(() => {
-    const points = [];
-    for (let i = 0; i <= 80; i++) {
+    return Array.from({ length: 81 }, (_, i) => {
       const value = -4 + (i / 80) * 8;
-      points.push({
+
+      return {
         x: 30 + i * 4,
-        value,
         sigmoid: 1 / (1 + Math.exp(-value)),
         relu: Math.max(0, value),
         tanh: Math.tanh(value),
-      });
-    }
-    return points;
+      };
+    });
   }, []);
-
 
   return (
     <div className="space-y-5 rounded-2xl border border-white/10 bg-white/[0.025] p-4 md:p-6">
       <div className="overflow-x-auto rounded-xl bg-[#0b1020] p-3">
-        <svg viewBox="0 0 380 155" className="mx-auto w-full min-w-[300px] max-w-2xl">
+        <svg
+          viewBox="0 0 380 155"
+          className="mx-auto w-full min-w-[300px] max-w-2xl"
+          role="img"
+          aria-label="Comparison of sigmoid, ReLU, and tanh activation functions"
+        >
           {[0, 1, 2, 3, 4].map((i) => (
             <line
               key={i}
@@ -443,27 +513,62 @@ function ActivationExplorer() {
               stroke={fn.color}
               strokeWidth="2"
               points={plot
-                .map((p) => {
-                  const v = fn.key === 'relu' ? Math.min(p.relu, 4) : p[fn.key];
-                  const y = fn.key === 'tanh'
-                    ? 80 - v * 45
-                    : fn.key === 'relu'
-                      ? 125 - v * 25
-                      : 130 - v * 100;
-                  return `${p.x},${y}`;
+                .map((point) => {
+                  const value =
+                    fn.key === 'relu'
+                      ? Math.min(point.relu, 4)
+                      : point[fn.key];
+
+                  const y =
+                    fn.key === 'tanh'
+                      ? 80 - value * 45
+                      : fn.key === 'relu'
+                        ? 125 - value * 25
+                        : 130 - value * 100;
+
+                  return `${point.x},${y}`;
                 })
                 .join(' ')}
             />
           ))}
 
-          <line x1="190" y1="15" x2="190" y2="135" stroke="#94a3b8" strokeDasharray="3 3" />
-          <text x="30" y="148" fill="#94a3b8" fontSize="9">−4</text>
-          <text x="190" y="148" fill="#94a3b8" fontSize="9" textAnchor="middle">0</text>
-          <text x="350" y="148" fill="#94a3b8" fontSize="9" textAnchor="end">4</text>
+          <line
+            x1="190"
+            y1="15"
+            x2="190"
+            y2="135"
+            stroke="#94a3b8"
+            strokeDasharray="3 3"
+          />
+
+          <text x="30" y="148" fill="#94a3b8" fontSize="9">
+            −4
+          </text>
+          <text
+            x="190"
+            y="148"
+            fill="#94a3b8"
+            fontSize="9"
+            textAnchor="middle"
+          >
+            0
+          </text>
+          <text
+            x="350"
+            y="148"
+            fill="#94a3b8"
+            fontSize="9"
+            textAnchor="end"
+          >
+            4
+          </text>
         </svg>
+
         <div className="flex flex-wrap justify-center gap-4 pb-2 text-xs">
           {functions.map((fn) => (
-            <span key={fn.name} style={{ color: fn.color }}>● {fn.name}</span>
+            <span key={fn.name} style={{ color: fn.color }}>
+              ● {fn.name}
+            </span>
           ))}
         </div>
       </div>
@@ -485,17 +590,22 @@ function ActivationExplorer() {
         {functions.map((fn) => (
           <div key={fn.name} className={cardClass}>
             <p className="text-sm text-white/60">{fn.name}</p>
-            <p className="my-2 text-2xl font-semibold" style={{ color: fn.color }}>
+            <p
+              className="my-2 text-2xl font-semibold"
+              style={{ color: fn.color }}
+            >
               {fn.value.toFixed(3)}
             </p>
-            <p className="text-xs text-white/45">Output range: {fn.range}</p>
+            <p className="text-xs text-white/45">
+              Output range: {fn.range}
+            </p>
           </div>
         ))}
       </div>
 
       <p className="text-sm leading-6 text-white/60">
         Activation functions introduce non-linearity. Without suitable
-        non-linear activations, stacking ordinary linear layers cannot learn
+        non-linear activations, stacking linear layers cannot represent
         more complex functions than a single linear transformation.
       </p>
     </div>
@@ -541,14 +651,20 @@ function TrainingFlow() {
             onClick={() => setActive(i)}
             className="rounded-xl border p-4 text-left transition"
             style={{
-              borderColor: active === i ? step.color : 'rgba(255,255,255,0.1)',
-              background: active === i ? `${step.color}15` : 'rgba(255,255,255,0.025)',
+              borderColor:
+                active === i ? step.color : 'rgba(255,255,255,0.1)',
+              background:
+                active === i
+                  ? `${step.color}15`
+                  : 'rgba(255,255,255,0.025)',
             }}
           >
             <div className="text-xs" style={{ color: step.color }}>
               STEP {step.number}
             </div>
-            <div className="mt-2 font-semibold text-white">{step.title}</div>
+            <div className="mt-2 font-semibold text-white">
+              {step.title}
+            </div>
           </button>
         ))}
       </div>
@@ -562,7 +678,10 @@ function TrainingFlow() {
         <p className="text-lg font-semibold text-white">
           {steps[active].title}
         </p>
-        <p className="mt-2 leading-7 text-white/65">{steps[active].text}</p>
+        <p className="mt-2 leading-7 text-white/65">
+          {steps[active].text}
+        </p>
+
         <div className="mt-4 flex flex-wrap gap-2">
           {steps.map((step, i) => (
             <button
@@ -570,7 +689,8 @@ function TrainingFlow() {
               onClick={() => setActive(i)}
               className="rounded-lg border px-3 py-2 text-sm text-white/75"
               style={{
-                borderColor: i === active ? step.color : 'rgba(255,255,255,0.1)',
+                borderColor:
+                  i === active ? step.color : 'rgba(255,255,255,0.1)',
               }}
             >
               {i + 1}
@@ -589,7 +709,7 @@ export default function MlDeepLearning() {
       subtitle="From learning patterns in data to understanding neural networks, one step at a time."
       toc={toc}
     >
-      <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
         <Pill>Beginner → Intermediate</Pill>
         <Pill>Interactive visualisations</Pill>
       </div>
@@ -605,16 +725,21 @@ export default function MlDeepLearning() {
         <div className="grid gap-4 md:grid-cols-2">
           <div className={cardClass}>
             <div className="mb-3 text-2xl">🖼️</div>
-            <h3 className="font-semibold text-white">Example: Recognising a cat</h3>
+            <h3 className="font-semibold text-white">
+              Example: Recognising a cat
+            </h3>
             <p className="mt-2 text-sm leading-6 text-white/60">
               A deep-learning model can learn visual patterns from labelled
               images. Early layers may respond to edges and textures; deeper
               layers can combine these into shapes and object-level patterns.
             </p>
           </div>
+
           <div className={cardClass}>
             <div className="mb-3 text-2xl">🗣️</div>
-            <h3 className="font-semibold text-white">Example: Understanding speech</h3>
+            <h3 className="font-semibold text-white">
+              Example: Understanding speech
+            </h3>
             <p className="mt-2 text-sm leading-6 text-white/60">
               Models learn patterns in audio and language to help recognise
               speech, transcribe words, translate languages, or generate
@@ -627,9 +752,9 @@ export default function MlDeepLearning() {
           Why is it called deep?
         </h3>
         <p className="leading-7 text-white/65">
-          The word <strong className="text-white">deep</strong> refers to the
-          multiple computational layers between input and output. A network
-          with many useful layers can build increasingly complex
+          The word <strong className="text-white">deep</strong> refers to
+          the multiple computational layers between input and output.
+          A network with many useful layers can build increasingly complex
           representations. More layers do not automatically make a model
           better; the architecture, data, and training process matter too.
         </p>
@@ -660,7 +785,9 @@ export default function MlDeepLearning() {
         </div>
 
         <div className="rounded-xl border border-amber-300/20 bg-amber-300/[0.05] p-4">
-          <p className="font-semibold text-amber-200">Important distinction</p>
+          <p className="font-semibold text-amber-200">
+            Important distinction
+          </p>
           <p className="mt-2 text-sm leading-6 text-white/65">
             Training is when the model adjusts its parameters using examples.
             Inference is when the trained model uses those parameters to make
@@ -706,11 +833,12 @@ export default function MlDeepLearning() {
             </tbody>
           </table>
         </div>
+
         <p className="text-sm leading-6 text-white/50">
           These are general tendencies, not strict rules. Some traditional
-          machine-learning models handle large datasets, and some deep-learning
-          models can learn from relatively small datasets with suitable
-          techniques.
+          machine-learning models handle large datasets, and some
+          deep-learning models can learn from relatively small datasets
+          with suitable techniques.
         </p>
       </Section>
 
@@ -733,12 +861,14 @@ export default function MlDeepLearning() {
               features.
             </p>
           </div>
+
           <div className={cardClass}>
             <h3 className="font-semibold text-violet-300">Hidden layers</h3>
             <p className="mt-2 text-sm leading-6 text-white/60">
               Transform information into useful intermediate representations.
             </p>
           </div>
+
           <div className={cardClass}>
             <h3 className="font-semibold text-emerald-300">Output layer</h3>
             <p className="mt-2 text-sm leading-6 text-white/60">
@@ -773,24 +903,25 @@ export default function MlDeepLearning() {
               text: 'Transforms the weighted sum. Non-linear activations allow stacked layers to represent more complex patterns.',
             },
           ].map((item, i) => (
-            <div key={item.title} className="flex gap-4 rounded-xl border border-white/10 p-4">
+            <div
+              key={item.title}
+              className="flex gap-4 rounded-xl border border-white/10 p-4"
+            >
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-400/10 font-semibold text-indigo-300">
                 {i + 1}
               </div>
               <div>
                 <h3 className="font-semibold text-white">{item.title}</h3>
-                <p className="mt-1 text-sm leading-6 text-white/60">{item.text}</p>
+                <p className="mt-1 text-sm leading-6 text-white/60">
+                  {item.text}
+                </p>
               </div>
             </div>
           ))}
         </div>
 
-        <Formula>
-          z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
-        </Formula>
-        <Formula>
-          Output = f(z)
-        </Formula>
+        <Formula>z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b</Formula>
+        <Formula>Output = f(z)</Formula>
       </Section>
 
       <Section id="neuron" title="6. Explore a Single Neuron">
@@ -799,6 +930,7 @@ export default function MlDeepLearning() {
           changes the neuron's result. This is a live calculation, not a
           trained model.
         </p>
+
         <SingleNeuronExplorer />
       </Section>
 
@@ -807,6 +939,7 @@ export default function MlDeepLearning() {
           A neuron first computes a weighted sum. Its activation function
           transforms that number before passing it to the next layer.
         </p>
+
         <ActivationExplorer />
 
         <div className="grid gap-3 md:grid-cols-3">
@@ -815,10 +948,11 @@ export default function MlDeepLearning() {
             <Formula>σ(x) = 1 / (1 + e⁻ˣ)</Formula>
             <p className="mt-3 text-sm leading-6 text-white/60">
               Maps values between 0 and 1. Often useful for a binary
-              classification output, though hidden layers commonly use other
-              activations.
+              classification output, though hidden layers commonly use
+              other activations.
             </p>
           </div>
+
           <div className={cardClass}>
             <h3 className="font-semibold text-violet-300">ReLU</h3>
             <Formula>f(x) = max(0, x)</Formula>
@@ -827,6 +961,7 @@ export default function MlDeepLearning() {
               positive values. Common in many hidden layers.
             </p>
           </div>
+
           <div className={cardClass}>
             <h3 className="font-semibold text-emerald-300">Tanh</h3>
             <Formula>f(x) = tanh(x)</Formula>
@@ -839,8 +974,8 @@ export default function MlDeepLearning() {
 
       <Section id="forward" title="8. Forward Propagation">
         <p className="leading-7 text-white/65">
-          Forward propagation is the process of moving input data through each
-          layer to calculate a prediction. Every layer uses the previous
+          Forward propagation is the process of moving input data through
+          each layer to calculate a prediction. Every layer uses the previous
           layer's outputs as its inputs.
         </p>
 
@@ -862,9 +997,7 @@ export default function MlDeepLearning() {
           ))}
         </div>
 
-        <Formula>
-          ŷ = f(Wx + b)
-        </Formula>
+        <Formula>ŷ = f(Wx + b)</Formula>
 
         <p className="text-sm leading-6 text-white/55">
           For a multi-layer network, this transformation is repeated through
@@ -888,10 +1021,12 @@ export default function MlDeepLearning() {
         </Formula>
 
         <div className={cardClass}>
-          <h3 className="font-semibold text-white">What does the learning rate do?</h3>
+          <h3 className="font-semibold text-white">
+            What does the learning rate do?
+          </h3>
           <p className="mt-2 text-sm leading-6 text-white/60">
-            It controls the size of each parameter update. If updates are too
-            large, training can become unstable. If they are too small,
+            It controls the size of each parameter update. If updates are
+            too large, training can become unstable. If they are too small,
             learning may be slow. Training usually repeats this process over
             many batches and epochs.
           </p>
@@ -906,6 +1041,7 @@ for inputs, targets in dataloader:
     optimizer.zero_grad()
     loss.backward()  # Calculate gradients
     optimizer.step() # Update parameters`}
+        
 </CodeBlock>
 </Section>
 </GuideLayout>
