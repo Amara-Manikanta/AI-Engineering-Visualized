@@ -1041,9 +1041,19 @@ for inputs, targets in dataloader:
     optimizer.zero_grad()
     loss.backward()  # Calculate gradients
     optimizer.step() # Update parameters`}
-        
-</CodeBlock>
-</Section>
-</GuideLayout>
+        </CodeBlock>
+      </Section>
+
+      <Section id="summary" title="10. Build Your Mental Model">
+        <div className={cardClass}>
+          <h3 className="font-semibold text-white">
+            Core Mental Model
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-white/60">
+            Deep learning is representation learning: stacked layers discover increasingly abstract features from raw inputs, turning difficult nonlinear problems into clean decisions via gradient descent and backpropagation.
+          </p>
+        </div>
+      </Section>
+    </GuideLayout>
   );
 }

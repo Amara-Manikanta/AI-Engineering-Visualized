@@ -3553,31 +3553,47 @@
   {
     "path": "/ml/deep-learning",
     "title": "Deep Learning",
-    "intro": "Stacking layers of simple weighted sums and non-linear functions to approximate arbitrarily complex patterns — the foundation under every modern LLM.",
+    "intro": "",
     "sections": [
       {
-        "label": "From Neuron to Network",
+        "label": "What Is Deep Learning?",
         "hash": "overview"
       },
       {
-        "label": "What One Neuron Computes",
-        "hash": "neuron"
+        "label": "How Deep Learning Learns",
+        "hash": "how-it-works"
+      },
+      {
+        "label": "Machine Learning vs Deep Learning",
+        "hash": "comparison"
+      },
+      {
+        "label": "What Is a Neural Network?",
+        "hash": "neural-network"
       },
       {
         "label": "Anatomy of a Neural Network",
         "hash": "anatomy"
       },
       {
+        "label": "Explore a Single Neuron",
+        "hash": "neuron"
+      },
+      {
         "label": "Activation Functions",
         "hash": "activations"
       },
       {
-        "label": "Forward Pass → Loss → Backprop",
-        "hash": "training-loop"
+        "label": "Forward Propagation",
+        "hash": "forward"
       },
       {
-        "label": "Common Architectures",
-        "hash": "architectures"
+        "label": "Loss and Backpropagation",
+        "hash": "training"
+      },
+      {
+        "label": "Build Your Mental Model",
+        "hash": "summary"
       }
     ],
     "keywords": []

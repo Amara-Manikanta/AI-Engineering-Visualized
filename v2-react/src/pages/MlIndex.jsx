@@ -281,8 +281,7 @@ export default function MlIndex() {
             <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
             
             <div className="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-widest text-indigo-400">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping" />
-              <span>Chapter 1: The Core Fundamentals</span>
+              <span>CHAPTER 1: THE CORE FUNDAMENTALS</span>
             </div>
             
             <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight">
@@ -291,10 +290,10 @@ export default function MlIndex() {
             
             <div className="prose prose-invert max-w-none text-gray-300 text-base md:text-lg leading-relaxed mb-8 space-y-4">
               <p>
-                <strong className="text-white font-semibold">Machine Learning (ML)</strong> is a branch of Artificial Intelligence that enables computers to learn patterns from data and use those patterns to make predictions or decisions on new, unseen examples.
+                <strong className="text-white font-semibold">Machine Learning (ML)</strong> is the science of teaching computers to recognize patterns in data so they can make decisions on their own.
               </p>
               <p className="text-gray-400 text-sm md:text-base">
-                Instead of manually writing rules for every possible situation, we provide data and a learning algorithm that builds a model. During training, the model adjusts its internal parameters to improve its performance on a specific task.
+                Instead of a human writing every single rule (e.g., &quot;If price &gt; 10, then expensive&quot;), we show the computer thousands of examples, and it figures out the rules itself.
               </p>
             </div>
 
@@ -304,33 +303,24 @@ export default function MlIndex() {
                 <div className="text-3xl mb-3">📊</div>
                 <h3 className="font-bold text-white text-base mb-1">1. The Data (Experience)</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  Data provides examples from which a model can learn useful patterns and relationships. Depending on the task, it may include images, text, sensor readings, historical prices, or customer records.
+                  The &quot;textbook&quot; the computer studies. It contains the examples (images, numbers, text) used to learn.
                 </p>
               </div>
 
               <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
                 <div className="text-3xl mb-3">⚙️</div>
-                <h3 className="font-bold text-white text-base mb-1">2. The Model (Hypothesis)</h3>
+                <h3 className="font-bold text-white text-base mb-1">2. The Model (The Brain)</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  A model is a mathematical function with learnable parameters. It transforms inputs into predictions. Simple models may have only a few parameters, while large neural networks can have billions.
+                  The mathematical structure that holds the patterns. It takes an input and produces a guess.
                 </p>
               </div>
 
               <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
                 <div className="text-3xl mb-3">🎯</div>
-                <h3 className="font-bold text-white text-base mb-1">3. The Loss & Optimizer (Learning)</h3>
+                <h3 className="font-bold text-white text-base mb-1">3. The Loss (The Score)</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
-                  A loss function measures how well the model's predictions match the target values. During training, an optimisation algorithm updates the model's parameters to reduce the loss (for example, using gradient descent).
+                  A score that tells the computer how wrong its guess was. The goal is to make this score as small as possible.
                 </p>
-              </div>
-            </div>
-
-            {/* Arthur Samuel / Tom Mitchell quote box */}
-            <div className="mt-8 p-5 rounded-2xl bg-indigo-950/30 border border-indigo-500/20 text-xs md:text-sm text-indigo-200/90 leading-relaxed flex items-start gap-3">
-              <span className="text-2xl">💡</span>
-              <div>
-                <strong className="text-white block mb-0.5">The Formal Definition (Tom Mitchell, 1997):</strong>
-                <em>"A computer program is said to <strong>learn</strong> from experience <strong>E</strong> with respect to some class of tasks <strong>T</strong> and performance measure <strong>P</strong>, if its performance at tasks in <strong>T</strong>, as measured by <strong>P</strong>, improves with experience <strong>E</strong>."</em>
               </div>
             </div>
           </div>
@@ -359,7 +349,7 @@ export default function MlIndex() {
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  Traditional (Explicit Rules)
+                  Traditional (Rules)
                 </button>
                 <button
                   onClick={() => setProgrammingMode('ml')}
@@ -369,20 +359,8 @@ export default function MlIndex() {
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  Machine Learning (Learned Patterns)
+                  Machine Learning (Data)
                 </button>
-              </div>
-            </div>
-
-            {/* Complementary Note */}
-            <div className="mb-6 p-4 rounded-2xl bg-indigo-950/20 border border-indigo-500/20 text-xs md:text-sm text-gray-300 leading-relaxed flex items-start gap-3">
-              <span className="text-xl">🤝</span>
-              <div>
-                <strong className="text-white block mb-0.5">Complementary Approaches:</strong>
-                Traditional programming and machine learning are complementary approaches. Explicit rules are often preferable when requirements are well-defined, while machine learning is useful when patterns are difficult to specify manually.
-                <span className="text-gray-400 block text-xs mt-1">
-                  (Note: Informal labels like "Software 1.0" and "Software 2.0" are sometimes used as helpful mental analogies for this contrast, rather than formal engineering versions.)
-                </span>
               </div>
             </div>
 
@@ -394,30 +372,21 @@ export default function MlIndex() {
                   ? 'bg-gradient-to-br from-red-950/20 to-black/60 border-red-500/50 shadow-lg shadow-red-500/10'
                   : 'bg-black/30 border-white/5 opacity-60'
               }`}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">💻</span>
-                    <h3 className="font-bold text-white text-base">Traditional Programming</h3>
-                  </div>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-300 border border-red-500/20">Rules + Data = Answers</span>
-                </div>
+                <h3 className="font-bold text-white text-base mb-4">
+                  Traditional: You provide the Rules
+                </h3>
 
-                <div className="space-y-3 font-mono text-xs mb-4">
+                <div className="space-y-3 font-mono text-xs">
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
-                    <span className="text-gray-500">1. INPUT:</span> Incoming Email (Subject, Sender, Body)
+                    <span className="text-gray-400 font-bold">INPUT:</span> Data
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-amber-300">
-                    <span className="text-gray-500">2. EXPLICIT RULES:</span> if "wire transfer" in body and sender not in address_book: flag_suspicious()
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                    <span className="text-amber-400 font-bold">RULES:</span> if (email contains &apos;win money&apos;) -&gt; Spam
                   </div>
-                  <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-bold">
-                    <span className="text-gray-500">3. OUTPUT:</span> Deterministic Decision: Flag as Suspicious
+                  <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
+                    <span className="text-emerald-400 font-bold">OUTPUT:</span> Decision
                   </div>
                 </div>
-
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  <strong className="text-white">When to use:</strong> Ideal when the business logic is strict, clear, and unambiguous (e.g. blocking known blocked domains, tax brackets, or input validation).<br />
-                  <strong className="text-red-400">Trade-off:</strong> Difficult to maintain when edge cases multiply or attackers modify phrasing (e.g. "w-i-r-e transfer"), requiring constant manual updates.
-                </p>
               </div>
 
               {/* Machine Learning Box */}
@@ -426,30 +395,21 @@ export default function MlIndex() {
                   ? 'bg-gradient-to-br from-indigo-950/30 via-[#11111e] to-purple-950/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
                   : 'bg-black/30 border-white/5 opacity-60'
               }`}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">🤖</span>
-                    <h3 className="font-bold text-white text-base">Machine Learning</h3>
-                  </div>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Data + Answers = Rules</span>
-                </div>
+                <h3 className="font-bold text-white text-base mb-4">
+                  Machine Learning: You provide the Answers
+                </h3>
 
-                <div className="space-y-3 font-mono text-xs mb-4">
+                <div className="space-y-3 font-mono text-xs">
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
-                    <span className="text-gray-500">1. INPUT:</span> Historical Dataset of Labeled Emails (Legitimate &amp; Phishing)
+                    <span className="text-gray-400 font-bold">INPUT:</span> Data + Correct Answers
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-purple-300">
-                    <span className="text-gray-500">2. LEARNING ALGORITHM:</span> Analyzes Vocabulary Frequencies, Headers, and Context
+                  <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                    <span className="text-indigo-400 font-bold">ALGORITHM:</span> Finds patterns in data
                   </div>
-                  <div className="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/40 text-indigo-200 font-bold">
-                    <span className="text-gray-500">3. LEARNED OUTPUT:</span> Trained Model (Estimates Spam Probability: 98.4%)
+                  <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 text-purple-300">
+                    <span className="text-purple-400 font-bold">OUTPUT:</span> The Rules (The Model)
                   </div>
                 </div>
-
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  <strong className="text-white">When to use:</strong> Excels when patterns are nuanced, high-dimensional, or evolving (e.g. natural language, vision, anomaly detection).<br />
-                  <strong className="text-indigo-400">Trade-off:</strong> Requires representative training data, careful evaluation, and ongoing monitoring to catch data drift.
-                </p>
               </div>
             </div>
           </div>
@@ -463,13 +423,13 @@ export default function MlIndex() {
               <div>
                 <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
                   <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-                  <span>Interactive Engine &amp; Intuition</span>
+                  <span>INTERACTIVE ENGINE &amp; INTUITION</span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white">
-                  Gradient Descent Visualisation: Learning by Optimization
+                  Gradient Descent: How the Model Learns
                 </h2>
                 <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-                  How does a machine learning model actually learn? By turning internal dials called <strong>weights</strong> to minimize an error score called <strong>loss</strong>. Below is a simple everyday example followed by the mathematical simulation.
+                  To learn, a model needs to minimize its mistakes. We use two key concepts: the <strong className="text-purple-300 font-semibold">Loss Function</strong> (how much we missed by) and the <strong className="text-indigo-300 font-semibold">Gradient</strong> (which way to turn the dial to fix it).
                 </p>
               </div>
 
@@ -491,109 +451,45 @@ export default function MlIndex() {
                   onClick={() => setGdStep(0)}
                   className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-mono text-xs cursor-pointer"
                 >
-                  Reset (t=0)
+                  Reset
                 </button>
               </div>
             </div>
 
-            {/* Small Definition of Gradient Descent */}
-            <div className="mb-6 p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-sm leading-relaxed">
-              <h3 className="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <span className="text-indigo-400">⛰️</span>
-                <span>What is Gradient Descent?</span>
-              </h3>
-              <p className="text-gray-300">
-                <strong className="text-white">Gradient Descent</strong> is an optimization algorithm that trains machine learning models by iteratively tweaking their parameters to minimize prediction errors.
-              </p>
-              <div className="mt-3 flex flex-col sm:flex-row gap-3 text-xs font-mono">
-                <div className="flex-1 p-2.5 rounded-xl bg-black/40 border border-white/5">
-                  <span className="text-indigo-300 font-bold block mb-0.5">1. Gradient (The Slope)</span>
-                  <span className="text-gray-400">Calculates which direction the prediction error is increasing or decreasing.</span>
+            {/* 2 Key Concepts: Loss Function & Gradient */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {/* Card 1: Loss Function */}
+              <div className="p-5 rounded-2xl bg-[#141422] border border-indigo-500/30">
+                <div className="flex items-center gap-2 font-bold text-white text-base mb-2">
+                  <span className="text-indigo-400">⏹️</span>
+                  <span>1. The Loss Function (The &quot;Mistake Meter&quot;)</span>
                 </div>
-                <div className="flex-1 p-2.5 rounded-xl bg-black/40 border border-white/5">
-                  <span className="text-purple-300 font-bold block mb-0.5">2. Descent (Going Downhill)</span>
-                  <span className="text-gray-400">Takes small steps in the opposite direction (downhill) to bring that error to zero.</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Intuition: Everyday Real-World Example */}
-            <div className="mb-8 p-6 md:p-7 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-[#12121e] to-purple-950/30 border border-indigo-500/30 shadow-lg">
-              {/* The Scenario Banner */}
-              <div className="p-4 rounded-xl bg-black/40 border border-white/10 text-xs md:text-sm text-gray-300 leading-relaxed mb-5 flex items-start gap-3">
-                <span className="text-2xl">🚖</span>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <strong className="text-white text-sm">Example: Predicting Cab / Auto Fares</strong>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                      Real-World Intuition
-                    </span>
-                  </div>
-                  Suppose you want to build an AI to predict the fare of a cab ride based on trip distance in kilometers (km).
-                  In reality, the fare is <span className="text-emerald-400 font-bold font-mono">₹2.00 per km</span> (so 1 km = ₹2.00, 5 km = ₹10.00). 
-                  <span className="text-amber-300 font-semibold"> But our AI starts completely blank! It does not know the ₹2.00 rule.</span>
+                <p className="text-xs text-gray-300 leading-relaxed mb-3">
+                  The Loss Function is a single number that represents how wrong the model is.
+                </p>
+                <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                  If the model predicts a cab fare of ₹5.50 but the real fare is ₹2.00, the &quot;Mistake Meter&quot; (Loss) goes up. If the prediction is exactly ₹2.00, the Loss is 0.
+                </p>
+                <div className="text-xs font-mono font-bold text-indigo-300">
+                  Goal: Get the Loss as zero.
                 </div>
               </div>
 
-              {/* 3 Step Intuition Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                {/* 1. Weight */}
-                <div className="p-4 rounded-xl bg-black/60 border border-indigo-500/20 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 font-bold text-indigo-300 mb-2">
-                      <span className="text-lg">🎛️</span>
-                      <span>1. The Weight (θ) = The Tunable Dial</span>
-                    </div>
-                    <p className="text-gray-400 leading-relaxed">
-                      A <strong className="text-white">weight</strong> (represented by θ) is simply the internal dial the model turns to make predictions:
-                    </p>
-                    <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-indigo-200 text-center border border-white/5">
-                      Predicted Fare = θ × Distance (km)
-                    </div>
-                    <p className="text-gray-400 leading-relaxed">
-                      At first, the model sets the dial randomly—say, at <code className="text-rose-300 font-mono">θ = -1.20</code>. For a 1-km ride, it absurdly predicts <strong className="text-rose-400">-₹1.20</strong> (the driver pays you!).
-                    </p>
-                  </div>
+              {/* Card 2: The Gradient */}
+              <div className="p-5 rounded-2xl bg-[#141422] border border-emerald-500/30">
+                <div className="flex items-center gap-2 font-bold text-white text-base mb-2">
+                  <span className="text-emerald-400">⏺️</span>
+                  <span>2. The Gradient (The &quot;Directional Compass&quot;)</span>
                 </div>
-
-                {/* 2. Loss */}
-                <div className="p-4 rounded-xl bg-black/60 border border-purple-500/20 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 font-bold text-purple-300 mb-2">
-                      <span className="text-lg">📉</span>
-                      <span>2. The Loss (L) = The Mistake Meter</span>
-                    </div>
-                    <p className="text-gray-400 leading-relaxed">
-                      The <strong className="text-white">loss function</strong> is an error penalty measuring how wrong the model&apos;s prediction was compared to reality (₹2.00):
-                    </p>
-                    <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-purple-200 text-center border border-white/5">
-                      Loss = (Prediction - ₹2.00)²
-                    </div>
-                    <p className="text-gray-400 leading-relaxed">
-                      When <code className="text-rose-300 font-mono">θ = -1.20</code>, the error penalty is <strong className="text-rose-400">(-3.20)² = 10.24</strong> (massive mistake).
-                      When <code className="text-emerald-300 font-mono">θ = 2.00</code>, the error penalty is <strong className="text-emerald-400 font-mono">(0.00)² = 0.00</strong> (perfection!).
-                    </p>
-                  </div>
-                </div>
-
-                {/* 3. Gradient Descent */}
-                <div className="p-4 rounded-xl bg-black/60 border border-emerald-500/20 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 font-bold text-emerald-300 mb-2">
-                      <span className="text-lg">🏔️</span>
-                      <span>3. Gradient Descent = Rolling Downhill</span>
-                    </div>
-                    <p className="text-gray-400 leading-relaxed">
-                      The AI cannot see the true rate (₹2.00) in advance. It is like a blindfolded hiker in a foggy valley, feeling the slope (gradient) under their boots:
-                    </p>
-                    <div className="my-2.5 p-2 rounded bg-white/5 font-mono text-[11px] text-emerald-200 text-center border border-white/5">
-                      New θ = Old θ - (Step × Slope)
-                    </div>
-                    <p className="text-gray-400 leading-relaxed">
-                      If the slope says &quot;you underpriced&quot;, turn the dial <strong className="text-emerald-400">UP</strong>. If &quot;you overpriced&quot;, turn it <strong className="text-rose-400">DOWN</strong>. It rolls down until the error hits zero!
-                    </p>
-                  </div>
-                </div>
+                <p className="text-xs text-gray-300 leading-relaxed mb-3">
+                  The Gradient is the slope of the error. It tells the model which direction to move its internal &apos;dials&apos; (weights) to make the error smaller.
+                </p>
+                <p className="text-xs text-gray-400 leading-relaxed mb-2">
+                  If the slope is <span className="text-rose-400 font-semibold">positive</span>, the error is increasing: we must turn the dial <span className="text-emerald-400 font-semibold underline">down</span>.
+                </p>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  If the slope is <span className="text-cyan-400 font-semibold">negative</span>, the error is decreasing: we must turn the dial <span className="text-emerald-400 font-semibold underline">up</span>.
+                </p>
               </div>
             </div>
 
@@ -603,21 +499,15 @@ export default function MlIndex() {
                 <span className="text-3xl">🚖</span>
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 block">
-                    Live Cab Fare Model Prediction (1-km Ride):
+                    CURRENT MODEL GUESS (FOR 1KM RIDE):
                   </span>
                   <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                    <span className="text-xs text-gray-400">Formula:</span>
-                    <code className="text-xs font-mono font-bold text-indigo-300 bg-white/5 px-2 py-0.5 rounded border border-white/10">
-                      Fare = ({currentGd.theta.toFixed(2)}) × 1 km
-                    </code>
-                    <span className="text-xs text-gray-400">→</span>
-                    <span className="text-sm font-mono font-extrabold text-white">
-                      Predicted:{' '}
-                      <span className={Math.abs(currentGd.theta - 2.0) < 0.05 ? 'text-emerald-400' : 'text-indigo-300'}>
+                    <span className="text-xs font-mono text-gray-300">
+                      Fare = {currentGd.theta.toFixed(2)} * 1km = <span className={Math.abs(currentGd.theta - 2.0) < 0.05 ? 'text-emerald-400 font-bold' : 'text-indigo-300 font-bold'}>
                         {currentGd.theta >= 0 ? `₹${currentGd.theta.toFixed(2)}` : `-₹${Math.abs(currentGd.theta).toFixed(2)}`}
                       </span>
                     </span>
-                    <span className="text-xs text-gray-400">(Actual: <strong className="text-emerald-400">₹2.00</strong>)</span>
+                    <span className="text-xs text-gray-400">(Target <strong className="text-emerald-400">₹2.00</strong>)</span>
                   </div>
                 </div>
               </div>
@@ -630,28 +520,28 @@ export default function MlIndex() {
                   </span>
                 ) : currentGd.theta < 2.0 ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                    <span>⚠️</span> Underpricing by ₹{(2.0 - currentGd.theta).toFixed(2)} → Slope pushes dial UP
+                    <span>⚠️</span> Underpricing -&gt; Turn Dial UP
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                    <span>⚠️</span> Overpricing by ₹{(currentGd.theta - 2.0).toFixed(2)} → Slope pushes dial DOWN
+                    <span>⚠️</span> Overpricing -&gt; Turn Dial DOWN
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Learning Rate Controls */}
+            {/* Step Size (Learning Rate) Controls */}
             <div className="mb-6 p-4 rounded-2xl bg-black/40 border border-white/10">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <span className="text-xs font-mono uppercase text-gray-400 font-bold block mb-1">
-                    1. Choose Step Size / Learning Rate (η):
+                    STEP SIZE (LEARNING RATE η):
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { label: 'Small (η = 0.08)', val: 0.08, desc: 'Slow, cautious descent' },
-                      { label: 'Suitable (η = 0.40)', val: 0.40, desc: 'Fast, stable convergence' },
-                      { label: 'Excessively Large (η = 1.08)', val: 1.08, desc: 'Overshoots & oscillates' },
+                      { label: 'Small (Slow)', val: 0.08 },
+                      { label: 'Ideal (Fast)', val: 0.40 },
+                      { label: 'Huge (Chaos)', val: 1.08 },
                     ].map((btn) => (
                       <button
                         key={btn.val}
@@ -673,7 +563,6 @@ export default function MlIndex() {
 
                 {/* Slider */}
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono text-gray-400">Manual η:</span>
                   <input
                     type="range"
                     min="0.04"
@@ -693,47 +582,12 @@ export default function MlIndex() {
               </div>
             </div>
 
-            {/* Interactive Readouts & Mathematical Values */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-mono text-xs">
-              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Parameter θ (Price Dial)</span>
-                <span className="text-white text-sm font-bold">{currentGd.theta.toFixed(3)}</span>
-                <span className="text-[10px] text-gray-400 block mt-0.5">
-                  {currentGd.theta >= 0 ? `₹${currentGd.theta.toFixed(2)}` : `-₹${Math.abs(currentGd.theta).toFixed(2)}`}/km (Target: ₹2.00)
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Current Loss L(θ) (Mistake)</span>
-                <span className="text-purple-300 text-sm font-bold">{currentGd.loss.toFixed(3)}</span>
-                <span className="text-[10px] text-gray-400 block mt-0.5">L = (θ - 2.0)² error penalty</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Gradient ∇L = 2(θ - 2) (Slope)</span>
-                <span className={`text-sm font-bold ${currentGd.grad < 0 ? 'text-cyan-400' : 'text-amber-400'}`}>
-                  {currentGd.grad >= 0 ? '+' : ''}{currentGd.grad.toFixed(3)}
-                </span>
-                <span className="text-[10px] text-gray-400 block mt-0.5">
-                  {currentGd.grad < 0 ? 'Negative: underpricing (raise θ)' : 'Positive: overpricing (lower θ)'}
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                <span className="text-gray-500 block text-[10px] uppercase">Step: Δθ = -η · ∇L (Dial Turn)</span>
-                <span className={`text-sm font-bold ${currentGd.delta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {currentGd.delta >= 0 ? '+' : ''}{currentGd.delta.toFixed(3)}
-                </span>
-                <span className="text-[10px] text-gray-400 block mt-0.5">Next θ = {currentGd.nextTheta.toFixed(3)}</span>
-              </div>
-            </div>
-
-            {/* Visual Loss Bowl + Deep Explanations */}
+            {/* The Error Valley Loss Curve & Math Update */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-black/50 p-6 rounded-2xl border border-white/5">
               {/* SVG Canvas */}
               <div className="flex flex-col items-center justify-center">
-                <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase tracking-wider">
-                  Loss Curve L(θ) = (θ - 2.0)² (Mistake Landscape)
+                <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase tracking-wider font-bold">
+                  THE &quot;ERROR VALLEY&quot; (LOSS CURVE)
                 </div>
 
                 <svg viewBox="0 0 360 210" className="w-full max-w-[360px] overflow-visible">
@@ -747,170 +601,131 @@ export default function MlIndex() {
                       return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
                     }).join(' ')}
                     fill="none"
-                    stroke="#6366f1"
+                    stroke="#38bdf8"
                     strokeWidth="3"
                   />
 
-                  {/* Underpricing / Overpricing Zones */}
-                  <text x="65" y="45" fill="#f59e0b" fontSize="8" fontFamily="monospace">← Underpricing (θ &lt; ₹2)</text>
-                  <text x="295" y="45" textAnchor="end" fill="#f43f5e" fontSize="8" fontFamily="monospace">Overpricing (θ &gt; ₹2) →</text>
-
                   {/* Optimal Minimum Line */}
-                  <line x1="180" y1="30" x2="180" y2="185" stroke="#10b981" strokeDasharray="3,3" strokeWidth="1.5" />
-                  <text x="180" y="200" textAnchor="middle" fill="#10b981" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                    Optimal θ* = 2.0 (₹2/km, 0 error)
+                  <line x1="180" y1="30" x2="180" y2="185" stroke="#ffffff" strokeDasharray="3,3" strokeWidth="1.5" />
+                  <text x="180" y="200" textAnchor="middle" fill="#9ca3af" fontSize="10" fontFamily="monospace">
+                    Optimal (Error = 0)
                   </text>
 
-                  {/* Trajectory Trail */}
-                  {gdStep > 0 && (
-                    <polyline
-                      points={gdHistory.slice(0, gdStep + 1).map((h) => {
-                        const clampedT = Math.max(-2.5, Math.min(6.5, h.theta));
-                        const clampedL = Math.min(11.5, (clampedT - 2.0) ** 2);
-                        const x = 180 + (clampedT - 2.0) * 38;
-                        const y = 175 - clampedL * 13;
-                        return `${x.toFixed(1)},${y.toFixed(1)}`;
-                      }).join(' ')}
-                      fill="none"
-                      stroke="#ec4899"
-                      strokeWidth="2"
-                      strokeDasharray="3,3"
-                    />
-                  )}
-
-                  {/* Past Step Markers */}
-                  {gdHistory.slice(0, gdStep + 1).map((h, i) => {
-                    const clampedT = Math.max(-2.5, Math.min(6.5, h.theta));
+                  {/* Current Position Marker */}
+                  {(() => {
+                    const clampedT = Math.max(-2.5, Math.min(6.5, currentGd.theta));
                     const clampedL = Math.min(11.5, (clampedT - 2.0) ** 2);
                     const x = 180 + (clampedT - 2.0) * 38;
                     const y = 175 - clampedL * 13;
-                    const isCurrent = i === gdStep;
-
                     return (
-                      <g key={i}>
+                      <g>
                         <circle
                           cx={x}
                           cy={y}
-                          r={isCurrent ? '7' : '4'}
-                          fill={isCurrent ? '#ec4899' : '#818cf8'}
-                          stroke={isCurrent ? '#fff' : 'none'}
-                          strokeWidth={isCurrent ? '2' : '0'}
+                          r="7"
+                          fill="#ec4899"
+                          stroke="#ffffff"
+                          strokeWidth="2"
                         />
                         <text
                           x={x}
                           y={y - 12}
                           textAnchor="middle"
-                          fill={isCurrent ? '#ec4899' : '#9ca3af'}
-                          fontSize="9"
+                          fill="#ec4899"
+                          fontSize="10"
                           fontFamily="monospace"
                           fontWeight="bold"
                         >
-                          t={h.step}
+                          t={gdStep}
                         </text>
                       </g>
                     );
-                  })}
+                  })()}
                 </svg>
-
-                <div className="text-[10px] text-gray-500 font-mono mt-3 text-center">
-                  Trajectory: {gdHistory.slice(0, gdStep + 1).map(h => `θ${h.step}=${h.theta.toFixed(2)}`).join(' → ')}
-                </div>
               </div>
 
-              {/* Step Explanations & Overshoot Insights */}
+              {/* Step Explanations & Math Update Box */}
               <div className="space-y-3 text-xs">
-                {/* Step Update Equation */}
+                {/* Math Update Box */}
                 <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 font-mono">
-                  <div className="text-gray-400 mb-1">// Mathematical Update Calculation:</div>
+                  <div className="text-gray-400 mb-1">// The Math Update:</div>
                   <div className="text-indigo-300 font-bold">
-                    θ_{gdStep + 1} = {currentGd.theta.toFixed(3)} - ({learningRate.toFixed(2)} · {currentGd.grad >= 0 ? '+' : ''}{currentGd.grad.toFixed(3)}) = {currentGd.nextTheta.toFixed(3)}
+                    New Dial = {currentGd.theta.toFixed(3)} - ({learningRate.toFixed(2)} * {currentGd.grad >= 0 ? '+' : ''}{currentGd.grad.toFixed(3)}) = {currentGd.nextTheta.toFixed(3)}
                   </div>
-                  <div className="text-gray-400 mt-1">
-                    Loss: <span className="text-purple-300 font-bold">{currentGd.loss.toFixed(3)}</span> → <span className="text-emerald-300 font-bold">{currentGd.nextLoss.toFixed(3)}</span> (ΔL = {(currentGd.nextLoss - currentGd.loss).toFixed(3)})
+                  <div className="text-gray-300 mt-1">
+                    Loss: <span className="text-purple-300 font-bold">{currentGd.loss.toFixed(3)}</span> -&gt; <span className="text-emerald-300 font-bold">{currentGd.nextLoss.toFixed(3)}</span>
                   </div>
                 </div>
 
-                {/* Why it moves in this direction */}
+                {/* Why did the dial move? */}
                 <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 leading-relaxed text-gray-300">
-                  <strong className="text-white block mb-1">Why does parameter θ change direction?</strong>
+                  <strong className="text-white block mb-1">Why did the dial move?</strong>
                   {currentGd.theta < 2.0 ? (
                     <span>
-                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the left of 2.0, the model is <strong className="text-amber-300">underpricing</strong> the ride (₹{currentGd.theta.toFixed(2)} vs the true ₹2.00). 
-                      The slope (gradient) is <span className="text-cyan-400 font-mono font-bold">negative</span> ({currentGd.grad.toFixed(2)}). 
-                      Subtracting a negative gradient results in an <span className="text-emerald-400 font-bold">addition</span> (+{currentGd.delta.toFixed(2)}), turning the price dial upward toward the ₹2.00 valley.
+                      The model is underpricing. The slope is negative. Subtracting a negative number makes the dial go UP.
                     </span>
                   ) : (
                     <span>
-                      Since the price dial θ ({currentGd.theta.toFixed(2)}) is to the right of 2.0, the model is <strong className="text-rose-300">overpricing</strong> the ride (₹{currentGd.theta.toFixed(2)} vs the true ₹2.00). 
-                      The slope is <span className="text-amber-400 font-mono font-bold">positive</span> ({currentGd.grad.toFixed(2)}). 
-                      Subtracting a positive gradient results in a <span className="text-rose-400 font-bold">reduction</span> ({currentGd.delta.toFixed(2)}), turning the price dial downward toward the ₹2.00 valley.
+                      The model is overpricing. The slope is positive. Subtracting a positive number makes the dial go DOWN.
                     </span>
                   )}
                 </div>
 
-                {/* Overshooting Alert or Convergence */}
+                {/* Stable Learning / Chaos Badge */}
                 {learningRate > 0.6 ? (
                   <div className="p-3.5 rounded-xl bg-red-950/20 border border-red-500/30 text-rose-200/90 leading-relaxed">
-                    <strong className="text-rose-400 block mb-1">⚠️ Why does it overshoot or diverge?</strong>
-                    With an excessively large learning rate (η = {learningRate.toFixed(2)}), the step size <code className="text-white font-mono">|η · ∇L|</code> is larger than twice the distance to the minimum. The update leaps completely over the valley to the opposite wall. Because η &gt; 1.0, each bounce lands higher than the last, causing wild oscillations or divergence!
+                    <strong className="text-rose-400 block mb-1">⚠️ Overshooting / Chaos</strong>
+                    With an excessively large learning rate, the step size leaps completely over the valley, causing wild oscillations!
                   </div>
                 ) : (
                   <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-emerald-200/90 leading-relaxed">
-                    <strong className="text-emerald-400 block mb-1">✅ Stable Convergence</strong>
-                    With a suitable learning rate (η = {learningRate.toFixed(2)}), the update step automatically shrinks as the gradient flattens near the minimum, settling smoothly into the optimal parameter θ* = 2.000 (₹2.00 / km).
+                    <strong className="text-emerald-400 flex items-center gap-1.5 mb-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      Stable Learning
+                    </strong>
+                    The model is taking controlled steps toward the bottom of the valley.
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* Note on Real-World Multidimensional Landscapes */}
-            <div className="mt-6 p-4 rounded-2xl bg-indigo-950/20 border border-indigo-500/20 text-xs md:text-sm text-gray-300 leading-relaxed flex items-start gap-3">
-              <span className="text-xl">🌐</span>
-              <div>
-                <strong className="text-white block mb-0.5">Real-World Note: Multidimensional Loss Landscapes</strong>
-                In this visual demonstration, our model has only 1 parameter (the price dial θ). In real-world machine learning, models have thousands to billions of parameters! The loss landscape is a complex, high-dimensional surface with hills, ravines, and saddle points. However, the fundamental law remains identical: the algorithm computes partial derivatives for every parameter and takes a step in the direction of steepest descent.
               </div>
             </div>
           </div>
         </motion.section>
 
-        {/* SECTION: HAS THE MODEL ACTUALLY LEARNED? (TRAINING VS GENERALISATION) */}
+        {/* SECTION: TRAINING VS GENERALISATION */}
         <motion.section variants={itemVariants} id="training-vs-generalisation" className="scroll-mt-24">
           <div className="p-6 md:p-8 rounded-3xl bg-[#111116] border border-white/10 shadow-xl">
             <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-widest text-purple-400">
               <span className="w-2 h-2 rounded-full bg-purple-400" />
-              <span>Crucial Conceptual Bridge</span>
+              <span>CRUCIAL CONCEPTUAL BRIDGE</span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
-              Has the Model Actually Learned? Training vs Generalisation
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
+              Training vs Generalisation
             </h2>
             <p className="text-sm text-gray-300 leading-relaxed mb-6 max-w-4xl">
-              Watching gradient descent reduce loss on training examples is satisfying, but it raises a vital question: <strong className="text-white">is minimizing training error alone enough?</strong>
-              <br /><br />
-              In machine learning, the goal is <span className="text-purple-300 font-semibold underline decoration-purple-500/40">never</span> to merely memorize the data the computer has already seen. The true objective is <strong className="text-white">generalisation</strong>—learning underlying patterns that allow the model to make accurate predictions on new, unseen examples.
+              Minimizing error on your training data is easy—you can just memorize it. The real goal is <strong className="text-white">Generalisation</strong>: the ability to perform well on data the model has <em className="text-white font-semibold">never seen before</em>.
             </p>
 
             {/* Model A vs Model B Comparison Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Model A Card */}
               <div className="p-6 rounded-2xl bg-black/50 border border-red-500/30 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-mono font-bold uppercase text-red-400">Model A: The Memorizer (Overfit)</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/10 text-red-300 border border-red-500/20">Poor Generalisation</span>
+                    <span className="text-xs font-mono font-bold uppercase text-red-400">MODEL A: THE MEMORIZER (OVERFIT)</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/20 text-red-300 border border-red-500/30 font-bold">Bad</span>
                   </div>
                   <div className="space-y-3 font-mono text-xs mb-4">
                     <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center">
                       <span className="text-gray-400">Training Score:</span>
-                      <span className="text-emerald-400 font-bold text-sm">99.4% (Near Zero Error)</span>
+                      <span className="text-emerald-400 font-bold text-sm">99.4%</span>
                     </div>
                     <div className="p-3 rounded-xl bg-red-950/30 border border-red-500/20 flex justify-between items-center">
-                      <span className="text-gray-400">Unseen Test Score:</span>
-                      <span className="text-rose-400 font-bold text-sm">54.2% (Fails on New Data!)</span>
+                      <span className="text-gray-400">New Data Score:</span>
+                      <span className="text-rose-400 font-bold text-sm">54.2%</span>
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
-                    <strong className="text-white">What happened:</strong> Model A memorized the exact training examples, including random noise, typos, and flukes—like a student who memorized the answers to practice questions without understanding the concepts. When presented with new questions, it fails.
+                    Like a student who memorizes the answers to a practice test but doesn&apos;t understand the math. They fail the real exam.
                   </p>
                 </div>
               </div>
@@ -919,8 +734,8 @@ export default function MlIndex() {
               <div className="p-6 rounded-2xl bg-black/50 border border-emerald-500/30 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-mono font-bold uppercase text-emerald-400">Model B: The Pattern Learner</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Strong Generalisation</span>
+                    <span className="text-xs font-mono font-bold uppercase text-emerald-400">MODEL B: THE LEARNER (GENERALISED)</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">Good</span>
                   </div>
                   <div className="space-y-3 font-mono text-xs mb-4">
                     <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center">
@@ -928,42 +743,31 @@ export default function MlIndex() {
                       <span className="text-emerald-400 font-bold text-sm">91.5%</span>
                     </div>
                     <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/20 flex justify-between items-center">
-                      <span className="text-gray-400">Unseen Test Score:</span>
-                      <span className="text-emerald-400 font-bold text-sm">90.8% (Performs Consistently!)</span>
+                      <span className="text-gray-400">New Data Score:</span>
+                      <span className="text-emerald-400 font-bold text-sm">90.8%</span>
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
-                    <strong className="text-white">What happened:</strong> Model B captured the true underlying signal and generalized relationships. It doesn't score 100% on the training set, but it performs reliably on brand-new examples in the real world.
+                    Like a student who learns the underlying logic. They might not get 100% on practice, but they ace the real exam.
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {/* Train / Test Split Key Takeaway */}
-            <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 text-xs md:text-sm text-purple-200/90 leading-relaxed flex items-start gap-3">
-              <span className="text-2xl">🔑</span>
-              <div>
-                <strong className="text-white block mb-0.5">The Key Takeaway for Machine Learning Engineers:</strong>
-                Never evaluate a model only on the data it was trained on. In practice, we always split historical data into a <strong>Training Set</strong> (used by the optimization algorithm to learn parameters) and a separate holdout <strong>Test Set</strong> (used as an honest, unbiased exam to measure real-world generalisation).
               </div>
             </div>
           </div>
         </motion.section>
 
-        {/* SECTION 3: TYPES OF MACHINE LEARNING (SUPERVISED, UNSUPERVISED, REINFORCEMENT) */}
+        {/* SECTION 5: TYPES OF MACHINE LEARNING */}
         <motion.section variants={itemVariants} id="types-of-ml" className="scroll-mt-24">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                <span>Core Paradigms</span>
-              </div>
-              <h2 className="text-2xl md:text-4xl font-black text-white">
-                Types of Machine Learning
-              </h2>
-              <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-                Every machine learning system in the world falls into one of three primary learning paradigms, defined by how much guidance (supervision) the machine receives.
-              </p>
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-emerald-400">
+              <span>CORE PARADIGMS</span>
             </div>
+            <h2 className="text-2xl md:text-4xl font-black text-white">
+              Types of Machine Learning
+            </h2>
+            <p className="text-sm text-gray-400 mt-1 max-w-3xl">
+              How much guidance does the machine receive?
+            </p>
           </div>
 
           {/* 3 Major Paradigm Tabs */}
@@ -982,7 +786,7 @@ export default function MlIndex() {
               </div>
               <div className="font-extrabold text-base text-white">1. Supervised Learning</div>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Learns from labelled examples containing inputs and their corresponding target outputs. The model learns a relationship that can be used to predict outputs for new inputs.
+                Learning with a &quot;Teacher&quot;. You give the machine the questions AND the correct answers.
               </p>
             </button>
 
@@ -1000,7 +804,7 @@ export default function MlIndex() {
               </div>
               <div className="font-extrabold text-base text-white">2. Unsupervised Learning</div>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Finds useful structures or patterns in data without predefined target labels. Common tasks include clustering and dimensionality reduction.
+                Learning by &quot;Discovery&quot;. You give the machine data with NO answers and ask it to find patterns.
               </p>
             </button>
 
@@ -1014,11 +818,11 @@ export default function MlIndex() {
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-3xl">🕹️</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Reward Optimization</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Trial &amp; Error</span>
               </div>
               <div className="font-extrabold text-base text-white">3. Reinforcement Learning</div>
               <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                An agent learns a decision-making policy by interacting with an environment and receiving rewards. The goal is to maximise cumulative reward over time.
+                Learning by &quot;Experience&quot;. An agent tries actions and gets &quot;Rewards&quot; or &quot;Penalties&quot; to learn the best path.
               </p>
             </button>
           </div>
@@ -1030,17 +834,17 @@ export default function MlIndex() {
               animate={{ opacity: 1, y: 0 }}
               className="p-6 md:p-8 rounded-3xl bg-[#111118] border border-blue-500/40 shadow-2xl"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 className="text-2xl font-black text-white flex items-center gap-2">
-                    <span>🎯 Supervised Learning: Learning with a Teacher</span>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🎯</span>
+                  <h3 className="text-2xl font-black text-white">
+                    Supervised Learning
                   </h3>
-                  <p className="text-xs text-blue-300 font-mono mt-1">Given inputs X and known answers Y, learn a mapping function f(X) ≈ Y</p>
                 </div>
                 <div className="flex gap-2 p-1 rounded-xl bg-black/60 border border-white/10">
                   <button
                     onClick={() => setActiveSupervisedType('classification')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeSupervisedType === 'classification'
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-400 hover:text-white'
@@ -1050,7 +854,7 @@ export default function MlIndex() {
                   </button>
                   <button
                     onClick={() => setActiveSupervisedType('regression')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeSupervisedType === 'regression'
                         ? 'bg-emerald-600 text-white'
                         : 'text-gray-400 hover:text-white'
@@ -1061,107 +865,81 @@ export default function MlIndex() {
                 </div>
               </div>
 
+              <div className="text-xs text-blue-300 font-mono mb-2">
+                Goal: Learn the relationship between Inputs (X) and Answers (Y)
+              </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-6">
-                In supervised learning, every row in your dataset includes both the <strong>features (inputs)</strong> and the <strong>target label (the correct answer)</strong>. 
-                The model compares its guess to the true label, calculates its mistake, and improves.
+                Think of this as a student with an answer key. The student makes a guess, checks the key, sees the error, and adjusts.
               </p>
 
               {/* Sub-Type Visual Demo */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-black/50 p-6 rounded-2xl border border-white/5">
                 {activeSupervisedType === 'classification' ? (
                   <>
-                    <div className="space-y-4">
-                      <div className="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                        Task Type: Classification
-                      </div>
-                      <h4 className="text-lg font-bold text-white">Predicting Discrete Categories</h4>
+                    <div className="space-y-3">
+                      <h4 className="text-lg font-bold text-white">Predicting Categories</h4>
                       <p className="text-xs text-gray-300 leading-relaxed">
-                        The target is a class or label. The model draws a <strong className="text-blue-300">Decision Boundary</strong> that separates one category from another.
+                        The model draws a &quot;boundary&quot; to separate groups (e.g., Spam vs. Not Spam).
                       </p>
-                      <ul className="text-xs text-gray-400 space-y-2 list-disc list-inside">
-                        <li><strong>Spam Filter:</strong> Predict if email is <span className="text-red-400">Spam</span> or <span className="text-emerald-400">Not Spam</span>.</li>
-                        <li><strong>Healthcare:</strong> Predict if tumor is <span className="text-red-400">Malignant</span> or <span className="text-emerald-400">Benign</span>.</li>
-                        <li><strong>Vision:</strong> Classify image as <span className="text-blue-400">Cat</span>, <span className="text-amber-400">Dog</span>, or <span className="text-purple-400">Bird</span>.</li>
+                      <ul className="text-xs text-gray-300 space-y-1.5 list-disc list-inside">
+                        <li><strong>Email:</strong> Is this Spam or Inbox?</li>
+                        <li><strong>Medical:</strong> Is this tumor Benign or Malignant?</li>
                       </ul>
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-xs font-mono text-gray-300">
-                        <strong>Common Algorithms:</strong> Logistic Regression, Decision Trees, Random Forests, Support Vector Machines (SVM).
-                      </div>
                     </div>
 
                     <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-black/70 border border-white/10">
-                      <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase">Decision Boundary Visualization</div>
-                      <svg viewBox="0 0 280 200" className="w-full max-w-[280px]">
-                        {/* Background shading for classes */}
-                        <polygon points="0,0 280,0 280,110 0,170" fill="rgba(59, 130, 246, 0.1)" />
-                        <polygon points="0,170 280,110 280,200 0,200" fill="rgba(239, 68, 68, 0.1)" />
+                      <svg viewBox="0 0 280 180" className="w-full max-w-[280px]">
+                        {/* Class A: Blue circles */}
+                        {[[40, 40], [70, 50], [90, 75], [120, 45], [150, 70], [180, 35], [210, 60], [240, 50]].map(([x, y], i) => (
+                          <circle key={`a-${i}`} cx={x} cy={y} r="5" fill="#38bdf8" />
+                        ))}
 
                         {/* Decision Boundary Line */}
-                        <line x1="0" y1="170" x2="280" y2="110" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="4,3" />
-                        <text x="140" y="130" fill="#38bdf8" fontSize="9" fontFamily="monospace" textAnchor="middle">Decision Boundary</text>
+                        <line x1="20" y1="130" x2="260" y2="90" stroke="#ffffff" strokeWidth="2" strokeDasharray="4,4" />
 
-                        {/* Class A: Blue circles */}
-                        {[[30, 40], [50, 70], [80, 50], [100, 90], [140, 40], [180, 60], [210, 30], [240, 70]].map(([x, y], i) => (
-                          <circle key={`a-${i}`} cx={x} cy={y} r="5" fill="#3b82f6" stroke="#93c5fd" strokeWidth="1.5" />
+                        {/* Class B: Orange squares */}
+                        {[[30, 150], [60, 160], [100, 145], [140, 155], [170, 135], [200, 145], [230, 125]].map(([x, y], i) => (
+                          <rect key={`b-${i}`} x={x - 4} y={y - 4} width="8" height="8" fill="#fb923c" />
                         ))}
-                        <text x="50" y="30" fill="#60a5fa" fontSize="10" fontFamily="sans-serif" fontWeight="bold">Class A (Legitimate)</text>
-
-                        {/* Class B: Red squares */}
-                        {[[30, 185], [70, 180], [110, 160], [150, 175], [190, 140], [220, 165], [250, 135]].map(([x, y], i) => (
-                          <rect key={`b-${i}`} x={x - 4} y={y - 4} width="9" height="9" fill="#ef4444" stroke="#fca5a5" strokeWidth="1.5" />
-                        ))}
-                        <text x="200" y="190" fill="#f87171" fontSize="10" fontFamily="sans-serif" fontWeight="bold">Class B (Spam)</text>
                       </svg>
-                      <span className="text-[10px] text-gray-500 font-mono mt-2">New incoming points are classified based on which side they land on</span>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="space-y-4">
-                      <div className="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Task Type: Regression
-                      </div>
+                    <div className="space-y-3">
                       <h4 className="text-lg font-bold text-white">Predicting Continuous Numbers</h4>
                       <p className="text-xs text-gray-300 leading-relaxed">
-                        The target is a continuous numeric quantity. The model fits a trendline or curve that minimizes the distance to all data points.
+                        The model fits a &quot;line&quot; to the data to predict values like price or temperature.
                       </p>
-                      <ul className="text-xs text-gray-400 space-y-2 list-disc list-inside">
-                        <li><strong>Real Estate:</strong> Predict home selling price based on square footage and location.</li>
-                        <li><strong>Weather:</strong> Predict tomorrow's temperature in Celsius.</li>
-                        <li><strong>Retail:</strong> Forecast inventory demand for winter coats next month.</li>
+                      <ul className="text-xs text-gray-300 space-y-1.5 list-disc list-inside">
+                        <li><strong>Real Estate:</strong> Predicting house price based on size.</li>
+                        <li><strong>Weather:</strong> Predicting tomorrow&apos;s temperature.</li>
                       </ul>
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-xs font-mono text-gray-300">
-                        <strong>Common Algorithms:</strong> Linear Regression, Ridge/Lasso, Gradient Boosted Trees (XGBoost), Neural Networks.
-                      </div>
                     </div>
 
                     <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-black/70 border border-white/10">
-                      <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase">Continuous Trendline Fit</div>
-                      <svg viewBox="0 0 280 200" className="w-full max-w-[280px]">
+                      <svg viewBox="0 0 280 180" className="w-full max-w-[280px]">
                         {/* Axes */}
-                        <line x1="30" y1="170" x2="260" y2="170" stroke="#4b5563" strokeWidth="1.5" />
-                        <line x1="30" y1="170" x2="30" y2="20" stroke="#4b5563" strokeWidth="1.5" />
-                        <text x="145" y="190" fill="#9ca3af" fontSize="9" fontFamily="monospace" textAnchor="middle">Square Footage (Feature X)</text>
-                        <text x="15" y="90" fill="#9ca3af" fontSize="9" fontFamily="monospace" textAnchor="middle" transform="rotate(-90, 15, 90)">Price ($) (Target Y)</text>
+                        <line x1="30" y1="150" x2="250" y2="150" stroke="#6b7280" strokeWidth="1.5" />
+                        <line x1="30" y1="150" x2="30" y2="30" stroke="#6b7280" strokeWidth="1.5" />
 
                         {/* Best Fit Line */}
-                        <line x1="30" y1="155" x2="250" y2="40" stroke="#10b981" strokeWidth="2.5" />
+                        <line x1="30" y1="140" x2="245" y2="45" stroke="#34d399" strokeWidth="2.5" />
 
                         {/* Scatter points and residual error lines */}
                         {[
-                          [50, 135], [75, 140], [100, 105], [130, 115],
-                          [160, 80], [185, 95], [210, 50], [240, 55]
+                          [45, 130], [65, 132], [95, 108], [120, 115],
+                          [150, 85], [175, 95], [205, 55], [230, 60]
                         ].map(([x, y], i) => {
-                          const expectedY = 155 - ((x - 30) / 220) * 115;
+                          const expectedY = 140 - ((x - 30) / 215) * 95;
                           return (
                             <g key={i}>
-                              {/* Residual error dashed line */}
                               <line x1={x} y1={y} x2={x} y2={expectedY} stroke="#f43f5e" strokeDasharray="2,2" strokeWidth="1" />
                               <circle cx={x} cy={y} r="4" fill="#38bdf8" />
                             </g>
                           );
                         })}
                       </svg>
-                      <span className="text-[10px] text-gray-500 font-mono mt-2">Dashed red lines show errors (residuals) minimized by Least Squares</span>
                     </div>
                   </>
                 )}
@@ -1176,82 +954,58 @@ export default function MlIndex() {
               animate={{ opacity: 1, y: 0 }}
               className="p-6 md:p-8 rounded-3xl bg-[#111118] border border-emerald-500/40 shadow-2xl"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 className="text-2xl font-black text-white flex items-center gap-2">
-                    <span>🧭 Unsupervised Learning: Discovering Hidden Patterns</span>
-                  </h3>
-                  <p className="text-xs text-emerald-300 font-mono mt-1">Given raw data X with zero answers or labels, uncover natural groupings and structures</p>
-                </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🧭</span>
+                <h3 className="text-2xl font-black text-white">
+                  Unsupervised Learning
+                </h3>
               </div>
 
+              <div className="text-xs text-emerald-300 font-mono mb-2">
+                Goal: Find hidden structures in data with NO answers provided.
+              </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-6">
-                Most data in the real world is unlabeled because labeling requires millions of hours of human labor. 
-                Unsupervised algorithms inspect the mathematical geometry and density of data points to find natural clusters, anomalies, and underlying axes.
+                Think of this as sorting a giant pile of mixed Lego bricks. You don&apos;t know what they are supposed to be, but you can group them by color, size, or shape.
               </p>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-black/50 p-6 rounded-2xl border border-white/5">
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                     <h4 className="font-bold text-white text-sm mb-1 flex items-center gap-2">
-                      <span>🫧 1. Clustering (Customer Segmentation)</span>
+                      <span>🫧 Clustering</span>
                     </h4>
                     <p className="text-xs text-gray-300 leading-relaxed">
-                      Automatically grouping customers into personas based on purchasing behavior (e.g. "Bargain Hunters", "Tech Enthusiasts", "Infrequent Shoppers") without pre-existing labels.
+                      Grouping customers into &quot;Big Spenders&quot; vs &quot;Window Shoppers&quot; based on behavior.
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                     <h4 className="font-bold text-white text-sm mb-1 flex items-center gap-2">
-                      <span>📉 2. Dimensionality Reduction (PCA &amp; t-SNE)</span>
+                      <span>🚨 Anomaly Detection</span>
                     </h4>
                     <p className="text-xs text-gray-300 leading-relaxed">
-                      Compressing datasets with 500 columns down to 2 or 3 essential dimensions so humans can visualize them, while keeping 95% of the information.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <h4 className="font-bold text-white text-sm mb-1 flex items-center gap-2">
-                      <span>🚨 3. Anomaly &amp; Fraud Detection</span>
-                    </h4>
-                    <p className="text-xs text-gray-300 leading-relaxed">
-                      Learning what "normal" data looks like. Any data point that sits in an empty, low-density region is flagged as an anomaly or intrusion.
+                      Finding the one &quot;weird&quot; transaction in a million normal ones (Fraud Detection).
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-black/70 border border-white/10">
-                  <div className="text-[11px] font-mono text-gray-400 mb-2 uppercase">K-Means Cluster Discovery</div>
-                  <svg viewBox="0 0 280 200" className="w-full max-w-[280px]">
-                    {/* Cluster 1: Green */}
-                    <circle cx="70" cy="65" r="45" fill="rgba(16, 185, 129, 0.12)" stroke="#10b981" strokeDasharray="3,3" />
-                    <circle cx="70" cy="65" r="6" fill="#10b981" stroke="#fff" strokeWidth="1.5" />
-                    {[[50, 50], [80, 55], [60, 80], [90, 75], [65, 45]].map(([x, y], i) => (
-                      <circle key={`c1-${i}`} cx={x} cy={y} r="3.5" fill="#34d399" />
+                  <svg viewBox="0 0 280 180" className="w-full max-w-[280px]">
+                    {/* Cluster 1: Green dotted circle */}
+                    <circle cx="85" cy="85" r="45" fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
+                    {[[85, 85], [70, 75], [95, 70], [75, 100], [95, 95], [85, 65]].map(([x, y], i) => (
+                      <circle key={`u1-${i}`} cx={x} cy={y} r={i === 0 ? "5" : "3.5"} fill="#34d399" />
                     ))}
-                    <text x="70" y="30" fill="#34d399" fontSize="9" fontFamily="monospace" textAnchor="middle">Cluster 1 (Budget)</text>
 
-                    {/* Cluster 2: Blue */}
-                    <circle cx="210" cy="60" r="45" fill="rgba(59, 130, 246, 0.12)" stroke="#3b82f6" strokeDasharray="3,3" />
-                    <circle cx="210" cy="60" r="6" fill="#3b82f6" stroke="#fff" strokeWidth="1.5" />
-                    {[[190, 45], [225, 50], [200, 75], [230, 70], [215, 40]].map(([x, y], i) => (
-                      <circle key={`c2-${i}`} cx={x} cy={y} r="3.5" fill="#60a5fa" />
+                    {/* Cluster 2: Blue dotted circle */}
+                    <circle cx="195" cy="80" r="45" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
+                    {[[195, 80], [180, 70], [210, 75], [185, 95], [205, 95], [195, 60]].map(([x, y], i) => (
+                      <circle key={`u2-${i}`} cx={x} cy={y} r={i === 0 ? "5" : "3.5"} fill="#60a5fa" />
                     ))}
-                    <text x="210" y="30" fill="#60a5fa" fontSize="9" fontFamily="monospace" textAnchor="middle">Cluster 2 (Enterprise)</text>
-
-                    {/* Cluster 3: Purple */}
-                    <circle cx="140" cy="150" r="40" fill="rgba(168, 85, 247, 0.12)" stroke="#a855f7" strokeDasharray="3,3" />
-                    <circle cx="140" cy="150" r="6" fill="#a855f7" stroke="#fff" strokeWidth="1.5" />
-                    {[[125, 140], [155, 145], [135, 165], [150, 160]].map(([x, y], i) => (
-                      <circle key={`c3-${i}`} cx={x} cy={y} r="3.5" fill="#c084fc" />
-                    ))}
-                    <text x="140" y="185" fill="#c084fc" fontSize="9" fontFamily="monospace" textAnchor="middle">Cluster 3 (Casual)</text>
 
                     {/* Anomaly Outlier */}
-                    <circle cx="255" cy="170" r="5" fill="#ef4444" stroke="#fff" strokeWidth="1" />
-                    <text x="255" y="160" fill="#ef4444" fontSize="8" fontFamily="monospace" textAnchor="middle">🚨 Outlier</text>
+                    <circle cx="250" cy="155" r="4.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
                   </svg>
-                  <span className="text-[10px] text-gray-500 font-mono mt-2">Centroids (large dots) calculate the center of mass for each natural grouping</span>
                 </div>
               </div>
             </motion.div>
@@ -1264,12 +1018,12 @@ export default function MlIndex() {
               animate={{ opacity: 1, y: 0 }}
               className="p-6 md:p-8 rounded-3xl bg-[#111118] border border-rose-500/40 shadow-2xl"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 className="text-2xl font-black text-white flex items-center gap-2">
-                    <span>🕹️ Reinforcement Learning: Learning by Trial and Error</span>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🕹️</span>
+                  <h3 className="text-2xl font-black text-white">
+                    Reinforcement Learning
                   </h3>
-                  <p className="text-xs text-rose-300 font-mono mt-1">An Agent interacts with an Environment to maximize cumulative reward signals</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -1281,44 +1035,34 @@ export default function MlIndex() {
                   </button>
                   <button
                     onClick={() => setRlStep(0)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-mono text-xs"
+                    className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-mono text-xs cursor-pointer"
                   >
                     Reset
                   </button>
                 </div>
               </div>
 
+              <div className="text-xs text-rose-300 font-mono mb-2">
+                Goal: Maximize &quot;Rewards&quot; through trial and error.
+              </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-6">
-                In Reinforcement Learning (RL), an <strong>Agent</strong> learns a decision-making policy by interacting with an <strong>Environment</strong> and receiving <strong>Rewards</strong>. The goal is to maximise cumulative reward over time.
-                <br /><br />
-                <span className="text-xs text-gray-400 italic">
-                  Note: In reinforcement learning, rewards are not necessarily immediate (they can be delayed across long trajectories), and explicit penalties are not required in every formulation—an agent can learn effectively purely by seeking positive rewards.
-                </span>
+                Think of training a dog. You don&apos;t give it a manual; you give it a treat when it sits and say &quot;No&quot; when it jumps. Eventually, it learns the behavior that gets the most treats.
               </p>
 
               {/* The Feedback Loop + Interactive Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-black/50 p-6 rounded-2xl border border-white/5">
-                <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 font-mono text-xs">
-                    <div className="text-rose-400 font-bold mb-2">// The Core 4 Elements of RL:</div>
-                    <div className="space-y-1.5 text-gray-300">
-                      <div><strong className="text-white">1. Agent:</strong> The learner / decision-maker (e.g. Robot, AlphaGo, Self-driving car).</div>
-                      <div><strong className="text-white">2. Environment:</strong> The world the agent lives in (e.g. Chess board, road, video game).</div>
-                      <div><strong className="text-white">3. Action (A):</strong> What the agent decides to do (e.g. Move Left, Turn Steering Wheel, Buy Stock).</div>
-                      <div><strong className="text-white">4. Reward (R):</strong> Feedback score (+10 for reaching goal, -50 for crashing).</div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-500/30 text-xs text-rose-200/90 leading-relaxed">
-                    <strong>Modern Breakthrough: RLHF</strong><br />
-                    Reinforcement Learning with Human Feedback (RLHF) and GRPO is the secret sauce that turned raw foundation LLMs into helpful, aligned conversational models like ChatGPT and Claude!
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 font-mono text-xs">
+                  <div className="text-gray-400 font-bold mb-2">// The Loop:</div>
+                  <div className="space-y-1.5 text-gray-300">
+                    <div><strong className="text-white">1. Agent:</strong> The learner (The Dog).</div>
+                    <div><strong className="text-white">2. Environment:</strong> The world (The Living Room).</div>
+                    <div><strong className="text-white">3. Actions:</strong> What it does (Sit, Jump, Bark).</div>
+                    <div><strong className="text-white">4. Reward:</strong> Feedback (+Treat, -No!).</div>
                   </div>
                 </div>
 
                 {/* Interactive Agent Grid World */}
                 <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-black/70 border border-white/10">
-                  <div className="text-[11px] font-mono text-gray-400 mb-3 uppercase">Grid World: Agent Pathfinding</div>
-                  
                   <div className="grid grid-cols-4 gap-2 w-full max-w-[240px] mb-3">
                     {[
                       { idx: 0, content: rlStep === 0 ? '🤖' : '', bg: 'bg-white/5' },
@@ -1341,10 +1085,7 @@ export default function MlIndex() {
                   </div>
 
                   <div className="text-xs font-mono text-gray-400 text-center">
-                    {rlStep === 0 && "Step 0: Agent starts at cell (0,0). Goal: Reach 🏆 without touching 🔥."}
-                    {rlStep === 1 && "Step 1: Moves Right. Sees fire ahead (-50 penalty risk!). Policy steers agent down."}
-                    {rlStep === 2 && "Step 2: Moves Down to bypass the hazard. Cumulative reward = 0."}
-                    {rlStep === 3 && "Step 3: Moves Right to goal! Reward = +100. Policy updates weights to favor this path!"}
+                    Start: Reach 🏆 without touching 🔥.
                   </div>
                 </div>
               </div>
@@ -1356,13 +1097,13 @@ export default function MlIndex() {
         <motion.section variants={itemVariants} id="ml-lifecycle" className="scroll-mt-24">
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-widest text-indigo-400">
-              <span>Engineering Architecture</span>
+              <span>ENGINEERING ARCHITECTURE</span>
             </div>
             <h2 className="text-2xl md:text-4xl font-black text-white">
-              The Machine Learning Workflow &amp; Lifecycle
+              The ML Lifecycle
             </h2>
             <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-              Building real-world ML is not just calling <code className="text-indigo-300 font-mono">model.fit()</code>. It is an 8-stage cyclical engineering pipeline from problem formulation to continuous production drift monitoring.
+              Building ML is a continuous loop, not a one-time task.
             </p>
           </div>
 
