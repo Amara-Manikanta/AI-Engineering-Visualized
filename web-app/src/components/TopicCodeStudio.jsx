@@ -10,6 +10,11 @@ import {
   Eye,
   AlertTriangle,
   FileCode,
+  GitBranch,
+  UploadCloud,
+  Key,
+  ExternalLink,
+  X,
 } from 'lucide-react';
 import {
   getOriginalPageSource,
@@ -19,6 +24,7 @@ import {
   hasCustomPageCode,
 } from '../lib/pageSources';
 import { compileAndEvaluate } from '../lib/jsxRuntime';
+import routeFileMap from '../lib/routeFileMap.json';
 
 // Error Boundary to prevent runtime exceptions in custom components from crashing the app
 class SandboxErrorBoundary extends Component {
@@ -74,6 +80,24 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
   // Compile state
   const [compileError, setCompileError] = useState(null);
   const [compiledComponent, setCompiledComponent] = useState(null);
+
+  // GitHub Direct Push state
+  const [isGitModalOpen, setIsGitModalOpen] = useState(false);
+  const [gitToken, setGitToken] = useState(() => localStorage.getItem('ai_visualized_gh_token') || '');
+  const [gitRepo, setGitRepo] = useState(() => localStorage.getItem('ai_visualized_gh_repo') || 'Amara-Manikanta/AI-Engineering-Visualized');
+  const [gitBranch, setGitBranch] = useState(() => localStorage.getItem('ai_visualized_gh_branch') || 'main');
+  const [gitCommitMsg, setGitCommitMsg] = useState('');
+  const [gitPushing, setGitPushing] = useState(false);
+  const [gitResult, setGitResult] = useState(null);
+  const [gitError, setGitError] = useState(null);
+
+  const targetRepoFile = useMemo(() => {
+    const mapped = routeFileMap[pagePath];
+    if (mapped) {
+      return 'web-app/src/' + mapped.replace(/^\.\.\//, '');
+    }
+    return `web-app/src/pages${pagePath}.jsx`;
+  }, [pagePath]);
 
   // Load source on mount or pagePath change
   useEffect(() => {
@@ -180,6 +204,82 @@ ${sourceCode}
     setSourceCode(original || '');
     setSaveStatus('Reverted to original.');
     setTimeout(() => setSaveStatus(''), 2500);
+  };
+
+  const handleOpenGitModal = () => {
+    setGitCommitMsg(`feat: enhance ${title} via in-app studio`);
+    setGitError(null);
+    setGitResult(null);
+    setIsGitModalOpen(true);
+  };
+
+  const handleExecutePush = async () => {
+    if (!gitToken.trim()) {
+      setGitError('Please enter a GitHub Personal Access Token.');
+      return;
+    }
+    setGitPushing(true);
+    setGitError(null);
+    setGitResult(null);
+
+    try {
+      localStorage.setItem('ai_visualized_gh_token', gitToken.trim());
+      localStorage.setItem('ai_visualized_gh_repo', gitRepo.trim());
+      localStorage.setItem('ai_visualized_gh_branch', gitBranch.trim());
+
+      const [owner, repoName] = gitRepo.trim().split('/');
+      if (!owner || !repoName) throw new Error('Repository must be formatted as owner/repo');
+
+      const apiBase = `https://api.github.com/repos/${owner}/${repoName}/contents/${targetRepoFile}`;
+
+      // 1. Get current SHA if exists
+      let sha = null;
+      const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(gitBranch.trim())}`, {
+        headers: {
+          Authorization: `Bearer ${gitToken.trim()}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (getRes.ok) {
+        const fileInfo = await getRes.json();
+        sha = fileInfo.sha;
+      } else if (getRes.status !== 404) {
+        const errJson = await getRes.json().catch(() => ({}));
+        throw new Error(errJson.message || `Unable to inspect file (${getRes.status})`);
+      }
+
+      // Base64 UTF8 conversion
+      const base64Content = btoa(unescape(encodeURIComponent(sourceCode)));
+
+      // 2. Put file
+      const putRes = await fetch(apiBase, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${gitToken.trim()}`,
+          Accept: 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: gitCommitMsg || `Update ${title} via in-app studio`,
+          content: base64Content,
+          branch: gitBranch.trim(),
+          ...(sha ? { sha } : {}),
+        }),
+      });
+
+      if (!putRes.ok) {
+        const errJson = await putRes.json().catch(() => ({}));
+        throw new Error(errJson.message || `Commit failed with status ${putRes.status}`);
+      }
+
+      const resData = await putRes.json();
+      setGitResult(resData);
+    } catch (err) {
+      setGitError(err.message || String(err));
+    } finally {
+      setGitPushing(false);
+    }
   };
 
   const lineCount = useMemo(() => {
@@ -291,6 +391,15 @@ ${sourceCode}
           <span>Save as Active</span>
         </button>
 
+        {/* Push to GitHub */}
+        <button
+          onClick={handleOpenGitModal}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold cursor-pointer transition-all shadow-md"
+        >
+          <UploadCloud className="w-3.5 h-3.5" />
+          <span>Push to GitHub</span>
+        </button>
+
         {/* Revert if override exists */}
         {hasOverride && (
           <button
@@ -386,6 +495,143 @@ ${sourceCode}
               Click &quot;Run &amp; Test&quot; to compile and preview your code.
             </div>
           )}
+        </div>
+      )}
+
+      {/* GitHub Direct Push Modal */}
+      {isGitModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-2xl bg-[#121218] border border-purple-500/30 p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
+                  <GitBranch className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-base">Push Directly to GitHub</h3>
+                  <p className="text-xs text-gray-400">Commit changes from your device</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsGitModalOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block text-gray-400 mb-1 font-mono">Target Repository</label>
+                <input
+                  type="text"
+                  value={gitRepo}
+                  onChange={(e) => setGitRepo(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  placeholder="owner/repo"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-gray-400 mb-1 font-mono">Branch</label>
+                  <input
+                    type="text"
+                    value={gitBranch}
+                    onChange={(e) => setGitBranch(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                    placeholder="main"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-400 mb-1 font-mono">File Path in Repo</label>
+                  <div className="px-3 py-2 rounded-xl bg-black/40 border border-white/5 text-gray-300 font-mono text-[11px] truncate" title={targetRepoFile}>
+                    {targetRepoFile}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-gray-400 mb-1 font-mono">GitHub Personal Access Token</label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={gitToken}
+                    onChange={(e) => setGitToken(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                    placeholder="ghp_... or github_pat_..."
+                  />
+                  <Key className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                </div>
+                <p className="text-[10px] text-gray-500 mt-1">
+                  Stored securely on this device. Needs <code className="text-purple-300">repo</code> or <code className="text-purple-300">Contents: Read and Write</code> permissions.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-gray-400 mb-1 font-mono">Commit Message</label>
+                <input
+                  type="text"
+                  value={gitCommitMsg}
+                  onChange={(e) => setGitCommitMsg(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  placeholder="Commit message"
+                />
+              </div>
+            </div>
+
+            {gitError && (
+              <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-rose-300 text-xs font-mono">
+                {gitError}
+              </div>
+            )}
+
+            {gitResult && (
+              <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-mono space-y-1">
+                <div className="flex items-center gap-1.5 font-bold">
+                  <Check className="w-4 h-4" />
+                  <span>Successfully committed to GitHub!</span>
+                </div>
+                {gitResult.commit?.html_url && (
+                  <a
+                    href={gitResult.commit.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-emerald-400 underline hover:text-emerald-300 text-xs"
+                  >
+                    <span>View Commit on GitHub</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/10">
+              <button
+                onClick={() => setIsGitModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleExecutePush}
+                disabled={gitPushing}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all shadow-lg"
+              >
+                {gitPushing ? (
+                  <>
+                    <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    <span>Pushing...</span>
+                  </>
+                ) : (
+                  <>
+                    <UploadCloud className="w-4 h-4" />
+                    <span>Push Commit</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
