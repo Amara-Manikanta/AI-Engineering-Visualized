@@ -8,6 +8,7 @@ import {
   Sparkles,
   ClipboardPaste,
   Eye,
+  EyeOff,
   AlertTriangle,
   FileCode,
   GitBranch,
@@ -15,6 +16,8 @@ import {
   Key,
   ExternalLink,
   X,
+  ShieldCheck,
+  GitPullRequest,
 } from 'lucide-react';
 import {
   getOriginalPageSource,
@@ -90,6 +93,9 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
   const [gitPushing, setGitPushing] = useState(false);
   const [gitResult, setGitResult] = useState(null);
   const [gitError, setGitError] = useState(null);
+  const [showToken, setShowToken] = useState(false);
+  const [tokenVerifiedUser, setTokenVerifiedUser] = useState(null);
+  const [verifyingToken, setVerifyingToken] = useState(false);
 
   const targetRepoFile = useMemo(() => {
     const mapped = routeFileMap[pagePath];
@@ -206,11 +212,40 @@ ${sourceCode}
     setTimeout(() => setSaveStatus(''), 2500);
   };
 
+  const handleVerifyToken = async (tokenCandidate) => {
+    const t = (tokenCandidate || gitToken).trim();
+    if (!t) return;
+    setVerifyingToken(true);
+    setTokenVerifiedUser(null);
+    try {
+      const res = await fetch('https://api.github.com/user', {
+        headers: {
+          Authorization: `Bearer ${t}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      });
+      if (res.ok) {
+        const u = await res.json();
+        setTokenVerifiedUser(u.login);
+        localStorage.setItem('ai_visualized_gh_token', t);
+      } else {
+        setTokenVerifiedUser(false);
+      }
+    } catch {
+      setTokenVerifiedUser(false);
+    } finally {
+      setVerifyingToken(false);
+    }
+  };
+
   const handleOpenGitModal = () => {
     setGitCommitMsg(`feat: enhance ${title} via in-app studio`);
     setGitError(null);
     setGitResult(null);
     setIsGitModalOpen(true);
+    if (gitToken.trim() && !tokenVerifiedUser) {
+      handleVerifyToken(gitToken.trim());
+    }
   };
 
   const handleExecutePush = async () => {
@@ -223,22 +258,61 @@ ${sourceCode}
     setGitResult(null);
 
     try {
-      localStorage.setItem('ai_visualized_gh_token', gitToken.trim());
-      localStorage.setItem('ai_visualized_gh_repo', gitRepo.trim());
-      localStorage.setItem('ai_visualized_gh_branch', gitBranch.trim());
+      const token = gitToken.trim();
+      const repo = gitRepo.trim();
+      const branch = gitBranch.trim();
+      const commitMsg = gitCommitMsg.trim() || `Update ${title} via in-app mobile studio`;
 
-      const [owner, repoName] = gitRepo.trim().split('/');
-      if (!owner || !repoName) throw new Error('Repository must be formatted as owner/repo');
+      localStorage.setItem('ai_visualized_gh_token', token);
+      localStorage.setItem('ai_visualized_gh_repo', repo);
+      localStorage.setItem('ai_visualized_gh_branch', branch);
+
+      const [owner, repoName] = repo.split('/');
+      if (!owner || !repoName) throw new Error('Repository must be formatted as owner/repo (e.g. Amara-Manikanta/AI-Engineering-Visualized)');
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      };
+
+      // 1. Check if the target branch exists, or create it automatically from main if it's new
+      const branchRefRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${encodeURIComponent(branch)}`,
+        { headers }
+      );
+
+      if (branchRefRes.status === 404) {
+        const mainRefRes = await fetch(
+          `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/main`,
+          { headers }
+        );
+        if (mainRefRes.ok) {
+          const mainRefData = await mainRefRes.json();
+          const createBranchRes = await fetch(
+            `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
+            {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({
+                ref: `refs/heads/${branch}`,
+                sha: mainRefData.object.sha,
+              }),
+            }
+          );
+          if (!createBranchRes.ok) {
+            const err = await createBranchRes.json().catch(() => ({}));
+            throw new Error(err.message || `Failed to create new branch '${branch}'`);
+          }
+        }
+      }
 
       const apiBase = `https://api.github.com/repos/${owner}/${repoName}/contents/${targetRepoFile}`;
 
-      // 1. Get current SHA if exists
+      // 2. Get current SHA if exists on that branch
       let sha = null;
-      const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(gitBranch.trim())}`, {
-        headers: {
-          Authorization: `Bearer ${gitToken.trim()}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
+      const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, {
+        headers,
       });
 
       if (getRes.ok) {
@@ -249,21 +323,17 @@ ${sourceCode}
         throw new Error(errJson.message || `Unable to inspect file (${getRes.status})`);
       }
 
-      // Base64 UTF8 conversion
+      // 3. UTF-8 safe base64 conversion
       const base64Content = btoa(unescape(encodeURIComponent(sourceCode)));
 
-      // 2. Put file
+      // 4. Put file
       const putRes = await fetch(apiBase, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${gitToken.trim()}`,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
-          message: gitCommitMsg || `Update ${title} via in-app studio`,
+          message: commitMsg,
           content: base64Content,
-          branch: gitBranch.trim(),
+          branch,
           ...(sha ? { sha } : {}),
         }),
       });
@@ -274,7 +344,12 @@ ${sourceCode}
       }
 
       const resData = await putRes.json();
-      setGitResult(resData);
+      setGitResult({
+        ...resData,
+        branch,
+        repo,
+        prUrl: branch !== 'main' ? `https://github.com/${owner}/${repoName}/pull/new/${encodeURIComponent(branch)}` : null,
+      });
     } catch (err) {
       setGitError(err.message || String(err));
     } finally {
@@ -500,72 +575,127 @@ ${sourceCode}
 
       {/* GitHub Direct Push Modal */}
       {isGitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl bg-[#121218] border border-purple-500/30 p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-[#121218] border border-purple-500/30 p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2.5 rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
                   <GitBranch className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-base">Push Directly to GitHub</h3>
-                  <p className="text-xs text-gray-400">Commit changes from your device</p>
+                  <p className="text-xs text-gray-400">Commit edits directly from your iPhone</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsGitModalOpen(false)}
-                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer"
+                className="p-1.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3.5 text-xs">
               <div>
                 <label className="block text-gray-400 mb-1 font-mono">Target Repository</label>
                 <input
                   type="text"
                   value={gitRepo}
                   onChange={(e) => setGitRepo(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500 text-xs"
                   placeholder="owner/repo"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-gray-400 mb-1 font-mono">Branch</label>
                   <input
                     type="text"
                     value={gitBranch}
                     onChange={(e) => setGitBranch(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
-                    placeholder="main"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500 text-xs"
+                    placeholder="main or new-branch"
                   />
+                  <span className="text-[10px] text-gray-500 mt-0.5 block">
+                    Auto-creates if new
+                  </span>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1 font-mono">File Path in Repo</label>
-                  <div className="px-3 py-2 rounded-xl bg-black/40 border border-white/5 text-gray-300 font-mono text-[11px] truncate" title={targetRepoFile}>
+                  <div className="px-3 py-2.5 rounded-xl bg-black/40 border border-white/5 text-gray-300 font-mono text-[11px] truncate" title={targetRepoFile}>
                     {targetRepoFile}
                   </div>
+                  <span className="text-[10px] text-emerald-400/80 mt-0.5 block font-mono">
+                    ✓ Matched topic file
+                  </span>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-400 mb-1 font-mono">GitHub Personal Access Token</label>
-                <div className="relative">
-                  <input
-                    type="password"
-                    value={gitToken}
-                    onChange={(e) => setGitToken(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
-                    placeholder="ghp_... or github_pat_..."
-                  />
-                  <Key className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-400 font-mono">GitHub Personal Access Token</label>
+                  <a
+                    href="https://github.com/settings/tokens/new?scopes=repo&description=AI+Engineering+Visualized+App"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-purple-400 hover:text-purple-300 underline"
+                  >
+                    <span>Generate token ↗</span>
+                  </a>
                 </div>
-                <p className="text-[10px] text-gray-500 mt-1">
-                  Stored securely on this device. Needs <code className="text-purple-300">repo</code> or <code className="text-purple-300">Contents: Read and Write</code> permissions.
-                </p>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type={showToken ? 'text' : 'password'}
+                      value={gitToken}
+                      onChange={(e) => {
+                        setGitToken(e.target.value);
+                        setTokenVerifiedUser(null);
+                      }}
+                      autoCapitalize="off"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500 text-xs"
+                      placeholder="ghp_... or github_pat_..."
+                    />
+                    <Key className="w-4 h-4 text-gray-500 absolute left-3 top-3" />
+                    <button
+                      type="button"
+                      onClick={() => setShowToken(!showToken)}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-white p-0.5 cursor-pointer"
+                    >
+                      {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleVerifyToken()}
+                    disabled={verifyingToken || !gitToken.trim()}
+                    className="px-3 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-200 font-semibold cursor-pointer shrink-0 disabled:opacity-40"
+                  >
+                    {verifyingToken ? 'Testing...' : 'Test Token'}
+                  </button>
+                </div>
+
+                {tokenVerifiedUser && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-mono pt-0.5">
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    <span>Authenticated as @{tokenVerifiedUser}</span>
+                  </div>
+                )}
+                {tokenVerifiedUser === false && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-rose-400 font-mono pt-0.5">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Invalid token. Please check scopes (repo or Contents: Read &amp; Write).</span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -574,59 +704,76 @@ ${sourceCode}
                   type="text"
                   value={gitCommitMsg}
                   onChange={(e) => setGitCommitMsg(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500 text-xs"
                   placeholder="Commit message"
                 />
               </div>
             </div>
 
             {gitError && (
-              <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-rose-300 text-xs font-mono">
-                {gitError}
+              <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 text-rose-300 text-xs font-mono space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-red-400">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>Push Failed</span>
+                </div>
+                <p className="opacity-90">{gitError}</p>
               </div>
             )}
 
             {gitResult && (
-              <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-mono space-y-1">
-                <div className="flex items-center gap-1.5 font-bold">
-                  <Check className="w-4 h-4" />
+              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-mono space-y-2.5">
+                <div className="flex items-center gap-2 font-bold text-emerald-400 text-sm">
+                  <Check className="w-4 h-4 shrink-0" />
                   <span>Successfully committed to GitHub!</span>
                 </div>
-                {gitResult.commit?.html_url && (
-                  <a
-                    href={gitResult.commit.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-emerald-400 underline hover:text-emerald-300 text-xs"
-                  >
-                    <span>View Commit on GitHub</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {gitResult.commit?.html_url && (
+                    <a
+                      href={gitResult.commit.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 font-semibold"
+                    >
+                      <span>View Commit ↗</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  {gitResult.prUrl && (
+                    <a
+                      href={gitResult.prUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold"
+                    >
+                      <GitPullRequest className="w-3.5 h-3.5" />
+                      <span>Open Pull Request ↗</span>
+                    </a>
+                  )}
+                </div>
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/10">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
               <button
                 onClick={() => setIsGitModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold cursor-pointer"
               >
                 Close
               </button>
               <button
                 onClick={handleExecutePush}
                 disabled={gitPushing}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all shadow-lg"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all shadow-lg"
               >
                 {gitPushing ? (
                   <>
                     <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                    <span>Pushing...</span>
+                    <span>Committing to GitHub...</span>
                   </>
                 ) : (
                   <>
                     <UploadCloud className="w-4 h-4" />
-                    <span>Push Commit</span>
+                    <span>Push to GitHub</span>
                   </>
                 )}
               </button>
