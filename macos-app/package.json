@@ -1,0 +1,47 @@
+{
+  "name": "ai-engineering-macos-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "macOS Desktop application for AI Engineering Visualized",
+  "main": "src/main.cjs",
+  "scripts": {
+    "sync": "rm -rf dist && cp -R ../web-app/dist ./dist",
+    "dev": "electron .",
+    "build:mac": "npm run sync && electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.aivisualisedengineering.app",
+    "productName": "AI Visualised Engineering",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "src/**/*"
+    ],
+    "mac": {
+      "icon": "src/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.education",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    }
+  }
+}

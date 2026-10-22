@@ -1,0 +1,19 @@
+{
+  "name": "ai-engineering-iphone-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "iOS application for AI Engineering Visualized",
+  "scripts": {
+    "sync": "npx cap sync ios",
+    "open": "npx cap open ios",
+    "build:sim": "xcodebuild -project ios/App/App.xcodeproj -scheme App -destination 'generic/platform=iOS Simulator' -quiet build",
+    "build:device": "xcodebuild -project ios/App/App.xcodeproj -scheme App -destination generic/platform=iOS -allowProvisioningUpdates -derivedDataPath build/derivedDataDevice build",
+    "deploy:device": "npm run build:device && xcrun devicectl device install app --device 00008120-00064D803CDB401E build/derivedDataDevice/Build/Products/Debug-iphoneos/App.app",
+    "launch:device": "xcrun devicectl device process launch --device 00008120-00064D803CDB401E com.manikanta.aiengineering"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3"
+  }
+}

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
 import Footer from "./Footer";
 import { AZURE_LINKS, AWS_LINKS } from "../config/navigation";
@@ -8,6 +8,10 @@ import { PYTHON_LINKS } from "../config/pythonNavigation";
 import { neighbours, sectionFor } from "../lib/pageOrder";
 import { useReadPages, setRead } from "../lib/progress";
 import UserTopicNotes from "./UserTopicNotes";
+import TopicCodeStudio from "./TopicCodeStudio";
+import { getCustomPageCode, clearCustomPageCode } from "../lib/pageSources";
+import { compileAndEvaluate } from "../lib/jsxRuntime";
+import { GuideLayoutContext } from "../lib/GuideLayoutContext";
 
 const cleanName = (n) => n.replace(/^·\s*/, "");
 
@@ -58,11 +62,50 @@ function useActiveSection(ids) {
  * toc entry for a hidden section silently does nothing.
  */
 export default function GuideLayout({ title, intro, toc = [], children, onTocClick }) {
+  const isNestedGuideLayout = useContext(GuideLayoutContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [layoutMode, setLayoutMode] = useState("view"); // "view" | "code"
+  const [customComponent, setCustomComponent] = useState(null);
+  const [customError, setCustomError] = useState(null);
+  const [hasCustomOverride, setHasCustomOverride] = useState(false);
   const location = useLocation();
   const read = useReadPages();
   const isRead = read.has(location.pathname);
   const { prev, next } = neighbours(location.pathname);
+
+  // Sync custom override whenever location.pathname changes or custom event fires
+  useEffect(() => {
+    const updateCustomComponent = () => {
+      const customCode = getCustomPageCode(location.pathname);
+      if (customCode) {
+        setHasCustomOverride(true);
+        const { Component: Comp, error } = compileAndEvaluate(customCode);
+        if (error) {
+          setCustomError(error);
+          setCustomComponent(null);
+        } else {
+          setCustomError(null);
+          setCustomComponent(() => Comp);
+        }
+      } else {
+        setHasCustomOverride(false);
+        setCustomComponent(null);
+        setCustomError(null);
+      }
+    };
+
+    updateCustomComponent();
+    window.addEventListener("topic_custom_code_change", updateCustomComponent);
+    return () => {
+      window.removeEventListener("topic_custom_code_change", updateCustomComponent);
+    };
+  }, [location.pathname]);
+
+  const handleRevertCustom = () => {
+    if (window.confirm("Revert back to the original version of this topic?")) {
+      clearCustomPageCode(location.pathname);
+    }
+  };
 
   const ids = toc.map((item) => item.hash.replace(/^#/, ""));
   const activeId = useActiveSection(ids);
@@ -74,6 +117,14 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
     const t = setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: "start" }), 150);
     return () => clearTimeout(t);
   }, [location.pathname, location.hash]);
+
+  if (isNestedGuideLayout) {
+    return (
+      <div className="nested-guide-content space-y-8">
+        {children}
+      </div>
+    );
+  }
 
   let sidebarLinks = null;
   let sectionTitle = "";
@@ -192,14 +243,82 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
 
         {/* Main Content */}
         <main className="flex-1 min-w-0">
-          <div className="mb-8 lg:mb-10">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-3 tracking-tight">{title}</h1>
-            <p className="text-base sm:text-lg text-indigo-200/80 leading-relaxed font-light">{intro}</p>
+          {/* Personal Learning Mode: View Page vs Source Code & Live Sandbox Toggle */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 p-2 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10">
+              <button
+                onClick={() => setLayoutMode("view")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  layoutMode === "view"
+                    ? "bg-indigo-600 text-white shadow-md"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>View Topic</span>
+              </button>
+              <button
+                onClick={() => setLayoutMode("code")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  layoutMode === "code"
+                    ? "bg-purple-600 text-white shadow-md"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Code2 className="w-3.5 h-3.5" />
+                <span>Source Code &amp; Test</span>
+                {hasCustomOverride && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />}
+              </button>
+            </div>
+
+            {hasCustomOverride && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" /> Custom Version Active
+                </span>
+                <button
+                  onClick={handleRevertCustom}
+                  className="px-2.5 py-1 rounded-lg text-[10px] font-mono bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-300 border border-white/10 transition-colors cursor-pointer"
+                >
+                  Revert to Default
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="space-y-8 lg:space-y-12">
-            {children}
-          </div>
+          {layoutMode === "code" ? (
+            <TopicCodeStudio
+              pagePath={location.pathname}
+              title={title}
+              onRevertToView={() => setLayoutMode("view")}
+            />
+          ) : (
+            <GuideLayoutContext.Provider value={true}>
+              {hasCustomOverride && customError && (
+                <div className="mb-6 p-4 rounded-2xl bg-red-950/30 border border-red-500/40 text-rose-300 text-xs font-mono">
+                  <div className="font-bold flex items-center justify-between mb-1">
+                    <span>⚠️ Custom version failed to render:</span>
+                    <button
+                      onClick={() => setLayoutMode("code")}
+                      className="text-purple-400 underline hover:text-purple-300 cursor-pointer"
+                    >
+                      Fix in Code Studio
+                    </button>
+                  </div>
+                  <div className="opacity-80">{customError}</div>
+                </div>
+              )}
+
+              <div className="mb-8 lg:mb-10">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-3 tracking-tight">{title}</h1>
+                <p className="text-base sm:text-lg text-indigo-200/80 leading-relaxed font-light">{intro}</p>
+              </div>
+
+              <div className="space-y-8 lg:space-y-12">
+                {customComponent ? React.createElement(customComponent) : children}
+              </div>
+            </GuideLayoutContext.Provider>
+          )}
 
           {/* User Custom Points & Notes (Offline Persistent) */}
           <UserTopicNotes pagePath={location.pathname + location.hash} toc={toc} />

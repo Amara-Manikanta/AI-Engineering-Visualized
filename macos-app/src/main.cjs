@@ -28,7 +28,11 @@ function createWindow() {
   if (isDev && process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    const fs = require('fs');
+    const localDist = path.join(__dirname, '../dist/index.html');
+    const webDist = path.join(__dirname, '../../web-app/dist/index.html');
+    const targetPath = fs.existsSync(localDist) ? localDist : webDist;
+    mainWindow.loadFile(targetPath);
   }
 
   mainWindow.once('ready-to-show', () => {

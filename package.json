@@ -1,0 +1,23 @@
+{
+  "name": "ai-engineering-visualized-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Engineering Visualized - Multi-platform workspace for Web, macOS, and iPhone",
+  "scripts": {
+    "dev": "npm --prefix web-app run dev",
+    "dev:web": "npm --prefix web-app run dev",
+    "build": "npm --prefix web-app run build",
+    "build:web": "npm --prefix web-app run build",
+    "lint": "npm --prefix web-app run lint",
+    "check": "npm --prefix web-app run check",
+    "preview": "npm --prefix web-app run preview",
+    "build:macos": "npm --prefix web-app run build && npm --prefix macos-app run build:mac",
+    "dev:macos": "npm --prefix macos-app run dev",
+    "sync:iphone": "npm --prefix web-app run build && npm --prefix iphone-app run sync",
+    "build:iphone": "npm --prefix web-app run build && npm --prefix iphone-app run sync && npm --prefix iphone-app run build:sim",
+    "deploy:iphone": "npm --prefix web-app run build && npm --prefix iphone-app run sync && npm --prefix iphone-app run deploy:device",
+    "launch:iphone": "npm --prefix iphone-app run launch:device",
+    "open:iphone": "npm --prefix iphone-app run open",
+    "build:all": "npm run build:web && npm run build:macos && npm run build:iphone"
+  }
+}

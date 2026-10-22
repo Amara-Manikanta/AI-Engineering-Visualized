@@ -1,7 +1,7 @@
 {
   "appId": "com.manikanta.aiengineering",
   "appName": "AI Visualised Engineering",
-  "webDir": "dist",
+  "webDir": "../web-app/dist",
   "ios": {
     "contentInset": "automatic",
     "scheme": "AI Visualised Engineering"
