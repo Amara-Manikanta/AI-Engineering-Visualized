@@ -39,7 +39,7 @@ npm run dev
 ## 📁 Source Tree Architecture
 
 ```text
-v2-react/
+web-app/
 ├── electron/
 │   ├── main.cjs               # Electron main process (frameless window, menu, URL handling)
 │   ├── preload.js             # Context isolation bridge

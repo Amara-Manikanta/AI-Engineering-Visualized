@@ -12,6 +12,8 @@
     "check": "npm --prefix web-app run check",
     "preview": "npm --prefix web-app run preview",
     "build:macos": "npm --prefix web-app run build && npm --prefix macos-app run build:mac",
+    "install:macos": "npm run build:macos && rm -rf \"/Applications/AI Visualised Engineering.app\" && cp -R \"macos-app/release/mac-arm64/AI Visualised Engineering.app\" \"/Applications/\"",
+    "launch:macos": "open -a \"AI Visualised Engineering\"",
     "dev:macos": "npm --prefix macos-app run dev",
     "sync:iphone": "npm --prefix web-app run build && npm --prefix iphone-app run sync",
     "build:iphone": "npm --prefix web-app run build && npm --prefix iphone-app run sync && npm --prefix iphone-app run build:sim",

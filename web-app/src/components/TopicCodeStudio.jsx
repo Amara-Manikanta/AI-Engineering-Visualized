@@ -105,6 +105,27 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
     return `web-app/src/pages${pagePath}.jsx`;
   }, [pagePath]);
 
+  // Keyboard shortcuts (Cmd/Ctrl + Enter to run, Cmd/Ctrl + S to save, Cmd/Ctrl + Shift + P to push)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleCompileAndPreview();
+      }
+      if ((e.metaKey || e.ctrlKey) && (e.key === 's' || e.key === 'S') && !e.shiftKey) {
+        e.preventDefault();
+        handleSaveActive();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault();
+        handleOpenGitModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourceCode, title, hasOverride]);
+
   // Load source on mount or pagePath change
   useEffect(() => {
     let mounted = true;
@@ -374,7 +395,7 @@ ${sourceCode}
             {title}
           </h2>
           <p className="text-xs text-gray-400 mt-0.5">
-            View, edit, or paste AI-generated code to test new visual explainers live on your phone.
+            View, edit, or test AI-generated code live with instant preview and 1-click Push to GitHub.
           </p>
         </div>
 
@@ -452,27 +473,33 @@ ${sourceCode}
         <button
           onClick={handleCompileAndPreview}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold cursor-pointer transition-all shadow-md ml-auto"
+          title="Run & Test (⌘↵)"
         >
           <Play className="w-3.5 h-3.5 fill-current" />
           <span>Run &amp; Test</span>
+          <span className="hidden sm:inline-block text-[10px] opacity-75 font-mono ml-0.5">⌘↵</span>
         </button>
 
         {/* Save as Active */}
         <button
           onClick={handleSaveActive}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold cursor-pointer transition-all shadow-md"
+          title="Save as Active (⌘S)"
         >
           <Check className="w-3.5 h-3.5" />
           <span>Save as Active</span>
+          <span className="hidden sm:inline-block text-[10px] opacity-75 font-mono ml-0.5">⌘S</span>
         </button>
 
         {/* Push to GitHub */}
         <button
           onClick={handleOpenGitModal}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold cursor-pointer transition-all shadow-md"
+          title="Push to GitHub (⇧⌘P)"
         >
           <UploadCloud className="w-3.5 h-3.5" />
           <span>Push to GitHub</span>
+          <span className="hidden sm:inline-block text-[10px] opacity-75 font-mono ml-0.5">⇧⌘P</span>
         </button>
 
         {/* Revert if override exists */}

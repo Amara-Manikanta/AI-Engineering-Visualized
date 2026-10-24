@@ -5,6 +5,25 @@ import * as ReactRouterDOM from 'react-router-dom';
 import CodeBlock from '../components/CodeBlock';
 import { transform } from 'sucrase';
 
+// Internal modules and data imported across guide pages
+import * as stats from './stats';
+import * as VizKit from '../components/VizKit';
+import KnowledgeCheck from '../components/KnowledgeCheck';
+import * as quizBank from '../data/quizBank';
+import * as flowcharts from '../data/flowcharts';
+import * as glossary from '../data/glossary';
+import * as modelProfiles from '../data/modelProfiles';
+import * as ragVariants from '../data/ragVariants';
+import * as progress from './progress';
+import * as questionFormat from './questionFormat';
+import * as useReducedMotion from './useReducedMotion';
+import ModelBenchmarks from '../components/ModelBenchmarks';
+import ModelProfile from '../components/ModelProfile';
+import InterviewCards from '../components/InterviewCards';
+import PromptPractice from '../components/PromptPractice';
+import AdvancedFlowchart from '../components/AdvancedFlowchart';
+import VariantNotes from '../components/VariantNotes';
+
 // Safe proxy for Lucide icons so AI hallucinations don't crash the renderer
 const safeLucide = new Proxy(LucideIcons, {
   get(target, prop) {
@@ -34,6 +53,57 @@ function SandboxGuideLayout({ title, intro, children }) {
     React.createElement('div', { className: 'space-y-6' }, children)
   );
 }
+
+// Universal safe fallback proxy for any unknown or missing imports
+function createSafeDummy(name = 'Component') {
+  const dummyFn = function SafeDummy(props = {}) {
+    return props?.children || null;
+  };
+  dummyFn.displayName = `SafeDummy_${name}`;
+
+  return new Proxy(dummyFn, {
+    get(target, prop) {
+      if (prop === '__esModule') return true;
+      if (prop === 'default') return target;
+      if (typeof prop === 'string') {
+        return createSafeDummy(`${name}_${prop}`);
+      }
+      return undefined;
+    },
+    apply(target, thisArg, args) {
+      const first = args[0];
+      if (first && typeof first === 'object' && 'children' in first) {
+        return first.children || null;
+      }
+      // Return a harmless numeric/function generator so calls like rng() or randn() don't fail
+      return () => 0.5;
+    },
+  });
+}
+
+const asModule = (mod) => {
+  if (!mod) return createSafeDummy();
+  if (typeof mod === 'function') {
+    mod.default = mod;
+    mod.__esModule = true;
+    return mod;
+  }
+  if (typeof mod === 'object') {
+    if (!('default' in mod)) {
+      try {
+        mod.default = mod;
+      } catch {
+        /* ignore if sealed */
+      }
+    }
+    try {
+      mod.__esModule = true;
+    } catch {
+      /* ignore if sealed */
+    }
+  }
+  return mod;
+};
 
 /**
  * Cleans code pasted from LLMs (stripping markdown fences like ```jsx ... ```)
@@ -80,17 +150,43 @@ export function compileAndEvaluate(rawCode) {
     const exports = {};
     const module = { exports };
 
-    const scopeMap = {
-      react: React,
-      'react/jsx-runtime': React,
-      'framer-motion': FramerMotion,
-      'lucide-react': safeLucide,
-      'react-router-dom': ReactRouterDOM,
-      '../components/GuideLayout': SandboxGuideLayout,
-      './components/GuideLayout': SandboxGuideLayout,
-      '../components/CodeBlock': CodeBlock,
-      './components/CodeBlock': CodeBlock,
+    const scopeMap = {};
+
+    const registerModule = (keys, mod) => {
+      const wrapped = asModule(mod);
+      keys.forEach((k) => {
+        scopeMap[k] = wrapped;
+      });
     };
+
+    // Third-party essentials
+    registerModule(['react', 'react/jsx-runtime'], React);
+    registerModule(['framer-motion'], FramerMotion);
+    registerModule(['lucide-react'], safeLucide);
+    registerModule(['react-router-dom'], ReactRouterDOM);
+
+    // Layout and common visual components
+    registerModule(['../components/GuideLayout', './components/GuideLayout', 'GuideLayout'], SandboxGuideLayout);
+    registerModule(['../components/CodeBlock', './components/CodeBlock', 'CodeBlock'], CodeBlock);
+    registerModule(['../components/VizKit', './components/VizKit', 'VizKit'], VizKit);
+    registerModule(['../components/KnowledgeCheck', './components/KnowledgeCheck', 'KnowledgeCheck'], KnowledgeCheck);
+    registerModule(['../components/ModelBenchmarks', './components/ModelBenchmarks', 'ModelBenchmarks'], ModelBenchmarks);
+    registerModule(['../components/ModelProfile', './components/ModelProfile', 'ModelProfile'], ModelProfile);
+    registerModule(['../components/InterviewCards', './components/InterviewCards', 'InterviewCards'], InterviewCards);
+    registerModule(['../components/PromptPractice', './components/PromptPractice', 'PromptPractice'], PromptPractice);
+    registerModule(['../components/AdvancedFlowchart', './components/AdvancedFlowchart', 'AdvancedFlowchart'], AdvancedFlowchart);
+    registerModule(['../components/VariantNotes', './components/VariantNotes', 'VariantNotes'], VariantNotes);
+
+    // Data banks & statistics
+    registerModule(['../lib/stats', './stats', 'stats', 'lib/stats'], stats);
+    registerModule(['../data/quizBank', './quizBank', 'quizBank', 'data/quizBank'], quizBank);
+    registerModule(['../data/flowcharts', './flowcharts', 'flowcharts', 'data/flowcharts'], flowcharts);
+    registerModule(['../data/glossary', './glossary', 'glossary', 'data/glossary'], glossary);
+    registerModule(['../data/modelProfiles', './modelProfiles', 'modelProfiles', 'data/modelProfiles'], modelProfiles);
+    registerModule(['../data/ragVariants', './ragVariants', 'ragVariants', 'data/ragVariants'], ragVariants);
+    registerModule(['../lib/progress', './progress', 'progress', 'lib/progress'], progress);
+    registerModule(['../lib/questionFormat', './questionFormat', 'questionFormat', 'lib/questionFormat'], questionFormat);
+    registerModule(['../lib/useReducedMotion', './useReducedMotion', 'useReducedMotion', 'lib/useReducedMotion'], useReducedMotion);
 
     const customRequire = (moduleName) => {
       if (scopeMap[moduleName]) return scopeMap[moduleName];
@@ -98,12 +194,14 @@ export function compileAndEvaluate(rawCode) {
       const base = moduleName.split('/').pop().replace(/\.jsx?$/, '');
       if (scopeMap[base]) return scopeMap[base];
 
-      // If it looks like a component import, return a pass-through dummy
-      return { default: ({ children }) => children || null };
+      const cleanPath = moduleName.replace(/^\.\.?\//, '').replace(/\.jsx?$/, '');
+      if (scopeMap[cleanPath]) return scopeMap[cleanPath];
+
+      // Fallback safe dummy proxy so unmapped imports/icons/helpers never crash the preview
+      return createSafeDummy(base);
     };
 
     // 3. Evaluate transformed code
-    // Parameters available to the evaluated script:
     const evaluator = new Function(
       'React',
       'require',

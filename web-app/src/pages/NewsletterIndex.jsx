@@ -1524,6 +1524,15 @@ export default function NewsletterIndex() {
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState("");
   const [shareModalData, setShareModalData] = useState(null);
+
+  useEffect(() => {
+    if (!shareModalData) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") setShareModalData(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [shareModalData]);
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedDiagram, setCopiedDiagram] = useState(false);
   const [copiedExperiment, setCopiedExperiment] = useState(false);
@@ -2686,14 +2695,29 @@ export default function NewsletterIndex() {
       {/* ====== SOCIAL SHARE MODAL ====== */}
       <AnimatePresence>
         {shareModalData && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <motion.div
+            key="share-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Share"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShareModalData(null);
+            }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
               className="bg-[#141414] border border-white/20 rounded-2xl p-6 max-w-lg w-full relative shadow-2xl"
             >
               <button
+                aria-label="Close"
                 onClick={() => setShareModalData(null)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold"
               >
@@ -2797,7 +2821,7 @@ export default function NewsletterIndex() {
                 </button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
