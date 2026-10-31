@@ -574,17 +574,22 @@ export default function MlLogistic() {
               </p>
             </div>
           </div>
-          <CodeBlock language="python" maxHeight="300px" code={`from sklearn.linear_model import LogisticRegression
+          <CodeBlock language="python" maxHeight="340px" code={`from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import make_classification
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+# Generate sample 2D classification dataset
+X, y = make_classification(n_samples=100, n_features=2, n_informative=2, n_redundant=0, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 clf = LogisticRegression()
 clf.fit(X_train, y_train)
 
-proba = clf.predict_proba(X_test)[:, 1]   # probability of class 1
-pred  = clf.predict(X_test)               # thresholded at 0.5
-print("accuracy:", clf.score(X_test, y_test))`} />
+proba = clf.predict_proba(X_test)[:5, 1]   # probability of class 1 for first 5
+pred  = clf.predict(X_test)[:5]
+print("Predicted probabilities (first 5):", [round(p, 3) for p in proba])
+print("Predicted classes       (first 5):", pred.tolist())
+print(f"Test Set Accuracy: {clf.score(X_test, y_test) * 100:.1f}%")`} />
         </motion.section>
 
         {/* --------------------------------------------------------------- */}

@@ -3340,6 +3340,30 @@
     "keywords": []
   },
   {
+    "path": "/ml/code-lab",
+    "title": "ML & AI Code Lab",
+    "intro": "Interactive Python notebook for writing, experimenting, and mastering machine learning algorithms and GenAI architectures.",
+    "sections": [
+      {
+        "label": "Environment Status",
+        "hash": "status"
+      },
+      {
+        "label": "Select ML Concept",
+        "hash": "select"
+      },
+      {
+        "label": "Interactive Code Cell",
+        "hash": "cell"
+      },
+      {
+        "label": "Practice Challenges",
+        "hash": "challenges"
+      }
+    ],
+    "keywords": []
+  },
+  {
     "path": "/ml/data-analysis",
     "title": "Data Analysis (EDA)",
     "intro": "Exploratory data analysis is looking before you model: what each column contains, how it is distributed, and what surprises are hiding in it.",
@@ -6219,6 +6243,30 @@
     "title": "Interactive",
     "intro": "Every hands-on tool and step-through animation on the site, in one place. Poke at the thing rather than reading about it.",
     "sections": [],
+    "keywords": []
+  },
+  {
+    "path": "/practice",
+    "title": "ML & AI Code Lab",
+    "intro": "Interactive Python notebook for writing, experimenting, and mastering machine learning algorithms and GenAI architectures.",
+    "sections": [
+      {
+        "label": "Environment Status",
+        "hash": "status"
+      },
+      {
+        "label": "Select ML Concept",
+        "hash": "select"
+      },
+      {
+        "label": "Interactive Code Cell",
+        "hash": "cell"
+      },
+      {
+        "label": "Practice Challenges",
+        "hash": "challenges"
+      }
+    ],
     "keywords": []
   },
   {

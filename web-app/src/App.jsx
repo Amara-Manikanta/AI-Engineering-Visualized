@@ -26,6 +26,7 @@ const AgentsToolCalling = lazy(() => import("./pages/AgentsToolCalling"));
 const AgentsMemory = lazy(() => import("./pages/AgentsMemory"));
 const AgentsMultiAgent = lazy(() => import("./pages/AgentsMultiAgent"));
 const MlIndex = lazy(() => import("./pages/MlIndex"));
+const MlCodeLab = lazy(() => import("./pages/MlCodeLab"));
 const MlSupervised = lazy(() => import("./pages/MlSupervised"));
 const MlUnsupervised = lazy(() => import("./pages/MlUnsupervised"));
 const MlDeepLearning = lazy(() => import("./pages/MlDeepLearning"));
@@ -302,6 +303,8 @@ function App() {
         <Route path="/python/regex" element={<PythonRegex />} />
         
         <Route path="/ml" element={<MlIndex />} />
+        <Route path="/ml/code-lab" element={<MlCodeLab />} />
+        <Route path="/practice" element={<MlCodeLab />} />
         <Route path="/ml/supervised" element={<MlSupervised />} />
         <Route path="/ml/unsupervised" element={<MlUnsupervised />} />
         <Route path="/ml/evaluation-metrics" element={<MlEvaluationMetrics />} />

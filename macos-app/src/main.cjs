@@ -1,7 +1,228 @@
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const { spawn } = require('child_process');
 
 let mainWindow;
+
+// Python discovery on macOS
+function findPythonExecutable() {
+  const home = os.homedir();
+  const candidates = [
+    '/opt/anaconda3/bin/python3',
+    path.join(home, 'anaconda3/bin/python3'),
+    path.join(home, 'miniconda3/bin/python3'),
+    path.join(home, 'opt/anaconda3/bin/python3'),
+    path.join(home, 'opt/miniconda3/bin/python3'),
+    '/opt/homebrew/bin/python3',
+    '/usr/local/bin/python3',
+    '/usr/bin/python3',
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return 'python3';
+}
+
+const PYTHON_HARNESS = `
+import sys, io, json, base64, time, traceback
+
+code = sys.stdin.read()
+start_t = time.perf_counter()
+
+stdout_buf = io.StringIO()
+stderr_buf = io.StringIO()
+old_stdout = sys.stdout
+old_stderr = sys.stderr
+sys.stdout = stdout_buf
+sys.stderr = stderr_buf
+
+figures = []
+ok = True
+err = None
+tb = None
+
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+except Exception:
+    plt = None
+
+exec_globals = {'__name__': '__main__'}
+
+try:
+    exec(code, exec_globals)
+    if plt:
+        for fignum in plt.get_fignums():
+            fig = plt.figure(fignum)
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+            buf.seek(0)
+            figures.append('data:image/png;base64,' + base64.b64encode(buf.read()).decode('utf-8'))
+        plt.close('all')
+except Exception as e:
+    ok = False
+    err = str(e)
+    tb = traceback.format_exc()
+finally:
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+
+elapsed = int((time.perf_counter() - start_t) * 1000)
+
+result = {
+    'ok': ok,
+    'stdout': stdout_buf.getvalue(),
+    'stderr': stderr_buf.getvalue(),
+    'error': err,
+    'traceback': tb,
+    'figures': figures,
+    'timeMs': elapsed
+}
+
+print(json.dumps(result))
+`;
+
+// Setup IPC handlers for Python execution
+function setupIpcHandlers() {
+  ipcMain.handle('get-python-env', async () => {
+    const pythonPath = findPythonExecutable();
+    return new Promise((resolve) => {
+      const probeCode = `
+import sys, json
+mods = ['numpy', 'sklearn', 'matplotlib', 'pandas', 'scipy', 'torch', 'transformers', 'mlx']
+found = {}
+for m in mods:
+    try:
+        mod = __import__(m)
+        found[m] = getattr(mod, '__version__', 'available')
+    except ImportError:
+        found[m] = None
+
+print(json.dumps({
+    'version': sys.version.split(' ')[0],
+    'executable': sys.executable,
+    'packages': found
+}))
+`;
+      const proc = spawn(pythonPath, ['-c', probeCode]);
+      let stdout = '';
+      proc.stdout.on('data', (d) => { stdout += d.toString(); });
+      proc.on('close', (code) => {
+        if (code === 0) {
+          try {
+            const data = JSON.parse(stdout);
+            resolve({ ok: true, pythonPath, ...data });
+            return;
+          } catch (_) { /* fallback */ }
+        }
+        resolve({ ok: false, pythonPath, error: 'Failed to inspect python environment' });
+      });
+      proc.on('error', (err) => {
+        resolve({ ok: false, pythonPath, error: err.message });
+      });
+    });
+  });
+
+  ipcMain.handle('execute-python', async (_event, { code, timeoutMs = 30000 }) => {
+    const pythonPath = findPythonExecutable();
+    return new Promise((resolve) => {
+      const proc = spawn(pythonPath, ['-c', PYTHON_HARNESS]);
+      let stdout = '';
+      let stderr = '';
+      let timedOut = false;
+
+      const timer = setTimeout(() => {
+        timedOut = true;
+        proc.kill('SIGKILL');
+        resolve({
+          ok: false,
+          error: `Execution timed out after ${timeoutMs / 1000} seconds.`,
+          stdout: stdout,
+          stderr: 'Timeout',
+          figures: [],
+          timeMs: timeoutMs,
+        });
+      }, timeoutMs);
+
+      proc.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      proc.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      proc.on('close', (exitCode) => {
+        clearTimeout(timer);
+        if (timedOut) return;
+
+        if (exitCode !== 0 && !stdout.trim()) {
+          resolve({
+            ok: false,
+            error: stderr || `Process exited with code ${exitCode}`,
+            traceback: stderr,
+            stdout: '',
+            stderr,
+            figures: [],
+            timeMs: 0,
+          });
+          return;
+        }
+
+        try {
+          // stdout should contain the JSON string from harness
+          const jsonStart = stdout.indexOf('{');
+          const jsonEnd = stdout.lastIndexOf('}');
+          if (jsonStart !== -1 && jsonEnd !== -1) {
+            const jsonStr = stdout.substring(jsonStart, jsonEnd + 1);
+            const res = JSON.parse(jsonStr);
+            resolve(res);
+            return;
+          }
+          resolve({
+            ok: exitCode === 0,
+            stdout,
+            stderr,
+            figures: [],
+            timeMs: 0,
+          });
+        } catch (parseErr) {
+          resolve({
+            ok: false,
+            error: `Failed to parse Python output: ${parseErr.message}`,
+            stdout,
+            stderr,
+            figures: [],
+            timeMs: 0,
+          });
+        }
+      });
+
+      proc.on('error', (err) => {
+        clearTimeout(timer);
+        resolve({
+          ok: false,
+          error: `Failed to spawn Python process at ${pythonPath}: ${err.message}`,
+          stdout: '',
+          stderr: err.message,
+          figures: [],
+          timeMs: 0,
+        });
+      });
+
+      // Feed code to stdin
+      proc.stdin.write(code);
+      proc.stdin.end();
+    });
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -145,6 +366,7 @@ function createMenu() {
 }
 
 app.whenReady().then(() => {
+  setupIpcHandlers();
   createMenu();
   createWindow();
 

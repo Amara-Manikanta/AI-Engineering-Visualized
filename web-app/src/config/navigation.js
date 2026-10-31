@@ -20,6 +20,7 @@ export const NAV_LINKS = [
     path: "/ml",
     subLinks: [
       { name: "Introduction", path: "/ml" },
+      { name: "🧪 ML & AI Code Lab", path: "/ml/code-lab" },
       { name: "Data & Statistics", isHeader: true },
       { name: "Data Sourcing", path: "/ml/data-sourcing" },
       { name: "Data Cleaning", path: "/ml/data-cleaning" },

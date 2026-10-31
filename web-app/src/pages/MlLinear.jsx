@@ -179,17 +179,31 @@ export default function MlLinear() {
             </div>
           </div>
 
-          <CodeBlock language="python" maxHeight="320px" code={`for epoch in range(num_epochs):
+          <CodeBlock language="python" maxHeight="340px" code={`import numpy as np
+
+# Sample dataset
+X = np.array([1, 2, 3, 4, 5, 6, 7, 8])
+y = np.array([2.1, 3.9, 4.8, 6.2, 7.1, 8.9, 9.5, 11.2])
+n = len(X)
+
+m, b = 0.0, 0.0
+learning_rate = 0.02
+num_epochs = 150
+
+for epoch in range(num_epochs):
     y_pred = m * X + b
     error = y_pred - y
 
     # gradients: which way is downhill?
-    dm = (2/n) * sum(X * error)   # wrt slope
-    db = (2/n) * sum(error)       # wrt intercept
+    dm = (2/n) * np.sum(X * error)   # wrt slope
+    db = (2/n) * np.sum(error)       # wrt intercept
 
     # take a step against the gradient
     m -= learning_rate * dm
-    b -= learning_rate * db`} />
+    b -= learning_rate * db
+
+print(f"Trained Slope (m): {m:.4f}, Intercept (b): {b:.4f}")
+print(f"Final MSE Loss: {np.mean((m * X + b - y) ** 2):.4f}")`} />
         </div>
       </section>
 
