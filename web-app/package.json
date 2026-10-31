@@ -12,6 +12,7 @@
     "check": "node scripts/check-content.mjs"
   },
   "dependencies": {
+    "@capacitor/core": "^8.5.3",
     "@tailwindcss/vite": "^4.3.3",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.25.0",

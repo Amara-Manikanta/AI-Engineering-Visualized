@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, CheckCircle2, Bookmark, X, Save, ChevronDown, ChevronUp } from 'lucide-react';
-import { Capacitor } from '@capacitor/core';
 
 function isAppPlatform() {
   if (typeof window === 'undefined') return false;
@@ -10,12 +9,6 @@ function isAppPlatform() {
   if (isElectron) return true;
 
   // 2. iPhone app (Capacitor iOS)
-  try {
-    if (Capacitor.isNativePlatform()) return true;
-  } catch {
-    // ignore
-  }
-
   if (window.Capacitor?.isNativePlatform?.()) return true;
   if (window.location.protocol === 'capacitor:' || window.location.origin?.includes('capacitor://')) return true;
 
