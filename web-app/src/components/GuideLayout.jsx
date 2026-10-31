@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles, Terminal } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
 import Footer from "./Footer";
 import { AZURE_LINKS, AWS_LINKS } from "../config/navigation";
@@ -9,6 +9,7 @@ import { neighbours, sectionFor } from "../lib/pageOrder";
 import { useReadPages, setRead } from "../lib/progress";
 import UserTopicNotes from "./UserTopicNotes";
 import TopicCodeStudio from "./TopicCodeStudio";
+import TopicPythonLab from "./TopicPythonLab";
 import { getCustomPageCode, clearCustomPageCode } from "../lib/pageSources";
 import { compileAndEvaluate } from "../lib/jsxRuntime";
 import { GuideLayoutContext } from "../lib/GuideLayoutContext";
@@ -258,6 +259,17 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
                 <span>View Topic</span>
               </button>
               <button
+                onClick={() => setLayoutMode("lab")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  layoutMode === "lab"
+                    ? "bg-emerald-600 text-white shadow-md"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                <span>Python Lab</span>
+              </button>
+              <button
                 onClick={() => setLayoutMode("code")}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   layoutMode === "code"
@@ -286,7 +298,13 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
             )}
           </div>
 
-          {layoutMode === "code" ? (
+          {layoutMode === "lab" ? (
+            <TopicPythonLab
+              pagePath={location.pathname}
+              title={title}
+              onBackToView={() => setLayoutMode("view")}
+            />
+          ) : layoutMode === "code" ? (
             <TopicCodeStudio
               pagePath={location.pathname}
               title={title}
@@ -316,6 +334,11 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
 
               <div className="space-y-8 lg:space-y-12">
                 {customComponent ? React.createElement(customComponent) : children}
+              </div>
+
+              {/* Topic Python Practice Lab directly at the bottom of each topic page */}
+              <div className="mt-14 mb-8">
+                <TopicPythonLab pagePath={location.pathname} title={title} />
               </div>
             </GuideLayoutContext.Provider>
           )}
