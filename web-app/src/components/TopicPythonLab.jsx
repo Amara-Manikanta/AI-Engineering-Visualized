@@ -9,9 +9,12 @@ import {
   Trash2,
   Cpu,
   Image as ImageIcon,
+  Database,
+  ChevronDown,
 } from 'lucide-react';
 import { runPythonCode, getPythonEnvironment, isNativePythonAvailable } from '../lib/pythonRunner';
 import { getStarterCodeForPage } from '../lib/topicLabStarters';
+import { SAMPLE_DATASETS } from '../lib/sampleDatasets';
 
 export default function TopicPythonLab({ pagePath, title, onBackToView }) {
   const storageKey = `python_lab_code_${pagePath}`;
@@ -31,7 +34,24 @@ export default function TopicPythonLab({ pagePath, title, onBackToView }) {
   const [output, setOutput] = useState(null);
   const [copied, setCopied] = useState(false);
   const [envInfo, setEnvInfo] = useState(null);
+  const [showDatasetsMenu, setShowDatasetsMenu] = useState(false);
   const textareaRef = useRef(null);
+  const datasetsMenuRef = useRef(null);
+
+  // Close datasets menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (datasetsMenuRef.current && !datasetsMenuRef.current.contains(e.target)) {
+        setShowDatasetsMenu(false);
+      }
+    };
+    if (showDatasetsMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDatasetsMenu]);
 
   // Sync when pagePath changes
   useEffect(() => {
@@ -192,6 +212,58 @@ export default function TopicPythonLab({ pagePath, title, onBackToView }) {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Sample Datasets Dropdown */}
+          <div className="relative" ref={datasetsMenuRef}>
+            <button
+              type="button"
+              onClick={() => setShowDatasetsMenu(!showDatasetsMenu)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-indigo-500/40 bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 hover:text-indigo-200 transition-colors cursor-pointer text-xs font-semibold"
+              title="Load interesting sample dataset"
+            >
+              <Database className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Datasets</span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${showDatasetsMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showDatasetsMenu && (
+              <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto bg-[#141518] border border-white/10 rounded-xl shadow-2xl p-2 z-30 custom-scrollbar">
+                <div className="px-3 py-2 text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider border-b border-white/5 mb-1 flex items-center justify-between">
+                  <span>Sample Datasets</span>
+                  <span className="text-[0.6rem] text-indigo-400 font-mono">1-click insert</span>
+                </div>
+                {SAMPLE_DATASETS.map((ds) => (
+                  <button
+                    key={ds.id}
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm(`Load "${ds.name}" into the code cell?`)) {
+                        setCode(ds.pythonCode);
+                        try {
+                          localStorage.setItem(storageKey, ds.pythonCode);
+                        } catch {
+                          /* noop */
+                        }
+                        setShowDatasetsMenu(false);
+                        setOutput(null);
+                      }
+                    }}
+                    className="w-full text-left p-2.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group border border-transparent hover:border-white/5"
+                  >
+                    <div className="flex items-center justify-between text-xs font-bold text-white group-hover:text-indigo-300">
+                      <span className="truncate">{ds.name}</span>
+                      <span className="text-[0.6rem] font-mono px-1.5 py-0.2 rounded bg-white/5 text-gray-400 shrink-0">
+                        {ds.category}
+                      </span>
+                    </div>
+                    <p className="text-[0.7rem] text-gray-400 line-clamp-2 mt-1 leading-snug">
+                      {ds.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Reset */}
           <button
             type="button"
