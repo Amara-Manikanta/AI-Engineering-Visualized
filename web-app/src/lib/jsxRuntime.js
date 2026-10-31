@@ -66,6 +66,13 @@ function createSafeDummy(name = 'Component') {
       if (prop === '__esModule') return true;
       if (prop === 'default') return target;
       if (typeof prop === 'string') {
+        if (prop === 'rng') return (_seed = 1) => () => 0.5;
+        if (prop === 'randn') return () => 0.5;
+        if (['mean', 'std', 'sum', 'median', 'variance', 'quantile'].includes(prop)) return () => 0.5;
+        if (['fmt', 'fmtP', 'pct'].includes(prop)) return (x) => String(x ?? '0');
+        if (prop === 'histogram') return () => [];
+        if (prop === 'questionsFor') return () => [];
+        if (prop === 'SEARCH_KEYWORDS') return [];
         return createSafeDummy(`${name}_${prop}`);
       }
       return undefined;
@@ -83,24 +90,30 @@ function createSafeDummy(name = 'Component') {
 
 const asModule = (mod) => {
   if (!mod) return createSafeDummy();
-  if (typeof mod === 'function') {
-    mod.default = mod;
-    mod.__esModule = true;
-    return mod;
-  }
-  if (typeof mod === 'object') {
-    if (!('default' in mod)) {
-      try {
-        mod.default = mod;
-      } catch {
-        /* ignore if sealed */
-      }
-    }
-    try {
-      mod.__esModule = true;
-    } catch {
-      /* ignore if sealed */
-    }
+  if (typeof mod === 'function' || typeof mod === 'object') {
+    return new Proxy(mod, {
+      get(target, prop) {
+        if (prop === '__esModule') return true;
+        if (prop === 'default') {
+          return 'default' in target ? target.default : target;
+        }
+        if (typeof prop === 'string' && prop in target) {
+          const val = target[prop];
+          if (typeof val === 'function') {
+            return val.bind(target);
+          }
+          return val;
+        }
+        // Fallback for missing stats or utility exports
+        if (typeof prop === 'string') {
+          if (prop === 'rng') return (_seed = 1) => () => 0.5;
+          if (prop === 'randn') return () => 0.5;
+          if (['mean', 'std', 'sum', 'median', 'variance', 'quantile'].includes(prop)) return () => 0.5;
+          if (['fmt', 'fmtP', 'pct'].includes(prop)) return (x) => String(x ?? '0');
+        }
+        return target[prop];
+      },
+    });
   }
   return mod;
 };
@@ -156,6 +169,16 @@ export function compileAndEvaluate(rawCode) {
       const wrapped = asModule(mod);
       keys.forEach((k) => {
         scopeMap[k] = wrapped;
+        const noExt = k.replace(/\.jsx?$/, '');
+        scopeMap[noExt] = wrapped;
+        scopeMap[noExt + '.js'] = wrapped;
+        scopeMap[noExt + '.jsx'] = wrapped;
+
+        const stripped = k.replace(/^(\.\.\/|\.\/)+/, '');
+        scopeMap[stripped] = wrapped;
+        scopeMap['./' + stripped] = wrapped;
+        scopeMap['../' + stripped] = wrapped;
+        scopeMap['../../' + stripped] = wrapped;
       });
     };
 
@@ -191,11 +214,31 @@ export function compileAndEvaluate(rawCode) {
     const customRequire = (moduleName) => {
       if (scopeMap[moduleName]) return scopeMap[moduleName];
 
-      const base = moduleName.split('/').pop().replace(/\.jsx?$/, '');
+      const cleanName = moduleName.split('?')[0];
+      if (scopeMap[cleanName]) return scopeMap[cleanName];
+
+      const base = cleanName.split('/').pop().replace(/\.jsx?$/, '');
       if (scopeMap[base]) return scopeMap[base];
 
-      const cleanPath = moduleName.replace(/^\.\.?\//, '').replace(/\.jsx?$/, '');
+      const cleanPath = cleanName.replace(/^(\.\.\/|\.\/)+/, '').replace(/\.jsx?$/, '');
       if (scopeMap[cleanPath]) return scopeMap[cleanPath];
+      if (scopeMap['./' + cleanPath]) return scopeMap['./' + cleanPath];
+      if (scopeMap['../' + cleanPath]) return scopeMap['../' + cleanPath];
+      if (scopeMap['../../' + cleanPath]) return scopeMap['../../' + cleanPath];
+
+      // Specific fallbacks for common page modules
+      if (cleanName.includes('stats')) {
+        return scopeMap['stats'] || asModule(stats);
+      }
+      if (cleanName.includes('quizBank')) {
+        return scopeMap['quizBank'] || asModule(quizBank);
+      }
+      if (cleanName.includes('VizKit')) {
+        return scopeMap['VizKit'] || asModule(VizKit);
+      }
+      if (cleanName.includes('GuideLayout')) {
+        return scopeMap['GuideLayout'] || asModule(SandboxGuideLayout);
+      }
 
       // Fallback safe dummy proxy so unmapped imports/icons/helpers never crash the preview
       return createSafeDummy(base);

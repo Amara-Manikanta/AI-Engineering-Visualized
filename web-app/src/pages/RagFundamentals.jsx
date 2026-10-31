@@ -2,6 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import GuideLayout from "../components/GuideLayout";
 import AdvancedFlowchart from "../components/AdvancedFlowchart";
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 import * as charts from "../data/flowcharts";
 
 export default function RagFundamentals() {
@@ -110,6 +112,8 @@ export default function RagFundamentals() {
             <li><strong>Legal/Medical Analysis:</strong> Summarizing or querying massive regulatory/case law documents.</li>
           </ul>
         </motion.section>
+
+        <KnowledgeCheck questions={questionsFor("rag-core")} />
       </motion.div>
     </GuideLayout>
   );

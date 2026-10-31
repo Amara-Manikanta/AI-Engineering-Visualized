@@ -345,7 +345,7 @@ It is "how often does the knowledge change" and "must we cite a source".`}
           ))}
         </div>
       </section>
-      <KnowledgeCheck questions={questionsFor("rag-core")} />
+      <KnowledgeCheck questions={questionsFor("rag-vs-fine-tuning")} />
     </GuideLayout>
   );
 }

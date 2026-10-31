@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from '../components/KnowledgeCheck';
+import { questionsFor } from '../data/quizBank';
 
 /* ---------------------------------------------------------------------------
    Interactive retrieval-metrics calculator.
@@ -667,6 +669,10 @@ print(report)
             </p>
           </div>
         </motion.section>
+
+        <div className="mt-8">
+          <KnowledgeCheck questions={questionsFor("rag-evaluation")} />
+        </div>
       </div>
     </GuideLayout>
   );

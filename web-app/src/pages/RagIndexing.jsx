@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from '../components/KnowledgeCheck';
+import { questionsFor } from '../data/quizBank';
 
 /* ---------------------------------------------------------------------------
    The indexing pipeline as one SVG, so nodes and connectors share a single
@@ -413,6 +415,10 @@ export default function RagIndexing() {
           <h2 id="incremental" className="text-2xl font-bold mb-4 text-gray-100">Incremental Indexing</h2>
           <p className="text-gray-300 mb-6">In production, you rarely re-index the entire knowledge base. Incremental indexing uses Record Managers to track document hashes, updating or deleting only the chunks of files that have actually changed.</p>
         </section>
+
+        <div className="px-5 mt-8">
+          <KnowledgeCheck questions={questionsFor("rag-indexing")} />
+        </div>
     </GuideLayout>
   );
 }

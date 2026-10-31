@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Database, Search, Zap, ArrowRight, GitBranch, Layers, Shuffle, AlertTriangle, CheckCircle } from "lucide-react";
 import GuideLayout from "../components/GuideLayout";
+import KnowledgeCheck from "../components/KnowledgeCheck";
+import { questionsFor } from "../data/quizBank";
 
 const toc = [
   { label: "1. What is a Vector Database?", hash: "#what-is-vdb" },
@@ -685,6 +687,10 @@ print(results["documents"])
           ))}
         </div>
       </section>
+
+      <div className="mt-12">
+        <KnowledgeCheck questions={questionsFor("rag-vector-dbs")} />
+      </div>
 
     </GuideLayout>
   );

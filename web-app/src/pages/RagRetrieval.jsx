@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from '../components/KnowledgeCheck';
+import { questionsFor } from '../data/quizBank';
 
 export default function RagRetrieval() {
   const [step, setStep] = useState(1);
@@ -209,6 +211,10 @@ export default function RagRetrieval() {
             Vector search is fast but mathematically shallow. Re-ranking solves this by taking the top 50 results from the Vector DB and passing them to a <strong className="text-white">Cross-Encoder</strong> (like Cohere Rerank). The Cross-Encoder reads the query and the chunk together and assigns an absolute relevance score, bubbling the true best answers to the Top-3.
           </p>
         </motion.section>
+
+        <div className="mt-8">
+          <KnowledgeCheck questions={questionsFor("rag-retrieval")} />
+        </div>
       </div>
     </GuideLayout>
   );

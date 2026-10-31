@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import GuideLayout from '../components/GuideLayout';
+import KnowledgeCheck from '../components/KnowledgeCheck';
+import { questionsFor } from '../data/quizBank';
 
 /* Interactive Sliding Window animation */
 function SlidingWindowDemo() {
@@ -723,6 +725,9 @@ chunks = splitter.split_text(markdown_text)`}</div>
                 </div>
               </motion.div>
             )}
+        </div>
+        <div className="mt-8">
+          <KnowledgeCheck questions={questionsFor("rag-chunking")} />
         </div>
       </div>
     </GuideLayout>

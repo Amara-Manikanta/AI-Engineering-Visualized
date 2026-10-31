@@ -286,6 +286,39 @@ export const QUIZZES = [
     tone: "blue",
     questions: [
       {
+        q: "What is the primary reason for incorporating a retrieval step into an LLM generation pipeline (RAG)?",
+        options: [
+          "To create a reinforcement learning feedback loop based on human preferences",
+          "To expand the model's static parameter weights and training dataset",
+          "To reduce hallucination by grounding responses in verified external data",
+          "To improve the grammatical fluency and conversational tone of output",
+        ],
+        answer: 2,
+        why: "RAG decouples factual knowledge from the LLM's static weights. Providing authoritative passages dynamically retrieved from external corpora grounds the generation in verified facts and enables source citations.",
+      },
+      {
+        q: "In an end-to-end RAG architecture, what are the distinct responsibilities of the Retriever, Vector Database, and Generator?",
+        options: [
+          "Retriever searches vectors; Vector DB stores text chunks; Generator routes network requests",
+          "Retriever queries similarity; Vector DB indexes and organizes representations; Generator (LLM) synthesizes the grounded response",
+          "Retriever parses PDFs; Vector DB fine-tunes model weights; Generator computes cosine distances",
+          "Generator finds relevant context; Vector DB creates prompt templates; Retriever outputs tokens",
+        ],
+        answer: 1,
+        why: "The Retriever coordinates searching based on semantic context, the Vector Database stores and indexes dense embeddings for sub-linear nearest-neighbor search, and the Generator (the LLM) consumes the query plus retrieved context to compose a coherent answer.",
+      },
+      {
+        q: "When a user submits a query to a standard RAG pipeline, what is the exact operational sequence across components?",
+        options: [
+          "Query -> Embedding model -> Vector Database retrieval -> Context augmentation -> LLM Generator",
+          "Query -> LLM Generator -> Embedding model -> Vector Database -> User response",
+          "Query -> Vector Database -> LLM Generator -> Embedding model -> Output",
+          "Query -> Context augmentation -> Vector Database -> Embedding model -> Generator",
+        ],
+        answer: 0,
+        why: "The user query is first passed to an Embedding model to produce a dense query vector. The Retriever uses this vector to query the Vector Database for nearest-neighbor chunks. The retrieved chunks are augmented into the prompt alongside the query, which the LLM Generator uses to synthesize the final answer.",
+      },
+      {
         q: "When is fine-tuning the wrong tool for adding company knowledge to a model?",
         options: [
           "Whenever the company is small",

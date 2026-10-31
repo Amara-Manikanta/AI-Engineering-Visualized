@@ -89,3 +89,12 @@ needs, parse the generated SQL and reject anything that is not a single SELECT
 over allowed tables, add a row limit and a statement timeout, and never
 interpolate user text into SQL outside the model's validated output. Show the
 query to the user for high-stakes answers.
+
+Q: How do you evaluate Precision@K and Recall@K in RAG retrieval when only 1 relevant document exists in a corpus and is retrieved in the top 3?
+ANSWER: If K=3 and exactly 1 relevant document was retrieved in the top 3 candidates, Precision@3 is 1/3 (33.3%). If that is the only relevant document in the entire corpus, Recall@3 is 1/1 (100%). Precision measures retrieval purity (fraction of retrieved results that are relevant), while Recall measures coverage (fraction of all relevant documents that were successfully retrieved).
+
+Q: When deciding between RAG and long-context prompting, how do you handle a 50-page static policy versus a 10-million-document hourly updated corpus?
+ANSWER: A 50-page document (~20k tokens) is best handled by long-context prompting with prompt caching, eliminating retrieval complexity while guaranteeing full global reasoning at low cached-token cost. Conversely, a 10M-document corpus updated hourly cannot fit into context or undergo continual fine-tuning; it strictly requires RAG so updated chunks can be embedded into the vector store instantly without re-caching or retraining.
+
+Q: Why is RecursiveCharacterTextSplitter preferred over naive CharacterTextSplitter?
+ANSWER: Naive CharacterTextSplitter splits rigidly by character count or a single delimiter, frequently breaking sentences, code blocks, or semantic paragraphs midway. RecursiveCharacterTextSplitter uses a hierarchical list of delimiters (\n\n, \n, spaces, empty string) to break at the largest natural semantic boundary first, keeping coherent concepts intact inside each chunk.
