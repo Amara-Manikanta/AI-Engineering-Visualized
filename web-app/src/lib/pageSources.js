@@ -72,3 +72,31 @@ export function clearCustomPageCode(pathname) {
 export function hasCustomPageCode(pathname) {
   return Boolean(getCustomPageCode(pathname));
 }
+
+/**
+ * Retrieve path, filename, and directory for a route pathname
+ */
+export function getSourceFileInfo(pathname) {
+  const clean = pathname === '/' ? '/' : (pathname || '').split('#')[0].replace(/\/+$/, '');
+  let relPath = routeFileMap[clean];
+
+  if (!relPath) {
+    if (clean === '/ml/code-lab' || clean === '/practice') {
+      relPath = '../pages/MlCodeLab.jsx';
+    } else if (clean === '' || clean === '/') {
+      relPath = '../pages/Home.jsx';
+    } else {
+      relPath = `../pages${clean}.jsx`;
+    }
+  }
+
+  const fullRepoPath = 'web-app/src/' + relPath.replace(/^\.\.\//, '');
+  const fileName = fullRepoPath.split('/').pop() || '';
+  const dirPath = fullRepoPath.substring(0, fullRepoPath.lastIndexOf('/') + 1);
+
+  return {
+    fullRepoPath,
+    fileName,
+    dirPath,
+  };
+}

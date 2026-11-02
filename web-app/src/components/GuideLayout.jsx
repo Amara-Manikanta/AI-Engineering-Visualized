@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles, Terminal } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles, Terminal, FileCode, Copy, Folder } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
 import Footer from "./Footer";
 import { AZURE_LINKS, AWS_LINKS } from "../config/navigation";
@@ -10,7 +10,7 @@ import { useReadPages, setRead } from "../lib/progress";
 import UserTopicNotes from "./UserTopicNotes";
 import TopicCodeStudio from "./TopicCodeStudio";
 import TopicPythonLab from "./TopicPythonLab";
-import { getCustomPageCode, clearCustomPageCode } from "../lib/pageSources";
+import { getCustomPageCode, clearCustomPageCode, getSourceFileInfo } from "../lib/pageSources";
 import { compileAndEvaluate } from "../lib/jsxRuntime";
 import { GuideLayoutContext } from "../lib/GuideLayoutContext";
 
@@ -73,6 +73,26 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
   const read = useReadPages();
   const isRead = read.has(location.pathname);
   const { prev, next } = neighbours(location.pathname);
+  const fileInfo = getSourceFileInfo(location.pathname);
+  const [copiedPath, setCopiedPath] = useState(false);
+
+  const handleCopyPath = async (e) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(fileInfo.fullRepoPath);
+      setCopiedPath(true);
+      setTimeout(() => setCopiedPath(false), 1600);
+    } catch {
+      /* noop */
+    }
+  };
+
+  const handleRevealInFinder = async (e) => {
+    e.stopPropagation();
+    if (typeof window !== "undefined" && window.electronAPI?.revealSourceFile) {
+      await window.electronAPI.revealSourceFile(fileInfo.fullRepoPath);
+    }
+  };
 
   // Sync custom override whenever location.pathname changes or custom event fires
   useEffect(() => {
@@ -283,19 +303,64 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
               </button>
             </div>
 
-            {hasCustomOverride && (
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Custom Version Active
-                </span>
+            {/* Right: Source Code File Path & Custom State */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Source Code Path Pill */}
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 hover:border-indigo-500/40 text-xs font-mono transition-all shadow-inner group"
+                title={`Source file: ${fileInfo.fullRepoPath} (Click to open code studio)`}
+              >
+                <FileCode className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                 <button
-                  onClick={handleRevertCustom}
-                  className="px-2.5 py-1 rounded-lg text-[10px] font-mono bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-300 border border-white/10 transition-colors cursor-pointer"
+                  type="button"
+                  onClick={() => setLayoutMode("code")}
+                  className="flex items-center text-left hover:text-indigo-300 transition-colors cursor-pointer"
                 >
-                  Revert to Default
+                  <span className="text-gray-500 hidden sm:inline">{fileInfo.dirPath}</span>
+                  <span className="text-white font-semibold group-hover:text-indigo-300">{fileInfo.fileName}</span>
                 </button>
+
+                {/* Copy full path */}
+                <button
+                  type="button"
+                  onClick={handleCopyPath}
+                  title="Copy full source file path"
+                  className="p-1 hover:bg-white/10 rounded transition-colors text-gray-400 hover:text-white cursor-pointer ml-1"
+                >
+                  {copiedPath ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                </button>
+
+                {/* macOS Reveal in Finder (when running in macOS desktop app) */}
+                {typeof window !== "undefined" && Boolean(window.electronAPI?.revealSourceFile) && (
+                  <button
+                    type="button"
+                    onClick={handleRevealInFinder}
+                    title="Reveal source file in macOS Finder"
+                    className="p-1 hover:bg-white/10 rounded transition-colors text-gray-400 hover:text-indigo-300 cursor-pointer"
+                  >
+                    <Folder className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
-            )}
+
+              {hasCustomOverride && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Custom Active
+                  </span>
+                  <button
+                    onClick={handleRevertCustom}
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-mono bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-300 border border-white/10 transition-colors cursor-pointer"
+                  >
+                    Revert to Default
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {layoutMode === "lab" ? (

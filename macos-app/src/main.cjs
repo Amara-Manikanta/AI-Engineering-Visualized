@@ -222,6 +222,39 @@ print(json.dumps({
       proc.stdin.end();
     });
   });
+
+  // Source file revelation and opening in macOS
+  ipcMain.handle('reveal-source-file', async (_event, { relPath }) => {
+    const repoCandidates = [
+      path.resolve(__dirname, '../..'),
+      '/Users/manikantaamara/Desktop/Antigravity/ai-engineering-visualized',
+      path.resolve(process.cwd(), '..'),
+    ];
+    for (const r of repoCandidates) {
+      const fullPath = path.join(r, relPath);
+      if (fs.existsSync(fullPath)) {
+        shell.showItemInFolder(fullPath);
+        return { ok: true, fullPath };
+      }
+    }
+    return { ok: false, error: 'File not found on disk.' };
+  });
+
+  ipcMain.handle('open-source-file', async (_event, { relPath }) => {
+    const repoCandidates = [
+      path.resolve(__dirname, '../..'),
+      '/Users/manikantaamara/Desktop/Antigravity/ai-engineering-visualized',
+      path.resolve(process.cwd(), '..'),
+    ];
+    for (const r of repoCandidates) {
+      const fullPath = path.join(r, relPath);
+      if (fs.existsSync(fullPath)) {
+        await shell.openPath(fullPath);
+        return { ok: true, fullPath };
+      }
+    }
+    return { ok: false, error: 'File not found on disk.' };
+  });
 }
 
 function createWindow() {
