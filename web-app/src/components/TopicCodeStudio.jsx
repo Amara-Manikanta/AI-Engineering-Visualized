@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, Component } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback, Component } from 'react';
 import {
   Code2,
   Play,
@@ -118,6 +118,7 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
   const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
   const searchInputRef = useRef(null);
   const textareaRef = useRef(null);
+  const backdropRef = useRef(null);
 
   const targetRepoFile = useMemo(() => {
     const mapped = routeFileMap[pagePath];
@@ -198,44 +199,116 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
     return results;
   }, [sourceCode, searchQuery, caseSensitive]);
 
+  // Scroll to and select match in textarea
+  const jumpToMatch = useCallback(
+    (idx, shouldFocus = false) => {
+      if (idx < 0 || idx >= matches.length || !textareaRef.current) return;
+      const matchPos = matches[idx];
+      const ta = textareaRef.current;
+
+      if (shouldFocus) {
+        ta.focus();
+      }
+      ta.setSelectionRange(matchPos, matchPos + searchQuery.length);
+
+      const textBefore = sourceCode.substring(0, matchPos);
+      const lineNum = textBefore.split('\n').length - 1;
+      const lineHeight = 20;
+      const targetScrollTop = Math.max(0, lineNum * lineHeight - ta.clientHeight / 2);
+      ta.scrollTop = targetScrollTop;
+
+      const currentLine = textBefore.split('\n').pop() || '';
+      const charWidth = 7.2;
+      const targetScrollLeft = Math.max(0, currentLine.length * charWidth - ta.clientWidth / 2);
+      ta.scrollLeft = targetScrollLeft;
+
+      if (backdropRef.current) {
+        backdropRef.current.scrollTop = targetScrollTop;
+        backdropRef.current.scrollLeft = targetScrollLeft;
+      }
+    },
+    [matches, searchQuery, sourceCode]
+  );
+
   // Adjust match index when query/source changes
   useEffect(() => {
     if (matches.length > 0) {
       if (currentMatchIndex < 0 || currentMatchIndex >= matches.length) {
         setCurrentMatchIndex(0);
+        jumpToMatch(0, false);
       }
     } else {
       setCurrentMatchIndex(-1);
     }
-  }, [matches, currentMatchIndex]);
+  }, [matches, currentMatchIndex, jumpToMatch]);
 
-  // Scroll to and select match in textarea
-  const jumpToMatch = (idx) => {
-    if (idx < 0 || idx >= matches.length || !textareaRef.current) return;
-    const matchPos = matches[idx];
-    const ta = textareaRef.current;
+  // Render visual highlights in backdrop layer beneath transparent textarea
+  const renderedBackdropContent = useMemo(() => {
+    if (!showSearch || !searchQuery || matches.length === 0) {
+      return null;
+    }
 
-    ta.focus();
-    ta.setSelectionRange(matchPos, matchPos + searchQuery.length);
+    const nodes = [];
+    let lastIndex = 0;
+    const qLen = searchQuery.length;
+    const matchesToRender = matches.slice(0, 1500);
 
-    const textBefore = sourceCode.substring(0, matchPos);
-    const lineNum = textBefore.split('\n').length - 1;
-    const lineHeight = 19;
-    ta.scrollTop = Math.max(0, lineNum * lineHeight - ta.clientHeight / 2);
+    for (let i = 0; i < matchesToRender.length; i++) {
+      const matchIdx = matchesToRender[i];
+      if (matchIdx > lastIndex) {
+        nodes.push(sourceCode.substring(lastIndex, matchIdx));
+      }
+      const isCurrent = i === currentMatchIndex;
+      const matchedText = sourceCode.substring(matchIdx, matchIdx + qLen);
+      nodes.push(
+        <mark
+          key={`m-${i}-${matchIdx}`}
+          className={
+            isCurrent
+              ? 'p-0 m-0 bg-amber-400 text-transparent rounded-[2px] shadow-[0_0_0_2px_rgba(251,191,36,0.95)]'
+              : 'p-0 m-0 bg-yellow-400/35 text-transparent rounded-[2px]'
+          }
+        >
+          {matchedText}
+        </mark>
+      );
+      lastIndex = matchIdx + qLen;
+    }
+
+    if (lastIndex < sourceCode.length) {
+      nodes.push(sourceCode.substring(lastIndex));
+    }
+
+    return nodes;
+  }, [showSearch, searchQuery, matches, currentMatchIndex, sourceCode]);
+
+  // Sync scroll between textarea and highlight backdrop
+  const handleScroll = () => {
+    if (textareaRef.current && backdropRef.current) {
+      backdropRef.current.scrollTop = textareaRef.current.scrollTop;
+      backdropRef.current.scrollLeft = textareaRef.current.scrollLeft;
+    }
   };
+
+  useEffect(() => {
+    if (showSearch && textareaRef.current && backdropRef.current) {
+      backdropRef.current.scrollTop = textareaRef.current.scrollTop;
+      backdropRef.current.scrollLeft = textareaRef.current.scrollLeft;
+    }
+  }, [showSearch, searchQuery, currentMatchIndex]);
 
   const handleNextMatch = () => {
     if (matches.length === 0) return;
     const nextIdx = (currentMatchIndex + 1) % matches.length;
     setCurrentMatchIndex(nextIdx);
-    jumpToMatch(nextIdx);
+    jumpToMatch(nextIdx, false);
   };
 
   const handlePrevMatch = () => {
     if (matches.length === 0) return;
     const prevIdx = (currentMatchIndex - 1 + matches.length) % matches.length;
     setCurrentMatchIndex(prevIdx);
-    jumpToMatch(prevIdx);
+    jumpToMatch(prevIdx, false);
   };
 
   const handleReplaceCurrent = () => {
@@ -960,17 +1033,44 @@ ${sourceCode}
             </div>
           )}
 
-          <textarea
-            ref={textareaRef}
-            value={sourceCode}
-            onChange={(e) => handleCodeChange(e.target.value)}
-            onKeyDown={handleTextareaKeyDown}
-            spellCheck={false}
-            autoCorrect="off"
-            autoCapitalize="off"
-            className="w-full h-[65vh] p-4 rounded-2xl bg-black/80 border border-white/10 text-gray-200 font-mono text-xs leading-relaxed focus:outline-none focus:border-purple-500/60 custom-scrollbar resize-y selection:bg-purple-900/60"
-            placeholder="// Paste React JSX code here..."
-          />
+          <div className="relative w-full h-[65vh] rounded-2xl bg-[#090a0f] border border-white/10 focus-within:border-purple-500/60 overflow-hidden shadow-2xl">
+            {showSearch && searchQuery && matches.length > 0 && (
+              <pre
+                ref={backdropRef}
+                aria-hidden="true"
+                className="absolute inset-0 p-4 m-0 font-mono text-xs leading-[20px] text-transparent overflow-hidden whitespace-pre pointer-events-none select-none"
+                style={{
+                  fontFamily:
+                    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                  fontSize: '12px',
+                  lineHeight: '20px',
+                  tabSize: 2,
+                }}
+              >
+                {renderedBackdropContent}
+              </pre>
+            )}
+            <textarea
+              ref={textareaRef}
+              value={sourceCode}
+              wrap="off"
+              onChange={(e) => handleCodeChange(e.target.value)}
+              onScroll={handleScroll}
+              onKeyDown={handleTextareaKeyDown}
+              spellCheck={false}
+              autoCorrect="off"
+              autoCapitalize="off"
+              className="relative z-10 w-full h-full p-4 m-0 font-mono text-xs leading-[20px] bg-transparent text-gray-200 focus:outline-none overflow-auto whitespace-pre custom-scrollbar resize-none selection:bg-purple-700/60 selection:text-white"
+              style={{
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                fontSize: '12px',
+                lineHeight: '20px',
+                tabSize: 2,
+              }}
+              placeholder="// Paste React JSX code here..."
+            />
+          </div>
         </div>
       ) : (
         /* Preview Tab */
