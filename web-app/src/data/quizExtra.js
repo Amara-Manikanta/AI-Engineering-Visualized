@@ -2284,4 +2284,80 @@ export const EXTRA_QUIZZES = [
       },
     ],
   },
+  {
+    id: "ml-supervised",
+    topic: "Supervised Learning",
+    label: "Supervised Learning Fundamentals",
+    path: "/ml/supervised",
+    icon: "🎓",
+    tone: "emerald",
+    questions: [
+      {
+        q: "A model scores 98% on its training data and 71% on a held-out test set. What is the most likely diagnosis?",
+        options: [
+          "Underfitting: it is too simple to capture the pattern",
+          "Overfitting: it has memorised noise specific to the training rows",
+          "The test set must be mislabelled, since the model clearly learned the task",
+          "Class imbalance, which always lowers test accuracy by about the same amount",
+        ],
+        answer: 1,
+        why: "A large gap between training and test performance is the signature of overfitting (high variance). Underfitting shows up as poor scores on both. Fixes include more data, a simpler model, regularisation or early stopping.",
+      },
+      {
+        q: "You standardise (subtract mean, divide by standard deviation) the whole dataset and then split it into train and test. What is wrong?",
+        options: [
+          "Nothing, because scaling is a harmless step done before any modelling starts",
+          "Scaling is only valid for regression and breaks classification",
+          "Test rows shaped the scaler's statistics, which is data leakage",
+          "The test set ends up with a different number of rows than before",
+        ],
+        answer: 2,
+        why: "Statistics computed on all rows let test information leak into training, so the score is optimistic. Split first, fit the scaler on the training portion only, then apply it to the test portion. A scikit-learn Pipeline enforces this inside every cross-validation fold.",
+      },
+      {
+        q: "Which task is a regression problem?",
+        options: [
+          "Predicting how many minutes a delivery will take",
+          "Deciding whether an email is spam",
+          "Tagging a photo as 'beach', 'sunset' or both",
+          "Choosing which of 10 digits a handwritten image shows",
+        ],
+        answer: 0,
+        why: "Regression predicts a continuous quantity such as a duration, price or temperature. The other three predict categories: binary, multi-label and multi-class respectively.",
+      },
+      {
+        q: "A fraud model flags nothing and is right on 990 of 1,000 transactions, of which 10 are fraud. Which statement is true?",
+        options: [
+          "Its recall is 99%, because it is correct on almost every transaction",
+          "Its precision is 100%, because it never raises a false alarm",
+          "It is a strong model, since 99% accuracy is far above chance",
+          "Its accuracy is 99% but its recall is 0%, so it catches no fraud",
+        ],
+        answer: 3,
+        why: "Accuracy is (TP + TN) / all = 990 / 1,000. Recall is TP / (TP + FN) = 0 / 10. With rare positives, accuracy is dominated by the majority class and hides a useless model. Precision is undefined because no alerts were raised.",
+      },
+      {
+        q: "What is the main benefit of 5-fold cross-validation compared with a single 80/20 split?",
+        options: [
+          "A steadier estimate: every row gets tested once",
+          "It trains the model five times faster than one split does",
+          "It removes the need for a final test set altogether",
+          "It guarantees the final model will not overfit",
+        ],
+        answer: 0,
+        why: "A single split can be lucky or unlucky. Rotating the held-out fold averages that luck away and also shows the spread across folds. It costs about k times the compute, it does not replace a final untouched test set when you tune, and it measures overfitting rather than preventing it.",
+      },
+      {
+        q: "In gradient descent, what happens if the learning rate is set much too large?",
+        options: [
+          "Training becomes very slow but always reaches the exact minimum",
+          "Updates overshoot the valley, so loss can bounce or grow",
+          "The model automatically switches over to a closed-form solution",
+          "The parameters stop changing after the first step",
+        ],
+        answer: 1,
+        why: "The learning rate is the step length. Too small and progress crawls; too large and each step jumps past the minimum, which can oscillate or diverge. In practice you pick a rate that decreases the loss smoothly, often with a schedule.",
+      },
+    ],
+  },
 ];

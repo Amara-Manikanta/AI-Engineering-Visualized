@@ -5065,11 +5065,19 @@
   {
     "path": "/ml/supervised",
     "title": "Supervised Learning",
-    "intro": "Models trained on labelled data — every example comes with the right answer, and the model learns the mapping from input to output.",
+    "intro": "Models trained on labelled data: every example comes with the right answer, and the model learns the mapping from input to output so it can answer for inputs it has never seen.",
     "sections": [
       {
         "label": "How It Works",
         "hash": "how"
+      },
+      {
+        "label": "The Vocabulary",
+        "hash": "vocab"
+      },
+      {
+        "label": "How a Model Learns",
+        "hash": "learning"
       },
       {
         "label": "Regression vs Classification",
@@ -5088,11 +5096,69 @@
         "hash": "fit"
       },
       {
-        "label": "Evaluation & Cross-Validation",
+        "label": "Train / Validation / Test",
+        "hash": "splits"
+      },
+      {
+        "label": "Evaluation Metrics",
         "hash": "evaluation"
+      },
+      {
+        "label": "Cross-Validation",
+        "hash": "kfold"
+      },
+      {
+        "label": "Common Pitfalls",
+        "hash": "pitfalls"
+      },
+      {
+        "label": "In Code",
+        "hash": "code"
       }
     ],
-    "keywords": []
+    "keywords": [
+      "supervised learning",
+      "labelled data",
+      "labeled data",
+      "features",
+      "label",
+      "target",
+      "training set",
+      "test set",
+      "validation set",
+      "regression",
+      "classification",
+      "binary classification",
+      "multi-class",
+      "multi-label",
+      "loss function",
+      "mean squared error",
+      "gradient descent",
+      "learning rate",
+      "parameters",
+      "hyperparameters",
+      "overfitting",
+      "underfitting",
+      "bias variance tradeoff",
+      "generalisation",
+      "generalization",
+      "train test split",
+      "data leakage",
+      "cross validation",
+      "k-fold",
+      "stratified k-fold",
+      "confusion matrix",
+      "accuracy",
+      "precision",
+      "recall",
+      "F1 score",
+      "R squared",
+      "MAE",
+      "RMSE",
+      "class imbalance",
+      "decision threshold",
+      "scikit-learn"
+    ]
   },
   {
     "path": "/ml/svm",

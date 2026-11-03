@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, Component } from 'react';
+import React, { useState, useEffect, useMemo, useRef, Component } from 'react';
 import {
   Code2,
   Play,
@@ -18,6 +18,12 @@ import {
   X,
   ShieldCheck,
   GitPullRequest,
+  Search,
+  ChevronUp,
+  ChevronDown,
+  Replace,
+  Undo2,
+  Redo2,
 } from 'lucide-react';
 import {
   getOriginalPageSource,
@@ -97,6 +103,22 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
   const [tokenVerifiedUser, setTokenVerifiedUser] = useState(null);
   const [verifyingToken, setVerifyingToken] = useState(false);
 
+  // Undo / Redo history state
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const isUndoRedoAction = useRef(false);
+  const lastSnapshotTime = useRef(0);
+
+  // Search & Replace state
+  const [showSearch, setShowSearch] = useState(false);
+  const [showReplace, setShowReplace] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [replaceQuery, setReplaceQuery] = useState('');
+  const [caseSensitive, setCaseSensitive] = useState(false);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
+  const searchInputRef = useRef(null);
+  const textareaRef = useRef(null);
+
   const targetRepoFile = useMemo(() => {
     const mapped = routeFileMap[pagePath];
     if (mapped) {
@@ -105,7 +127,179 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
     return `web-app/src/pages${pagePath}.jsx`;
   }, [pagePath]);
 
-  // Keyboard shortcuts (Cmd/Ctrl + Enter to run, Cmd/Ctrl + S to save, Cmd/Ctrl + Shift + P to push)
+  // Push code changes into history stack
+  const pushHistory = (newCode, force = false) => {
+    const now = Date.now();
+    setHistory((prev) => {
+      if (!force && now - lastSnapshotTime.current < 500 && historyIndex >= 0) {
+        const copy = [...prev];
+        copy[historyIndex] = newCode;
+        return copy;
+      }
+      const truncated = prev.slice(0, historyIndex + 1);
+      if (truncated.length >= 100) truncated.shift();
+      return [...truncated, newCode];
+    });
+
+    setHistoryIndex((prev) => {
+      if (!force && now - lastSnapshotTime.current < 500 && prev >= 0) {
+        return prev;
+      }
+      lastSnapshotTime.current = now;
+      return Math.min(prev + 1, 99);
+    });
+  };
+
+  const handleCodeChange = (newVal) => {
+    if (isUndoRedoAction.current) {
+      isUndoRedoAction.current = false;
+      return;
+    }
+    setSourceCode(newVal);
+    pushHistory(newVal);
+  };
+
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.length - 1;
+
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      const prevIdx = historyIndex - 1;
+      const targetCode = history[prevIdx];
+      isUndoRedoAction.current = true;
+      setHistoryIndex(prevIdx);
+      setSourceCode(targetCode);
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      const nextIdx = historyIndex + 1;
+      const targetCode = history[nextIdx];
+      isUndoRedoAction.current = true;
+      setHistoryIndex(nextIdx);
+      setSourceCode(targetCode);
+    }
+  };
+
+  // Compute search match indices
+  const matches = useMemo(() => {
+    if (!searchQuery) return [];
+    const results = [];
+    const text = caseSensitive ? sourceCode : sourceCode.toLowerCase();
+    const query = caseSensitive ? searchQuery : searchQuery.toLowerCase();
+    if (!query) return [];
+
+    let idx = 0;
+    while ((idx = text.indexOf(query, idx)) !== -1) {
+      results.push(idx);
+      idx += query.length || 1;
+    }
+    return results;
+  }, [sourceCode, searchQuery, caseSensitive]);
+
+  // Adjust match index when query/source changes
+  useEffect(() => {
+    if (matches.length > 0) {
+      if (currentMatchIndex < 0 || currentMatchIndex >= matches.length) {
+        setCurrentMatchIndex(0);
+      }
+    } else {
+      setCurrentMatchIndex(-1);
+    }
+  }, [matches, currentMatchIndex]);
+
+  // Scroll to and select match in textarea
+  const jumpToMatch = (idx) => {
+    if (idx < 0 || idx >= matches.length || !textareaRef.current) return;
+    const matchPos = matches[idx];
+    const ta = textareaRef.current;
+
+    ta.focus();
+    ta.setSelectionRange(matchPos, matchPos + searchQuery.length);
+
+    const textBefore = sourceCode.substring(0, matchPos);
+    const lineNum = textBefore.split('\n').length - 1;
+    const lineHeight = 19;
+    ta.scrollTop = Math.max(0, lineNum * lineHeight - ta.clientHeight / 2);
+  };
+
+  const handleNextMatch = () => {
+    if (matches.length === 0) return;
+    const nextIdx = (currentMatchIndex + 1) % matches.length;
+    setCurrentMatchIndex(nextIdx);
+    jumpToMatch(nextIdx);
+  };
+
+  const handlePrevMatch = () => {
+    if (matches.length === 0) return;
+    const prevIdx = (currentMatchIndex - 1 + matches.length) % matches.length;
+    setCurrentMatchIndex(prevIdx);
+    jumpToMatch(prevIdx);
+  };
+
+  const handleReplaceCurrent = () => {
+    if (currentMatchIndex < 0 || currentMatchIndex >= matches.length) return;
+    const matchPos = matches[currentMatchIndex];
+    const newCode =
+      sourceCode.substring(0, matchPos) +
+      replaceQuery +
+      sourceCode.substring(matchPos + searchQuery.length);
+    setSourceCode(newCode);
+    pushHistory(newCode, true);
+  };
+
+  const handleReplaceAll = () => {
+    if (!searchQuery || matches.length === 0) return;
+    let newCode;
+    if (caseSensitive) {
+      newCode = sourceCode.replaceAll(searchQuery, replaceQuery);
+    } else {
+      const regex = new RegExp(searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      newCode = sourceCode.replace(regex, replaceQuery);
+    }
+    const count = matches.length;
+    setSourceCode(newCode);
+    pushHistory(newCode, true);
+    setSaveStatus(`Replaced ${count} occurrences`);
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
+  const handleSearchInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (e.shiftKey) {
+        handlePrevMatch();
+      } else {
+        handleNextMatch();
+      }
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowSearch(false);
+      textareaRef.current?.focus();
+    }
+  };
+
+  const handleTextareaKeyDown = (e) => {
+    // Tab key indent support
+    if (e.key === 'Tab' && textareaRef.current) {
+      e.preventDefault();
+      const ta = textareaRef.current;
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const val = sourceCode;
+      const updated = val.substring(0, start) + '  ' + val.substring(end);
+      handleCodeChange(updated);
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
+        }
+      }, 0);
+    }
+  };
+
+  // Keyboard shortcuts (Cmd/Ctrl + Enter to run, Cmd/Ctrl + S to save, Cmd/Ctrl + Shift + P to push, Cmd+F/H for search, Cmd+Z/Y for undo/redo)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -120,11 +314,51 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
         e.preventDefault();
         handleOpenGitModal();
       }
+      // Find (Cmd+F)
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && (e.key === 'f' || e.key === 'F')) {
+        e.preventDefault();
+        setActiveTab('editor');
+        setShowSearch(true);
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+          searchInputRef.current?.select();
+        }, 50);
+      }
+      // Replace (Cmd+H)
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && (e.key === 'h' || e.key === 'H')) {
+        e.preventDefault();
+        setActiveTab('editor');
+        setShowSearch(true);
+        setShowReplace(true);
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+          searchInputRef.current?.select();
+        }, 50);
+      }
+      // Undo (Cmd+Z, no shift)
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        handleUndo();
+      }
+      // Redo (Cmd+Shift+Z or Cmd+Y)
+      if (
+        ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'z' || e.key === 'Z')) ||
+        ((e.metaKey || e.ctrlKey) && (e.key === 'y' || e.key === 'Y'))
+      ) {
+        e.preventDefault();
+        handleRedo();
+      }
+      // Close search (Escape)
+      if (e.key === 'Escape' && showSearch) {
+        e.preventDefault();
+        setShowSearch(false);
+        textareaRef.current?.focus();
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceCode, title, hasOverride]);
+  }, [sourceCode, title, hasOverride, historyIndex, history, showSearch, matches, currentMatchIndex]);
 
   // Load source on mount or pagePath change
   useEffect(() => {
@@ -135,17 +369,18 @@ export default function TopicCodeStudio({ pagePath, title, onRevertToView }) {
       const isCustom = hasCustomPageCode(pagePath);
       setHasOverride(isCustom);
 
+      let initialText = '';
       if (custom) {
-        if (mounted) {
-          setSourceCode(custom);
-          setLoading(false);
-        }
-        return;
+        initialText = custom;
+      } else {
+        const original = await getOriginalPageSource(pagePath);
+        initialText = original || '// No source found for this page.';
       }
 
-      const original = await getOriginalPageSource(pagePath);
       if (mounted) {
-        setSourceCode(original || '// No source found for this page.');
+        setSourceCode(initialText);
+        setHistory([initialText]);
+        setHistoryIndex(0);
         setLoading(false);
       }
     }
@@ -197,6 +432,7 @@ ${sourceCode}
       const text = await navigator.clipboard.readText();
       if (text) {
         setSourceCode(text);
+        pushHistory(text, true);
         setSaveStatus('Pasted from clipboard');
         setTimeout(() => setSaveStatus(''), 2000);
       }
@@ -228,7 +464,10 @@ ${sourceCode}
     setCompileError(null);
     setCompiledComponent(null);
     const original = await getOriginalPageSource(pagePath);
-    setSourceCode(original || '');
+    const text = original || '';
+    setSourceCode(text);
+    setHistory([text]);
+    setHistoryIndex(0);
     setSaveStatus('Reverted to original.');
     setTimeout(() => setSaveStatus(''), 2500);
   };
@@ -469,6 +708,58 @@ ${sourceCode}
           <span>Paste Code</span>
         </button>
 
+        {/* Undo button */}
+        <button
+          type="button"
+          onClick={handleUndo}
+          disabled={!canUndo}
+          title="Undo (⌘Z)"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 font-mono cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <Undo2 className="w-3.5 h-3.5" />
+          <span className="hidden md:inline">Undo</span>
+          <span className="hidden lg:inline text-[10px] opacity-60">⌘Z</span>
+        </button>
+
+        {/* Redo button */}
+        <button
+          type="button"
+          onClick={handleRedo}
+          disabled={!canRedo}
+          title="Redo (⇧⌘Z)"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 font-mono cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <Redo2 className="w-3.5 h-3.5" />
+          <span className="hidden md:inline">Redo</span>
+          <span className="hidden lg:inline text-[10px] opacity-60">⇧⌘Z</span>
+        </button>
+
+        {/* Find & Replace button */}
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('editor');
+            const next = !showSearch;
+            setShowSearch(next);
+            if (next) {
+              setTimeout(() => {
+                searchInputRef.current?.focus();
+                searchInputRef.current?.select();
+              }, 50);
+            }
+          }}
+          title="Find & Replace in Code (⌘F)"
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border font-mono cursor-pointer transition-all ${
+            showSearch
+              ? 'bg-purple-600/30 border-purple-500/60 text-purple-200'
+              : 'bg-white/5 hover:bg-white/10 text-gray-300 border-white/10'
+          }`}
+        >
+          <Search className="w-3.5 h-3.5" />
+          <span className="hidden md:inline">Find</span>
+          <span className="hidden lg:inline text-[10px] opacity-60">⌘F</span>
+        </button>
+
         {/* Run & Preview button */}
         <button
           onClick={handleCompileAndPreview}
@@ -530,21 +821,154 @@ ${sourceCode}
         </div>
       ) : activeTab === 'editor' ? (
         <div className="space-y-2">
+          {/* Header Bar */}
           <div className="flex items-center justify-between text-[11px] font-mono text-gray-400 px-1">
             <span className="flex items-center gap-1.5">
               <FileCode className="w-3.5 h-3.5 text-purple-400" />
               <span>JSX Source ({lineCount} lines)</span>
             </span>
-            <span>{hasOverride ? '⚡ Custom Version Loaded' : 'Bundled Original'}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-gray-500 hidden sm:inline">⌘F find • ⌘H replace • ⌘Z undo</span>
+              <span>{hasOverride ? '⚡ Custom Version Loaded' : 'Bundled Original'}</span>
+            </div>
           </div>
 
+          {/* Search & Replace Floating Bar */}
+          {showSearch && (
+            <div className="p-3 rounded-2xl bg-[#14151b] border border-purple-500/40 shadow-2xl space-y-2.5 font-mono text-xs animate-in fade-in slide-in-from-top-1 duration-150">
+              {/* Find row */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative flex-1 min-w-[200px] flex items-center">
+                  <Search className="w-3.5 h-3.5 text-gray-500 absolute left-2.5" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearchInputKeyDown}
+                    placeholder="Find in code (Enter = next, Shift+Enter = prev)..."
+                    className="w-full pl-8 pr-24 py-1.5 rounded-xl bg-black/70 border border-white/10 focus:border-purple-500/70 focus:outline-none text-white text-xs placeholder:text-gray-500 shadow-inner"
+                  />
+                  <div className="absolute right-2.5 flex items-center gap-1 text-[11px]">
+                    {searchQuery ? (
+                      matches.length > 0 ? (
+                        <span className="text-purple-400 font-semibold">
+                          {currentMatchIndex + 1} of {matches.length}
+                        </span>
+                      ) : (
+                        <span className="text-rose-400 font-medium">No matches</span>
+                      )
+                    ) : null}
+                  </div>
+                </div>
+
+                {/* Match Navigation buttons */}
+                <div className="flex items-center gap-1 bg-black/40 rounded-xl p-0.5 border border-white/10">
+                  <button
+                    type="button"
+                    onClick={handlePrevMatch}
+                    disabled={matches.length === 0}
+                    title="Previous match (Shift + Enter)"
+                    className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-30 text-gray-300 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextMatch}
+                    disabled={matches.length === 0}
+                    title="Next match (Enter)"
+                    className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-30 text-gray-300 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Case sensitivity toggle */}
+                <button
+                  type="button"
+                  onClick={() => setCaseSensitive(!caseSensitive)}
+                  title="Match Case (Aa)"
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                    caseSensitive
+                      ? 'border-purple-500/60 bg-purple-500/20 text-purple-300 shadow-sm'
+                      : 'border-white/10 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Aa
+                </button>
+
+                {/* Toggle Replace */}
+                <button
+                  type="button"
+                  onClick={() => setShowReplace(!showReplace)}
+                  title="Toggle Replace Bar"
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border transition-colors cursor-pointer text-xs ${
+                    showReplace
+                      ? 'border-indigo-500/60 bg-indigo-500/20 text-indigo-300 shadow-sm'
+                      : 'border-white/10 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <Replace className="w-3.5 h-3.5" />
+                  <span>Replace</span>
+                </button>
+
+                {/* Close Search */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSearch(false);
+                    textareaRef.current?.focus();
+                  }}
+                  title="Close (Escape)"
+                  className="p-1.5 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-colors cursor-pointer ml-auto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Replace row */}
+              {showReplace && (
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+                  <div className="relative flex-1 min-w-[200px]">
+                    <input
+                      type="text"
+                      value={replaceQuery}
+                      onChange={(e) => setReplaceQuery(e.target.value)}
+                      placeholder="Replace with..."
+                      className="w-full px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 focus:border-indigo-500/70 focus:outline-none text-white text-xs placeholder:text-gray-500 shadow-inner"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleReplaceCurrent}
+                    disabled={matches.length === 0}
+                    className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold disabled:opacity-30 cursor-pointer transition-colors"
+                  >
+                    Replace
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleReplaceAll}
+                    disabled={matches.length === 0}
+                    className="px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 text-xs font-semibold disabled:opacity-30 cursor-pointer transition-colors"
+                  >
+                    Replace All ({matches.length})
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <textarea
+            ref={textareaRef}
             value={sourceCode}
-            onChange={(e) => setSourceCode(e.target.value)}
+            onChange={(e) => handleCodeChange(e.target.value)}
+            onKeyDown={handleTextareaKeyDown}
             spellCheck={false}
             autoCorrect="off"
             autoCapitalize="off"
-            className="w-full h-[65vh] p-4 rounded-2xl bg-black/80 border border-white/10 text-gray-200 font-mono text-xs leading-relaxed focus:outline-none focus:border-purple-500/60 custom-scrollbar resize-y"
+            className="w-full h-[65vh] p-4 rounded-2xl bg-black/80 border border-white/10 text-gray-200 font-mono text-xs leading-relaxed focus:outline-none focus:border-purple-500/60 custom-scrollbar resize-y selection:bg-purple-900/60"
             placeholder="// Paste React JSX code here..."
           />
         </div>
