@@ -24,6 +24,36 @@ import PromptPractice from '../components/PromptPractice';
 import AdvancedFlowchart from '../components/AdvancedFlowchart';
 import VariantNotes from '../components/VariantNotes';
 
+// Every project component, helper and data module a page can import, so edited
+// pages keep their page-specific labs (components/mcp/McpLabs and the like) instead
+// of silently falling back to empty placeholders. Modules that import this runtime
+// are left out to avoid a cycle.
+const AUTO_MODULES = import.meta.glob(
+  [
+    '../components/**/*.{js,jsx}',
+    '../lib/**/*.{js,jsx}',
+    '../data/**/*.{js,jsx}',
+    '!../components/GuideLayout.jsx',
+    '!../components/TopicCodeStudio.jsx',
+    '!../components/AiAssistant.jsx',
+    '!../components/UserTopicNotes.jsx',
+    '!../lib/jsxRuntime.js',
+    '!../lib/pageSources.js',
+    '!../lib/aiAssistant.js',
+  ],
+  { eager: true }
+);
+
+// "../components/mcp/McpLabs" / "components/mcp/McpLabs.jsx" -> module namespace, or null
+function resolveAutoModule(name) {
+  const clean = name.split('?')[0].replace(/^(\.\.\/|\.\/)+/, '').replace(/\.(jsx?|json)$/, '');
+  for (const ext of ['.jsx', '.js']) {
+    const hit = AUTO_MODULES[`../${clean}${ext}`];
+    if (hit) return hit;
+  }
+  return null;
+}
+
 // Safe proxy for Lucide icons so AI hallucinations don't crash the renderer
 const safeLucide = new Proxy(LucideIcons, {
   get(target, prop) {
@@ -211,6 +241,8 @@ export function compileAndEvaluate(rawCode) {
     registerModule(['../lib/questionFormat', './questionFormat', 'questionFormat', 'lib/questionFormat'], questionFormat);
     registerModule(['../lib/useReducedMotion', './useReducedMotion', 'useReducedMotion', 'lib/useReducedMotion'], useReducedMotion);
 
+    const unresolved = [];
+
     const customRequire = (moduleName) => {
       if (scopeMap[moduleName]) return scopeMap[moduleName];
 
@@ -240,7 +272,12 @@ export function compileAndEvaluate(rawCode) {
         return scopeMap['GuideLayout'] || asModule(SandboxGuideLayout);
       }
 
+      // Any other project file under components/, lib/ or data/
+      const auto = moduleName.startsWith('.') ? resolveAutoModule(moduleName) : null;
+      if (auto) return asModule(auto);
+
       // Fallback safe dummy proxy so unmapped imports/icons/helpers never crash the preview
+      if (!unresolved.includes(moduleName)) unresolved.push(moduleName);
       return createSafeDummy(base);
     };
 
@@ -285,7 +322,7 @@ export function compileAndEvaluate(rawCode) {
       };
     }
 
-    return { Component: ResultComponent, error: null };
+    return { Component: ResultComponent, error: null, unresolved };
   } catch (err) {
     return {
       Component: null,

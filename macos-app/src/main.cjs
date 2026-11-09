@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { spawn } = require('child_process');
+const { setupGemini } = require('./gemini.cjs');
 
 let mainWindow;
 
@@ -91,6 +92,8 @@ print(json.dumps(result))
 
 // Setup IPC handlers for Python execution
 function setupIpcHandlers() {
+  setupGemini(ipcMain, () => mainWindow);
+
   ipcMain.handle('get-python-env', async () => {
     const pythonPath = findPythonExecutable();
     return new Promise((resolve) => {

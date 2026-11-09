@@ -3,6 +3,8 @@ import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-d
 import { MotionConfig } from "framer-motion";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
+// macOS app only: the chunk is never requested on the web
+const AiAssistant = lazy(() => import("./components/AiAssistant"));
 const DocumentLoaders = lazy(() => import("./pages/DocumentLoaders"));
 const Langchain = lazy(() => import("./pages/Langchain"));
 const RagFundamentals = lazy(() => import("./pages/RagFundamentals"));
@@ -205,6 +207,17 @@ function AgiRedirect() {
   return <Navigate to={{ pathname: "/models/agi-claims", hash }} replace />;
 }
 
+// The floating AI assistant exists only where the Electron bridge does (the macOS app).
+function MacAssistant() {
+  useLocation(); // re-check on navigation
+  if (typeof window === "undefined" || !window.electronAPI?.aiGenerate) return null;
+  return (
+    <Suspense fallback={null}>
+      <AiAssistant />
+    </Suspense>
+  );
+}
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useLayoutEffect(() => {
@@ -220,6 +233,8 @@ function App() {
       {/* "user": framer-motion skips transform animations when the OS asks for reduced motion */}
       <MotionConfig reducedMotion="user">
       <ScrollToTop />
+      {/* macOS app only: renders nothing without the Electron bridge */}
+      <MacAssistant />
       <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route path="/" element={<Home />} />
