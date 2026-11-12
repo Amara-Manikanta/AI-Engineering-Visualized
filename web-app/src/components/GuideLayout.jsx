@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, lazy, Suspense } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles, Terminal, FileCode, Copy, Folder } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
@@ -8,11 +8,15 @@ import { PYTHON_LINKS } from "../config/pythonNavigation";
 import { neighbours, sectionFor } from "../lib/pageOrder";
 import { useReadPages, setRead } from "../lib/progress";
 import UserTopicNotes from "./UserTopicNotes";
-import TopicCodeStudio from "./TopicCodeStudio";
 import TopicPythonLab from "./TopicPythonLab";
 import { getCustomPageCode, clearCustomPageCode, getSourceFileInfo } from "../lib/pageSources";
-import { compileAndEvaluate } from "../lib/jsxRuntime";
 import { GuideLayoutContext } from "../lib/GuideLayoutContext";
+import ErrorBoundary from "./ErrorBoundary";
+
+// The code studio and the JSX sandbox it needs (compiler, every icon, every lab) weigh over a
+// megabyte. Readers who never edit a page should not download them, so both load on demand.
+const TopicCodeStudio = lazy(() => import("./TopicCodeStudio"));
+const loadRuntime = () => import("../lib/jsxRuntime");
 
 const cleanName = (n) => n.replace(/^·\s*/, "");
 
@@ -96,18 +100,29 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
 
   // Sync custom override whenever location.pathname changes or custom event fires
   useEffect(() => {
+    let live = true;
     const updateCustomComponent = () => {
       const customCode = getCustomPageCode(location.pathname);
       if (customCode) {
         setHasCustomOverride(true);
-        const { Component: Comp, error } = compileAndEvaluate(customCode);
-        if (error) {
-          setCustomError(error);
-          setCustomComponent(null);
-        } else {
-          setCustomError(null);
-          setCustomComponent(() => Comp);
-        }
+        loadRuntime()
+          .then(({ compileAndEvaluate }) => {
+            // The page or the override may have changed while the sandbox was loading.
+            if (!live || getCustomPageCode(location.pathname) !== customCode) return;
+            const { Component: Comp, error } = compileAndEvaluate(customCode);
+            if (error) {
+              setCustomError(error);
+              setCustomComponent(null);
+            } else {
+              setCustomError(null);
+              setCustomComponent(() => Comp);
+            }
+          })
+          .catch(() => {
+            if (!live) return;
+            setCustomError("Could not load the page editor. Check your connection and reload.");
+            setCustomComponent(null);
+          });
       } else {
         setHasCustomOverride(false);
         setCustomComponent(null);
@@ -118,6 +133,7 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
     updateCustomComponent();
     window.addEventListener("topic_custom_code_change", updateCustomComponent);
     return () => {
+      live = false;
       window.removeEventListener("topic_custom_code_change", updateCustomComponent);
     };
   }, [location.pathname]);
@@ -266,7 +282,7 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
         <main className="flex-1 min-w-0">
           {/* Personal Learning Mode: View Page vs Source Code & Live Sandbox Toggle */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6 p-2 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10">
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10">
               <button
                 onClick={() => setLayoutMode("view")}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
@@ -370,11 +386,13 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
               onBackToView={() => setLayoutMode("view")}
             />
           ) : layoutMode === "code" ? (
-            <TopicCodeStudio
-              pagePath={location.pathname}
-              title={title}
-              onRevertToView={() => setLayoutMode("view")}
-            />
+            <Suspense fallback={<div className="py-16 text-center text-gray-400 font-mono text-xs">Loading code studio…</div>}>
+              <TopicCodeStudio
+                pagePath={location.pathname}
+                title={title}
+                onRevertToView={() => setLayoutMode("view")}
+              />
+            </Suspense>
           ) : (
             <GuideLayoutContext.Provider value={true}>
               {hasCustomOverride && customError && (
@@ -398,7 +416,37 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
               </div>
 
               <div className="space-y-8 lg:space-y-12">
-                {customComponent ? React.createElement(customComponent) : children}
+                {customComponent ? (
+                  // An edited page can compile and still throw while rendering. Without this it
+                  // would blank the app on every visit, because the edit is saved on the device.
+                  <ErrorBoundary
+                    resetKey={customComponent}
+                    fallback={(error) => (
+                      <div className="p-5 rounded-2xl bg-red-950/30 border border-red-500/40 text-sm text-rose-200">
+                        <div className="font-bold mb-1">Your edited version of this page crashed</div>
+                        <p className="text-xs font-mono opacity-80 break-words mb-4">{String(error?.message || error)}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => clearCustomPageCode(location.pathname)}
+                            className="px-3 py-2 min-h-9 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold cursor-pointer"
+                          >
+                            Restore the original page
+                          </button>
+                          <button
+                            onClick={() => setLayoutMode("code")}
+                            className="px-3 py-2 min-h-9 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-100 text-xs font-semibold cursor-pointer"
+                          >
+                            Fix in Code Studio
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  >
+                    {React.createElement(customComponent)}
+                  </ErrorBoundary>
+                ) : (
+                  children
+                )}
               </div>
 
               {/* Topic Python Practice Lab directly at the bottom of each topic page */}

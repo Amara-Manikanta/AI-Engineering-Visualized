@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-d
 import { MotionConfig } from "framer-motion";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
+import ErrorBoundary from "./components/ErrorBoundary";
 // macOS app only: the chunk is never requested on the web
 const AiAssistant = lazy(() => import("./components/AiAssistant"));
 const DocumentLoaders = lazy(() => import("./pages/DocumentLoaders"));
@@ -218,6 +219,63 @@ function MacAssistant() {
   );
 }
 
+// Last line of defence: a page that throws, or a page chunk that vanished after a redeploy,
+// shows a message instead of a blank window.
+/* A lazy page chunk that no longer exists: the site was redeployed while this tab was open. */
+const isChunkLoadError = (error) =>
+  /dynamically imported module|Importing a module script failed|error loading dynamically imported|Unable to preload/i.test(
+    String(error?.message || error),
+  );
+
+const RELOAD_FLAG = "chunk-reload-at";
+function PageErrorBoundary({ children }) {
+  const { pathname } = useLocation();
+  return (
+    <ErrorBoundary
+      resetKey={pathname}
+      onError={(error) => {
+        // A missing chunk means a newer version is live: reload once to pick it up.
+        if (!isChunkLoadError(error)) return;
+        try {
+          const last = Number(sessionStorage.getItem(RELOAD_FLAG) || 0);
+          if (Date.now() - last < 30000) return;
+          sessionStorage.setItem(RELOAD_FLAG, String(Date.now()));
+        } catch {
+          return;
+        }
+        window.location.reload();
+      }}
+      fallback={(error) => (
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6">
+          <div className="max-w-md text-center">
+            <h1 className="text-xl font-bold text-white mb-2">
+              {isChunkLoadError(error) ? "This page could not be loaded" : "This page hit an error"}
+            </h1>
+            <p className="text-sm text-gray-400 leading-relaxed mb-5">
+              {isChunkLoadError(error)
+                ? "The site was probably updated while this tab was open, or you are offline. Reloading usually fixes it."
+                : "Something on this page failed to render. The rest of the site still works."}
+            </p>
+            <p className="text-xs font-mono text-rose-300/80 bg-black/50 border border-white/10 rounded-lg p-3 mb-5 break-words">
+              {String(error?.message || error)}
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <button onClick={() => window.location.reload()} className="px-4 py-2 min-h-10 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold cursor-pointer">
+                Reload
+              </button>
+              <a href="#/" className="px-4 py-2 min-h-10 rounded-lg bg-white/10 hover:bg-white/15 text-white text-sm font-semibold flex items-center">
+                Go to home
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useLayoutEffect(() => {
@@ -235,6 +293,7 @@ function App() {
       <ScrollToTop />
       {/* macOS app only: renders nothing without the Electron bridge */}
       <MacAssistant />
+      <PageErrorBoundary>
       <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -436,6 +495,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
+      </PageErrorBoundary>
       </MotionConfig>
     </HashRouter>
   );

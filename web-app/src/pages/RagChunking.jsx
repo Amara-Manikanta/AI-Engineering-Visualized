@@ -260,7 +260,7 @@ export default function RagChunking() {
           </div>
           <div className="flex gap-3">
             <span className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">4</span>
-            <div>
+            <div className="min-w-0">
               <p className="text-gray-200 font-semibold">Choose your splitting strategy</p>
               <p className="text-sm text-gray-400">Use <code className="bg-gray-800 px-1 rounded text-pink-400">RecursiveCharacterTextSplitter</code> as the default. It tries paragraph → sentence → word → character splits in order.</p>
             </div>

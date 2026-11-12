@@ -28,6 +28,11 @@
 :root { --reading-scale: 1; }
 html { font-size: calc(100% * var(--reading-scale)); }
 
+/* Safety net: one over-wide element (a long word, a fixed-width diagram) must not make the
+   whole page scroll sideways. `clip` hides the excess without creating a scroll container, so
+   the sticky header keeps working. Wide tables and code scroll inside their own boxes. */
+html, body { overflow-x: clip; }
+
 @media (max-width: 640px) {
   html { font-size: calc(112.5% * var(--reading-scale)); } /* 18px at 1.0 */
 

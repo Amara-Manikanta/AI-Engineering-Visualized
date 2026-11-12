@@ -25,4 +25,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener(channel, listener);
     }
   },
+
+  // TTS (macOS Native Siri Voice)
+  ttsSpeak: (params) => ipcRenderer.invoke('tts:speak', params),
+  ttsStop: () => ipcRenderer.invoke('tts:stop'),
+  ttsVoices: () => ipcRenderer.invoke('tts:voices'),
 });

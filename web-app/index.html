@@ -56,14 +56,23 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').then((reg) => {
-            console.log('SW registered for offline capability:', reg.scope);
-          }).catch((err) => {
-            console.warn('SW registration skipped:', err);
+      // Offline cache for the published site only. On localhost it would cache Vite's dev
+      // modules and serve stale copies after a restart (two Reacts, "invalid hook call"),
+      // so there any earlier worker and its cache are removed instead.
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        var isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+        if (isLocal) {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (r) { r.unregister(); });
+          }).catch(function () {});
+          if (window.caches) caches.keys().then(function (keys) { keys.forEach(function (k) { caches.delete(k); }); }).catch(function () {});
+        } else {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('./sw.js').catch(function (err) {
+              console.warn('SW registration skipped:', err);
+            });
           });
-        });
+        }
       }
     </script>
   </body>

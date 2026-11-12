@@ -114,7 +114,7 @@ export default function AgentsToolCalling() {
           <div className="bg-[#111] border border-gray-800 rounded-xl p-5">
             <h3 className="text-indigo-400 font-semibold mb-2">Sequential</h3>
             <p className="text-sm text-gray-300 mb-3">Each tool call depends on the previous one's result — e.g. look up a user ID, then fetch that user's orders.</p>
-            <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-gray-400">
               <span className="bg-white/10 px-2 py-1 rounded">get_user_id</span>
               <span>→</span>
               <span className="bg-white/10 px-2 py-1 rounded">get_orders(id)</span>

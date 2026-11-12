@@ -38,7 +38,7 @@ export function CodeSnippet({ className = '', children }) {
 
   return (
     <div className="relative group">
-      <pre ref={preRef} className={className}>{children}</pre>
+      <pre ref={preRef} className={`max-w-full overflow-x-auto ${className}`}>{children}</pre>
       <button
         onClick={handleCopy}
         aria-label="Copy code"

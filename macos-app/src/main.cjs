@@ -4,6 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const { spawn } = require('child_process');
 const { setupGemini } = require('./gemini.cjs');
+const { setupTts } = require('./tts.cjs');
 
 let mainWindow;
 
@@ -93,6 +94,7 @@ print(json.dumps(result))
 // Setup IPC handlers for Python execution
 function setupIpcHandlers() {
   setupGemini(ipcMain, () => mainWindow);
+  setupTts(ipcMain);
 
   ipcMain.handle('get-python-env', async () => {
     const pythonPath = findPythonExecutable();
@@ -226,37 +228,36 @@ print(json.dumps({
     });
   });
 
-  // Source file revelation and opening in macOS
-  ipcMain.handle('reveal-source-file', async (_event, { relPath }) => {
+  // Source file revelation and opening in macOS.
+  // The page only ever asks for files inside the repo, so anything that resolves outside it
+  // (for example "../../.ssh/id_rsa") is refused rather than handed to Finder or an app.
+  const findRepoFile = (relPath) => {
+    if (typeof relPath !== 'string' || !relPath || path.isAbsolute(relPath)) return null;
     const repoCandidates = [
       path.resolve(__dirname, '../..'),
       '/Users/manikantaamara/Desktop/Antigravity/ai-engineering-visualized',
       path.resolve(process.cwd(), '..'),
     ];
-    for (const r of repoCandidates) {
-      const fullPath = path.join(r, relPath);
-      if (fs.existsSync(fullPath)) {
-        shell.showItemInFolder(fullPath);
-        return { ok: true, fullPath };
-      }
+    for (const root of repoCandidates) {
+      const fullPath = path.resolve(root, relPath);
+      if (!fullPath.startsWith(root + path.sep)) continue;
+      if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) return fullPath;
     }
-    return { ok: false, error: 'File not found on disk.' };
+    return null;
+  };
+
+  ipcMain.handle('reveal-source-file', async (_event, { relPath } = {}) => {
+    const fullPath = findRepoFile(relPath);
+    if (!fullPath) return { ok: false, error: 'File not found on disk.' };
+    shell.showItemInFolder(fullPath);
+    return { ok: true, fullPath };
   });
 
-  ipcMain.handle('open-source-file', async (_event, { relPath }) => {
-    const repoCandidates = [
-      path.resolve(__dirname, '../..'),
-      '/Users/manikantaamara/Desktop/Antigravity/ai-engineering-visualized',
-      path.resolve(process.cwd(), '..'),
-    ];
-    for (const r of repoCandidates) {
-      const fullPath = path.join(r, relPath);
-      if (fs.existsSync(fullPath)) {
-        await shell.openPath(fullPath);
-        return { ok: true, fullPath };
-      }
-    }
-    return { ok: false, error: 'File not found on disk.' };
+  ipcMain.handle('open-source-file', async (_event, { relPath } = {}) => {
+    const fullPath = findRepoFile(relPath);
+    if (!fullPath) return { ok: false, error: 'File not found on disk.' };
+    await shell.openPath(fullPath);
+    return { ok: true, fullPath };
   });
 }
 
@@ -307,13 +308,22 @@ function createWindow() {
     console.error('Failed to load:', errorCode, errorDescription, validatedURL);
   });
 
-  // Handle external link clicks in default OS browser
+  // Links that leave the app open in the default browser. The app window itself never
+  // navigates to a website: a remote page loaded here would inherit the Python and AI bridges.
+  const openExternally = (url) => {
+    if (/^(https?|mailto):/i.test(url)) shell.openExternal(url);
+  };
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('http:') || url.startsWith('https:')) {
-      shell.openExternal(url);
-      return { action: 'deny' };
-    }
-    return { action: 'allow' };
+    openExternally(url);
+    return { action: 'deny' };
+  });
+
+  const appUrl = () => mainWindow.webContents.getURL().split('#')[0];
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url.split('#')[0] === appUrl()) return; // in-app hash routes and reloads
+    event.preventDefault();
+    openExternally(url);
   });
 
   mainWindow.on('closed', () => {

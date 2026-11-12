@@ -205,13 +205,13 @@ export default function TopicPythonLab({ pagePath, title, onBackToView }) {
       </div>
 
       {/* Editor Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-black/40 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-b border-white/10 bg-black/40 text-xs">
         <div className="flex items-center gap-2 text-gray-400 font-mono">
           <Terminal className="w-3.5 h-3.5 text-gray-500" />
           <span>Python 3 Code Cell</span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Sample Datasets Dropdown */}
           <div className="relative" ref={datasetsMenuRef}>
             <button
@@ -226,7 +226,7 @@ export default function TopicPythonLab({ pagePath, title, onBackToView }) {
             </button>
 
             {showDatasetsMenu && (
-              <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto bg-[#141518] border border-white/10 rounded-xl shadow-2xl p-2 z-30 custom-scrollbar">
+              <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-3rem)] max-h-96 overflow-y-auto bg-[#141518] border border-white/10 rounded-xl shadow-2xl p-2 z-30 custom-scrollbar">
                 <div className="px-3 py-2 text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider border-b border-white/5 mb-1 flex items-center justify-between">
                   <span>Sample Datasets</span>
                   <span className="text-[0.6rem] text-indigo-400 font-mono">1-click insert</span>

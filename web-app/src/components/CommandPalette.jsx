@@ -318,8 +318,9 @@ function SearchTrigger({ onOpen }) {
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
       </svg>
-      <span className="hidden sm:inline text-xs">Search</span>
-      <kbd className="hidden sm:inline text-[0.625rem] font-mono border border-white/15 rounded px-1 py-0.5">
+      {/* Hidden between xl and 2xl, where the full nav bar leaves no room for it */}
+      <span className="hidden sm:inline xl:hidden 2xl:inline text-xs">Search</span>
+      <kbd className="hidden sm:inline xl:hidden 2xl:inline text-[0.625rem] font-mono border border-white/15 rounded px-1 py-0.5">
         {isMac ? "⌘" : "Ctrl"}K
       </kbd>
     </button>

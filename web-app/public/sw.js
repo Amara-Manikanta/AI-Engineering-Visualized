@@ -1,5 +1,5 @@
 // Offline Service Worker for AI Visualised Engineering
-const CACHE_NAME = 'ai-engineering-v1';
+const CACHE_NAME = 'ai-engineering-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -38,41 +38,41 @@ self.addEventListener('fetch', (event) => {
   // Ignore chrome-extension or other non-http/https protocols
   if (!event.request.url.startsWith('http')) return;
 
+  // The page itself is fetched fresh whenever the network is there. Every deploy renames the
+  // script files, so a cached index.html would point at files that no longer exist.
+  const isPage = event.request.mode === 'navigate' || event.request.destination === 'document';
+  if (isPage) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(async () =>
+          (await caches.match(event.request)) || (await caches.match('./index.html')) || (await caches.match('./')) || Response.error()
+        )
+    );
+    return;
+  }
+
+  // Everything else (hashed scripts, styles, images): cache first, refresh in the background.
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      const refresh = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const copy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return networkResponse;
+      });
       if (cachedResponse) {
-        // Return cached, but revalidate in background for dynamic updates
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          }
-        }).catch(() => {
-          // Offline, cachedResponse already served
-        });
+        refresh.catch(() => {}); // offline: the cached copy is already on its way
         return cachedResponse;
       }
-
-      // Not in cache, fetch from network and cache
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
-        }
-
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return networkResponse;
-      }).catch(() => {
-        // If navigation request fails while offline, return index.html
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html') || caches.match('./');
-        }
-      });
+      return refresh;
     })
   );
 });

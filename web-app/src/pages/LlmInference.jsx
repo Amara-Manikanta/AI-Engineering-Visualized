@@ -97,7 +97,7 @@ export default function LlmInference() {
       {/* Step 3: Embedding Layer */}
       <motion.section 
         id="embedding"
-        className="mb-16 bg-white/5 -mx-6 px-6 py-10 rounded-2xl"
+        className="mb-16 bg-white/5 -mx-2 sm:-mx-6 px-4 sm:px-6 py-10 rounded-2xl"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -162,7 +162,7 @@ export default function LlmInference() {
           </div>
 
           <h3 className="text-emerald-400 font-semibold mb-4 border-b border-white/10 pb-2">🔁 Feed-Forward Network (FFN)</h3>
-          <div className="flex items-center justify-center gap-4 text-sm font-mono text-gray-300">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm font-mono text-gray-300">
             <div className="bg-white/10 px-4 py-2 rounded">Linear</div>
             <div>→</div>
             <div className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded">ReLU/SwiGLU</div>
@@ -175,7 +175,7 @@ export default function LlmInference() {
       {/* Sampling */}
       <motion.section 
         id="sampling"
-        className="mb-16 bg-white/5 -mx-6 px-6 py-10 rounded-2xl"
+        className="mb-16 bg-white/5 -mx-2 sm:-mx-6 px-4 sm:px-6 py-10 rounded-2xl"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -244,7 +244,7 @@ export default function LlmInference() {
       {/* Streaming Output */}
       <motion.section 
         id="streaming"
-        className="mb-16 bg-white/5 -mx-6 px-6 py-10 rounded-2xl"
+        className="mb-16 bg-white/5 -mx-2 sm:-mx-6 px-4 sm:px-6 py-10 rounded-2xl"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}

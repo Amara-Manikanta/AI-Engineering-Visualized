@@ -31,7 +31,7 @@ function ScalingPanel() {
         expressive range.
       </p>
 
-      <div className="grid grid-cols-[auto_1fr_auto_1fr_auto_1fr] gap-x-3 gap-y-2 items-center mb-5 text-xs">
+      <div className="grid grid-cols-[auto_1fr_auto_1fr_auto_1fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center mb-5 text-xs overflow-x-auto">
         <div className="text-[0.625rem] uppercase tracking-wide text-gray-500">ch</div>
         <div className="text-[0.625rem] uppercase tracking-wide text-gray-500">activation</div>
         <div className="text-[0.625rem] uppercase tracking-wide text-blue-400">learned ℓ</div>

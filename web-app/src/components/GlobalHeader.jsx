@@ -45,9 +45,11 @@ export default function GlobalHeader() {
         <div className="max-w-[1400px] mx-auto px-4 h-16 flex items-center justify-between">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 text-lg sm:text-xl font-bold hover:opacity-80 transition-opacity shrink-0">
-            <span className="text-2xl">🧠</span>
-            <span>AI Visualised <span className="text-indigo-400">Engineering</span></span>
+          {/* On phones the name may shrink and truncate so the menu button always fits;
+              from sm up there is room and it keeps its full width. */}
+          <Link to="/" className="flex items-center gap-2 text-base sm:text-xl font-bold hover:opacity-80 transition-opacity min-w-0 sm:shrink-0">
+            <span className="text-2xl shrink-0">🧠</span>
+            <span className="truncate">AI Visualised <span className="text-indigo-400">Engineering</span></span>
           </Link>
 
           {/* Desktop Nav */}
@@ -110,7 +112,7 @@ export default function GlobalHeader() {
           </nav>
 
           {/* Global search — Cmd+K */}
-          <div className="ml-auto lg:ml-4 mr-2 flex items-center gap-3">
+          <div className="ml-auto lg:ml-4 mr-2 flex items-center gap-3 shrink-0">
             <div className="hidden sm:block">
               <ReadingSize compact />
             </div>
@@ -119,7 +121,7 @@ export default function GlobalHeader() {
 
           {/* Mobile Toggle */}
           <button 
-            className="xl:hidden p-2 rounded-lg hover:bg-white/10 transition-colors" 
+            className="xl:hidden p-2 rounded-lg hover:bg-white/10 transition-colors shrink-0" 
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle navigation menu"
             aria-expanded={mobileOpen}

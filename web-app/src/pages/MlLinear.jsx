@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import GuideLayout from "../components/GuideLayout";
 import CodeBlock from "../components/CodeBlock";
+import AudioTourPlayer from "../components/AudioTourPlayer";
 
 const DATA = [
   { x: 1, y: 2.1 }, { x: 2, y: 3.9 }, { x: 3, y: 4.8 }, { x: 4, y: 6.2 },
@@ -39,6 +40,57 @@ export default function MlLinear() {
     return errs.reduce((s, e) => s + e, 0) / DATA.length;
   }, [best]);
 
+  const audioTourSteps = useMemo(
+    () => [
+      {
+        title: "1. The Data Points",
+        narration:
+          "Welcome to Linear Regression. Look at the blue dots: each one represents real training data, like square footage versus house price. Our objective is to draw one straight line that best predicts these points.",
+        action: () => {
+          setM(1.0);
+          setB(1.0);
+        },
+      },
+      {
+        title: "2. Residuals & Error",
+        narration:
+          "See the dashed red lines between our line and the blue points? Those are residuals: the prediction error. If a dot sits above the line, we underpredicted; if below, we overpredicted.",
+        action: () => {
+          setM(0.7);
+          setB(2.5);
+        },
+      },
+      {
+        title: "3. Bad Fit Spikes Loss",
+        narration:
+          "Watch what happens if we tilt the slope the wrong way. As our line pulls away from the data, the red residual lines stretch out, and our Mean Squared Error shoots up dramatically.",
+        action: () => {
+          setM(0.2);
+          setB(6.5);
+        },
+      },
+      {
+        title: "4. Optimal Least Squares Fit",
+        narration:
+          "Now watch as we snap directly to the optimal least-squares line. The red residuals shrink to their minimum possible lengths, and our MSE drops to its lowest value.",
+        action: () => {
+          setM(parseFloat(best.slope.toFixed(2)));
+          setB(parseFloat(best.intercept.toFixed(2)));
+        },
+      },
+      {
+        title: "5. The Key Takeaway",
+        narration:
+          "That is the core intuition of Linear Regression: training simply means adjusting the slope and intercept until the total squared length of those red error lines is as small as mathematically possible.",
+        action: () => {
+          setM(parseFloat(best.slope.toFixed(2)));
+          setB(parseFloat(best.intercept.toFixed(2)));
+        },
+      },
+    ],
+    [best]
+  );
+
   const toc = [
     { label: "What is Linear Regression?", hash: "overview" },
     { label: "Fit the Line Yourself", hash: "interactive" },
@@ -69,6 +121,14 @@ export default function MlLinear() {
           Drag the sliders to change the slope and intercept. Watch the Mean Squared Error (MSE) — that number is exactly
           what gradient descent is trying to minimize automatically.
         </p>
+
+        {/* Audio Tour Player with Siri Voice */}
+        <AudioTourPlayer
+          title="Linear Regression Interactive Tour"
+          steps={audioTourSteps}
+          className="mb-6 max-w-3xl"
+        />
+
         <div className="bg-[#0a0a0a] border border-gray-800 rounded-xl p-6 flex flex-col items-center">
           <svg width={width} height={height} className="max-w-full">
             {/* axes */}

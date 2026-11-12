@@ -39,7 +39,7 @@ function SerialVsParallel() {
         methods, and everything else follows from it.
       </p>
 
-      <div className="rounded-xl bg-black/50 border border-white/10 p-3 mb-4">
+      <div className="rounded-xl bg-black/50 border border-white/10 p-3 mb-4 overflow-x-auto">
         <svg viewBox="0 0 620 200" className="w-full h-auto min-w-[540px]">
           <defs>
             <marker id="al-a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
