@@ -308,22 +308,22 @@ function createWindow() {
     console.error('Failed to load:', errorCode, errorDescription, validatedURL);
   });
 
-  // Links that leave the app open in the default browser. The app window itself never
-  // navigates to a website: a remote page loaded here would inherit the Python and AI bridges.
-  const openExternally = (url) => {
-    if (/^(https?|mailto):/i.test(url)) shell.openExternal(url);
-  };
-
+  // Handle external link clicks in default OS browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    openExternally(url);
+    if (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('mailto:')) {
+      shell.openExternal(url);
+    }
     return { action: 'deny' };
   });
 
-  const appUrl = () => mainWindow.webContents.getURL().split('#')[0];
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    if (url.split('#')[0] === appUrl()) return; // in-app hash routes and reloads
-    event.preventDefault();
-    openExternally(url);
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      if (isDev && process.env.VITE_DEV_SERVER_URL && url.startsWith(process.env.VITE_DEV_SERVER_URL)) {
+        return;
+      }
+      event.preventDefault();
+      shell.openExternal(url);
+    }
   });
 
   mainWindow.on('closed', () => {
