@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronRight, ArrowRight, Menu, X } from "lucide-react";
 import CommandPalette from "./CommandPalette";
@@ -26,20 +26,43 @@ function groupSubLinks(subLinks) {
   return groups;
 }
 
-
 export default function GlobalHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileExpanded, setMobileExpanded] = useState(null);
+  const closeTimerRef = useRef(null);
   const location = useLocation();
+
+  const handleMouseEnter = (i) => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setOpenDropdown(i);
+  };
+
+  const handleMouseLeave = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
+      setOpenDropdown(null);
+    }, 220); // 220ms grace window for mouse transitions
+  };
 
   // Close menus on route change — a clicked dropdown link would otherwise leave
   // its menu hanging open over the new page until the mouse moved away.
   useEffect(() => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     setMobileOpen(false);
     setMobileExpanded(null);
     setOpenDropdown(null);
   }, [location.pathname, location.hash]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
 
   // Escape closes an open dropdown.
   useEffect(() => {
@@ -66,8 +89,6 @@ export default function GlobalHeader() {
         <div className="max-w-[1400px] mx-auto px-4 h-16 flex items-center justify-between">
           
           {/* Logo */}
-          {/* On phones the name may shrink and truncate so the menu button always fits;
-              from sm up there is room and it keeps its full width. */}
           <Link to="/" className="flex items-center gap-2.5 text-base sm:text-xl font-bold hover:opacity-90 transition-opacity min-w-0 sm:shrink-0 group">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1.5px] shrink-0 shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow">
               <div className="w-full h-full bg-[#0a0a0f] rounded-[10px] flex items-center justify-center">
@@ -80,16 +101,16 @@ export default function GlobalHeader() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden xl:flex items-center gap-3 2xl:gap-5 ml-4">
+          <nav className="hidden xl:flex items-center gap-3 2xl:gap-5 ml-4 h-full">
             {NAV_LINKS.map((nav, i) => (
               <div 
                 key={i} 
-                className="relative group"
-                onMouseEnter={() => setOpenDropdown(i)}
-                onMouseLeave={() => setOpenDropdown(null)}
+                className="relative h-full flex items-center group"
+                onMouseEnter={() => handleMouseEnter(i)}
+                onMouseLeave={handleMouseLeave}
                 // Keyboard users: the menu stays open while focus is inside it.
                 onBlur={(e) => {
-                  if (!e.currentTarget.contains(e.relatedTarget)) setOpenDropdown(null);
+                  if (!e.currentTarget.contains(e.relatedTarget)) handleMouseLeave();
                 }}
               >
                 {nav.subLinks ? (
@@ -118,7 +139,9 @@ export default function GlobalHeader() {
                   const isMultiCol = groups.length > 1;
                   return (
                     <div
-                      className={`absolute top-full z-50 mt-1 bg-[#101015]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-2xl p-5 overflow-hidden transition-all duration-200 ${
+                      onMouseEnter={() => handleMouseEnter(i)}
+                      onMouseLeave={handleMouseLeave}
+                      className={`absolute top-full z-50 pt-2 ${
                         isMultiCol
                           ? groups.length >= 4
                             ? "w-[880px] max-w-[calc(100vw-32px)]"
@@ -126,68 +149,73 @@ export default function GlobalHeader() {
                           : "w-64"
                       } ${i > 4 ? "right-0" : i < 2 ? "left-0" : "left-1/2 -translate-x-1/2"}`}
                     >
-                      <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-2 h-2 rounded-full ${theme.barColor}`} />
-                          <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                            {nav.name}
+                      {/* Invisible bridge eliminating mouse gap */}
+                      <div className="absolute -top-3 left-0 right-0 h-4" />
+
+                      <div className="bg-[#101015]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-2xl p-5 overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-top-1">
+                        <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+                          <div className="flex items-center gap-2">
+                            <span className={`w-2 h-2 rounded-full ${theme.barColor}`} />
+                            <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                              {nav.name}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-gray-500 font-mono">
+                            {nav.subLinks.filter(s => !s.isHeader).length} topics
                           </span>
                         </div>
-                        <span className="text-[11px] text-gray-500 font-mono">
-                          {nav.subLinks.filter(s => !s.isHeader).length} topics
-                        </span>
-                      </div>
 
-                      <div
-                        className={`grid gap-5 max-h-[65vh] overflow-y-auto custom-scrollbar pr-1 ${
-                          isMultiCol
-                            ? groups.length >= 4
-                              ? "grid-cols-4"
-                              : groups.length === 3
-                              ? "grid-cols-3"
-                              : "grid-cols-2"
-                            : "grid-cols-1"
-                        }`}
-                      >
-                        {groups.map((grp, gIdx) => (
-                          <div key={gIdx} className="space-y-1">
-                            {isMultiCol && (
-                              <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400 mb-2 pb-1 border-b border-white/5 truncate">
-                                {grp.title}
-                              </div>
-                            )}
-                            <ul className="space-y-0.5">
-                              {grp.items.map((sub, j) => (
-                                <li key={j}>
-                                  <Link
-                                    to={sub.path}
-                                    className={`group/link block px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                                      location.pathname === sub.path
-                                        ? `${theme.badgeBg} font-semibold`
-                                        : "text-gray-300 hover:text-white hover:bg-white/5"
-                                    }`}
-                                  >
-                                    <div className="flex items-center justify-between">
-                                      <span className="truncate">{sub.name.replace(/^·\s*/, "")}</span>
-                                      <ChevronRight className="w-3 h-3 opacity-0 group-hover/link:opacity-60 transition-opacity shrink-0 ml-1" />
-                                    </div>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
-                        <span className="text-[11px] text-gray-500">Interactive guides & visualizers</span>
-                        <Link
-                          to={nav.path}
-                          className={`inline-flex items-center gap-1 text-xs font-semibold ${theme.text} hover:underline`}
+                        <div
+                          className={`grid gap-5 max-h-[65vh] overflow-y-auto custom-scrollbar pr-1 ${
+                            isMultiCol
+                              ? groups.length >= 4
+                                ? "grid-cols-4"
+                                : groups.length === 3
+                                ? "grid-cols-3"
+                                : "grid-cols-2"
+                              : "grid-cols-1"
+                          }`}
                         >
-                          <span>Explore all in {nav.name}</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </Link>
+                          {groups.map((grp, gIdx) => (
+                            <div key={gIdx} className="space-y-1">
+                              {isMultiCol && (
+                                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400 mb-2 pb-1 border-b border-white/5 truncate">
+                                  {grp.title}
+                                </div>
+                              )}
+                              <ul className="space-y-0.5">
+                                {grp.items.map((sub, j) => (
+                                  <li key={j}>
+                                    <Link
+                                      to={sub.path}
+                                      className={`group/link block px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                                        location.pathname === sub.path
+                                          ? `${theme.badgeBg} font-semibold`
+                                          : "text-gray-300 hover:text-white hover:bg-white/5"
+                                      }`}
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <span className="truncate">{sub.name.replace(/^·\s*/, "")}</span>
+                                        <ChevronRight className="w-3 h-3 opacity-0 group-hover/link:opacity-60 transition-opacity shrink-0 ml-1" />
+                                      </div>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                          <span className="text-[11px] text-gray-500">Interactive guides & visualizers</span>
+                          <Link
+                            to={nav.path}
+                            className={`inline-flex items-center gap-1 text-xs font-semibold ${theme.text} hover:underline`}
+                          >
+                            <span>Explore all in {nav.name}</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   );
