@@ -4,6 +4,8 @@ import { MotionConfig } from "framer-motion";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import ErrorBoundary from "./components/ErrorBoundary";
+import MobileBottomNav from "./components/MobileBottomNav";
+import ToastContainer from "./components/ToastContainer";
 // macOS app only: the chunk is never requested on the web
 const AiAssistant = lazy(() => import("./components/AiAssistant"));
 const DocumentLoaders = lazy(() => import("./pages/DocumentLoaders"));
@@ -497,6 +499,8 @@ function App() {
       </Suspense>
       </PageErrorBoundary>
       </MotionConfig>
+      <MobileBottomNav />
+      <ToastContainer />
     </HashRouter>
   );
 }

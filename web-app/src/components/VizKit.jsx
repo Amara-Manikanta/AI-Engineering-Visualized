@@ -1,5 +1,8 @@
 import React from "react";
+import { Link2 } from "lucide-react";
 import { quantile } from "../lib/stats";
+import { showToast } from "../lib/toast";
+export { default as GlossaryTerm } from "./GlossaryTerm";
 
 /* ---------------------------------------------------------------------------
    Shared building blocks for the interactive panels on the statistics, data
@@ -11,11 +14,14 @@ import { quantile } from "../lib/stats";
 export const TONE = {
   indigo: { box: "border-indigo-500/25 bg-indigo-500/[0.07]", text: "text-indigo-400", soft: "text-indigo-300", accent: "accent-indigo-500", btn: "border-indigo-500/40 bg-indigo-500/15 text-indigo-200 hover:bg-indigo-500/25", fill: "#818cf8" },
   blue: { box: "border-blue-500/25 bg-blue-500/[0.07]", text: "text-blue-400", soft: "text-blue-300", accent: "accent-blue-500", btn: "border-blue-500/40 bg-blue-500/15 text-blue-200 hover:bg-blue-500/25", fill: "#60a5fa" },
+  sky: { box: "border-sky-500/25 bg-sky-500/[0.07]", text: "text-sky-400", soft: "text-sky-300", accent: "accent-sky-500", btn: "border-sky-500/40 bg-sky-500/15 text-sky-200 hover:bg-sky-500/25", fill: "#38bdf8" },
   emerald: { box: "border-emerald-500/25 bg-emerald-500/[0.07]", text: "text-emerald-400", soft: "text-emerald-300", accent: "accent-emerald-500", btn: "border-emerald-500/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25", fill: "#34d399" },
   amber: { box: "border-amber-500/25 bg-amber-500/[0.07]", text: "text-amber-400", soft: "text-amber-300", accent: "accent-amber-500", btn: "border-amber-500/40 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25", fill: "#fbbf24" },
+  orange: { box: "border-orange-500/25 bg-orange-500/[0.07]", text: "text-orange-400", soft: "text-orange-300", accent: "accent-orange-500", btn: "border-orange-500/40 bg-orange-500/15 text-orange-200 hover:bg-orange-500/25", fill: "#fb923c" },
   rose: { box: "border-rose-500/25 bg-rose-500/[0.07]", text: "text-rose-400", soft: "text-rose-300", accent: "accent-rose-500", btn: "border-rose-500/40 bg-rose-500/15 text-rose-200 hover:bg-rose-500/25", fill: "#fb7185" },
   purple: { box: "border-purple-500/25 bg-purple-500/[0.07]", text: "text-purple-400", soft: "text-purple-300", accent: "accent-purple-500", btn: "border-purple-500/40 bg-purple-500/15 text-purple-200 hover:bg-purple-500/25", fill: "#a78bfa" },
   teal: { box: "border-teal-500/25 bg-teal-500/[0.07]", text: "text-teal-400", soft: "text-teal-300", accent: "accent-teal-500", btn: "border-teal-500/40 bg-teal-500/15 text-teal-200 hover:bg-teal-500/25", fill: "#2dd4bf" },
+  slate: { box: "border-white/10 bg-white/[0.03]", text: "text-gray-300", soft: "text-gray-400", accent: "accent-gray-400", btn: "border-white/15 bg-white/5 text-gray-300 hover:bg-white/10", fill: "#94a3b8" },
 };
 
 export function Panel({ tone = "indigo", title, children, actions, className = "" }) {
@@ -200,31 +206,91 @@ export function Histogram({
   );
 }
 
-/* A plain card for "concept + short explanation" grids. */
-export function Card({ title, tone, children }) {
+/* A plain card for "concept + short explanation" grids (Item 4). */
+export function Card({ title, tone, children, className = "" }) {
   const t = tone ? TONE[tone] : null;
   return (
-    <div className={`p-5 rounded-xl border ${t ? t.box : "border-white/10 bg-white/5"}`}>
-      {title && <div className={`text-sm font-semibold mb-2 ${t ? t.text : "text-white"}`}>{title}</div>}
-      <div className="text-sm text-gray-300 leading-relaxed [&>p]:m-0 [&>p+p]:mt-2">{children}</div>
+    <div
+      className={`p-5 sm:p-6 rounded-2xl border backdrop-blur-sm transition-all duration-200 ${
+        t ? t.box : "border-white/10 bg-white/[0.03] hover:border-white/20"
+      } ${className}`}
+    >
+      {title && (
+        <div className={`text-sm font-semibold mb-2.5 tracking-tight ${t ? t.text : "text-white"}`}>
+          {title}
+        </div>
+      )}
+      <div className="text-sm text-gray-300 leading-relaxed [&>p]:m-0 [&>p+p]:mt-2.5">{children}</div>
     </div>
   );
 }
 
-/* Callout used for "the one thing to remember" notes. */
-export function Note({ tone = "amber", children }) {
+/* Callout used for "the one thing to remember" notes (Item 4). */
+export function Note({ tone = "amber", title, children, className = "" }) {
   const t = TONE[tone] || TONE.amber;
   return (
-    <div className={`p-4 rounded-xl border ${t.box}`}>
-      <p className="text-sm text-gray-200 leading-relaxed m-0">{children}</p>
+    <div className={`p-4 sm:p-5 rounded-2xl border backdrop-blur-sm ${t.box} ${className}`}>
+      {title && (
+        <div className={`text-xs font-bold uppercase tracking-wider mb-1.5 ${t.text}`}>
+          {title}
+        </div>
+      )}
+      <div className="text-sm text-gray-200 leading-relaxed m-0">{children}</div>
+    </div>
+  );
+}
+
+export function KeyTakeaways({ points = [], title = "Key Takeaways", tone = "indigo" }) {
+  const t = TONE[tone] || TONE.indigo;
+  return (
+    <div className={`my-8 p-5 sm:p-6 rounded-2xl border backdrop-blur-sm ${t.box}`}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="w-2 h-2 rounded-full bg-indigo-400" />
+        <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${t.text}`}>
+          {title}
+        </h4>
+      </div>
+      <ul className="space-y-2">
+        {points.map((pt, idx) => (
+          <li key={idx} className="flex items-start gap-2.5 text-sm text-gray-200">
+            <span className={`font-mono text-xs font-bold shrink-0 mt-0.5 ${t.soft}`}>0{idx + 1}</span>
+            <span className="leading-relaxed">{pt}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 export function Section({ id, title, lead, children }) {
+  const handleCopyLink = async (e) => {
+    e.stopPropagation();
+    if (!id) return;
+    const url = `${window.location.origin}${window.location.pathname}#${id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast("Section link copied to clipboard");
+    } catch {
+      /* noop */
+    }
+  };
+
   return (
-    <section id={id} className="mb-16 scroll-mt-24">
-      <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
+    <section id={id} className="mb-16 scroll-mt-24 group/section">
+      <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
+        <span>{title}</span>
+        {id && (
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            aria-label="Copy link to section"
+            title="Copy link to section"
+            className="opacity-0 group-hover/section:opacity-50 hover:!opacity-100 p-1 rounded-md hover:bg-white/10 text-gray-400 hover:text-indigo-300 transition-all cursor-pointer"
+          >
+            <Link2 className="w-4 h-4" />
+          </button>
+        )}
+      </h2>
       {lead && <p className="text-gray-300 leading-relaxed max-w-3xl mb-6">{lead}</p>}
       {children}
     </section>

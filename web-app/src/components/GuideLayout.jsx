@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, lazy, Suspense } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles, Terminal, FileCode, Copy, Folder } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Check, BookOpen, Code2, Sparkles, Terminal, FileCode, Copy, Folder, ArrowUp, ListOrdered, X } from "lucide-react";
 import GlobalHeader from "./GlobalHeader";
 import Footer from "./Footer";
 import { AZURE_LINKS, AWS_LINKS } from "../config/navigation";
@@ -12,6 +12,7 @@ import TopicPythonLab from "./TopicPythonLab";
 import { getCustomPageCode, clearCustomPageCode, getSourceFileInfo } from "../lib/pageSources";
 import { GuideLayoutContext } from "../lib/GuideLayoutContext";
 import ErrorBoundary from "./ErrorBoundary";
+import { getSectionTheme } from "../lib/sectionTheme";
 
 // The code studio and the JSX sandbox it needs (compiler, every icon, every lab) weigh over a
 // megabyte. Readers who never edit a page should not download them, so both load on demand.
@@ -78,6 +79,28 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
   const isRead = read.has(location.pathname);
   const { prev, next } = neighbours(location.pathname);
   const isMacApp = typeof window !== "undefined" && Boolean(window.electronAPI);
+  const sectionTheme = getSectionTheme(location.pathname);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
+  const [navSectionOpen, setNavSectionOpen] = useState(true);
+  const [localTocOpen, setLocalTocOpen] = useState(true);
+
+  // Track reading scroll progress (Item 9) & back-to-top trigger (Item 20)
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = document.documentElement;
+      const total = el.scrollHeight - window.innerHeight;
+      if (total > 0) {
+        setScrollProgress(Math.min(100, Math.max(0, (window.scrollY / total) * 100)));
+      }
+      setShowBackToTop(window.scrollY > 450);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [location.pathname]);
+
   const fileInfo = getSourceFileInfo(location.pathname);
   const [copiedPath, setCopiedPath] = useState(false);
 
@@ -190,10 +213,18 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
     <div className="min-h-screen flex flex-col bg-[#0a0a0a] text-gray-300 font-sans">
       <GlobalHeader />
 
+      {/* Reading Progress Bar (Item 9) */}
+      <div className="fixed top-[64px] left-0 right-0 h-[2.5px] z-40 bg-white/5 pointer-events-none">
+        <div
+          className={`h-full ${sectionTheme.barColor} transition-[width] duration-150 ease-out`}
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       <div className="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-8 mt-6 max-w-[1200px] mx-auto px-4 sm:px-5 pb-20 w-full">
 
-        {/* Sidebar TOC — collapsible on mobile, sticky on desktop */}
-        <aside className="lg:w-[250px] shrink-0 lg:sticky lg:top-[90px] h-fit bg-[#141414] border border-white/10 rounded-xl overflow-hidden">
+        {/* Sidebar TOC — collapsible sections on desktop, sticky (Item 10) */}
+        <aside className="lg:w-[260px] shrink-0 lg:sticky lg:top-[85px] h-fit bg-[#121217]/90 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-lg">
 
           {/* Mobile toggle header */}
           <button
@@ -202,80 +233,110 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
             aria-expanded={sidebarOpen}
             aria-controls="guide-sidebar"
           >
-            <span className="font-bold text-sm text-white uppercase tracking-wider text-left">{title}</span>
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${sectionTheme.barColor}`} />
+              <span className="font-bold text-sm text-white uppercase tracking-wider text-left">{title}</span>
+            </div>
             <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${sidebarOpen ? "rotate-180" : ""}`} />
           </button>
 
           {/* Desktop header (always visible) */}
-          <h3 className="hidden lg:block font-bold p-5 pb-0 text-sm text-white uppercase tracking-wider">{title}</h3>
+          <div className="hidden lg:flex items-center justify-between p-5 pb-3 border-b border-white/5">
+            <h3 className="font-bold text-xs text-white uppercase tracking-wider font-mono truncate">{title}</h3>
+            {sidebarLinks && (
+              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                {sidebarLinks.filter(l => read.has(l.path)).length}/{sidebarLinks.length}
+              </span>
+            )}
+          </div>
 
-          {/* Navigation & TOC — always visible on desktop, toggle on mobile */}
+          {/* Navigation & TOC */}
           <nav
             id="guide-sidebar"
             aria-label="Page contents"
-            className={`${sidebarOpen ? "block" : "hidden"} lg:block overflow-y-auto max-h-[60vh] lg:max-h-[calc(100vh-120px)] custom-scrollbar`}
+            className={`${sidebarOpen ? "block" : "hidden"} lg:block overflow-y-auto max-h-[60vh] lg:max-h-[calc(100vh-140px)] custom-scrollbar`}
           >
-
-            {/* Render Section Navigation if available */}
+            {/* Collapsible Section Navigation */}
             {sidebarLinks && (
-              <div className="p-4 lg:p-5 border-b border-white/10 mb-2">
-                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">{sectionTitle}</h4>
-                <div className="flex flex-col gap-1">
-                  {sidebarLinks.map((link, i) => (
-                    <Link
-                      key={i}
-                      to={link.path}
-                      onClick={() => setSidebarOpen(false)}
-                      aria-current={location.pathname === link.path ? "page" : undefined}
-                      className={`flex items-center justify-between gap-2 py-1.5 text-[0.9em] transition-colors ${
-                        location.pathname === link.path
-                          ? "text-indigo-400 font-semibold border-l-2 border-indigo-400 pl-2 -ml-[10px]"
-                          : "text-gray-400 hover:text-white"
-                      }`}
-                    >
-                      <span>{link.name}</span>
-                      {read.has(link.path) && <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" aria-label="read" />}
-                    </Link>
-                  ))}
-                </div>
+              <div className="p-3 lg:p-4 border-b border-white/5">
+                <button
+                  type="button"
+                  onClick={() => setNavSectionOpen(!navSectionOpen)}
+                  className="w-full flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 hover:text-white transition-colors cursor-pointer"
+                >
+                  <span className="truncate">{sectionTitle}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${navSectionOpen ? "rotate-0" : "-rotate-90"}`} />
+                </button>
+                {navSectionOpen && (
+                  <div className="flex flex-col gap-0.5 pt-1">
+                    {sidebarLinks.map((link, i) => (
+                      <Link
+                        key={i}
+                        to={link.path}
+                        onClick={() => setSidebarOpen(false)}
+                        aria-current={location.pathname === link.path ? "page" : undefined}
+                        className={`flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg text-xs transition-colors ${
+                          location.pathname === link.path
+                            ? `${sectionTheme.badgeBg} font-semibold`
+                            : "text-gray-400 hover:text-white hover:bg-white/5"
+                        }`}
+                      >
+                        <span className="truncate">{link.name}</span>
+                        {read.has(link.path) && (
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-label="read" />
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Render Local TOC */}
+            {/* Collapsible Local TOC */}
             {toc.length > 0 && (
-            <div className="p-4 lg:p-5 lg:pt-2">
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">On this page</h4>
-              <div className="flex flex-col gap-1">
-              {toc.map((item, i) => {
-                const id = ids[i];
-                const active = activeId === id;
-                return (
-                  <a
-                    key={i}
-                    // A full hash-router URL, so "open in new tab" and "copy link" work.
-                    href={`#${location.pathname}#${id}`}
-                    aria-current={active ? "location" : undefined}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSidebarOpen(false); // Close sidebar on mobile after clicking
-                      onTocClick?.(id);
-                      // A tabbed page may have just mounted the section, so look
-                      // for it again on the next frame rather than immediately.
-                      requestAnimationFrame(() => {
-                        const el = document.getElementById(id);
-                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                      });
-                    }}
-                    className={`block py-2 lg:py-1.5 text-[0.85em] transition-colors border-l-2 -ml-[10px] ${item.indent ? "pl-6 text-xs" : "pl-2"} ${
-                      active ? "text-indigo-400 font-semibold border-indigo-400" : "text-gray-400 hover:text-indigo-400 border-transparent"
-                    }`}
-                  >
-                    {item.label}
-                  </a>
-                );
-              })}
+              <div className="p-3 lg:p-4">
+                <button
+                  type="button"
+                  onClick={() => setLocalTocOpen(!localTocOpen)}
+                  className="w-full flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 hover:text-white transition-colors cursor-pointer"
+                >
+                  <span>On this page</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${localTocOpen ? "rotate-0" : "-rotate-90"}`} />
+                </button>
+                {localTocOpen && (
+                  <div className="flex flex-col gap-0.5 pt-1">
+                    {toc.map((item, i) => {
+                      const id = ids[i];
+                      const active = activeId === id;
+                      return (
+                        <a
+                          key={i}
+                          href={`#${location.pathname}#${id}`}
+                          aria-current={active ? "location" : undefined}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSidebarOpen(false);
+                            onTocClick?.(id);
+                            requestAnimationFrame(() => {
+                              const el = document.getElementById(id);
+                              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                            });
+                          }}
+                          className={`block py-1.5 text-xs transition-colors border-l-2 ${
+                            item.indent ? "pl-5 text-[11px]" : "pl-2.5"
+                          } ${
+                            active
+                              ? `${sectionTheme.text} font-semibold border-current`
+                              : `text-gray-400 ${sectionTheme.linkHover} border-transparent hover:border-white/20`
+                          }`}
+                        >
+                          <span className="truncate block">{item.label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
             )}
           </nav>
         </aside>
@@ -414,9 +475,30 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
                 </div>
               )}
 
+              {/* Breadcrumb Navigation (Item 8) */}
+              <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-xs text-gray-500 mb-4 font-mono">
+                <Link to="/" className="hover:text-gray-300 transition-colors">Home</Link>
+                <span className="text-gray-600">/</span>
+                <Link to={sectionTheme.parentPath} className={`hover:${sectionTheme.linkHover} transition-colors font-medium`}>
+                  {sectionTheme.badgeLabel}
+                </Link>
+                <span className="text-gray-600">/</span>
+                <span className="text-gray-300 truncate max-w-[200px] sm:max-w-none">{title}</span>
+              </nav>
+
+              {/* Topic Hero Band (Item 13) */}
               <div className="mb-8 lg:mb-10">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-3 tracking-tight">{title}</h1>
-                <p className="text-base sm:text-lg text-indigo-200/80 leading-relaxed font-light">{intro}</p>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${sectionTheme.badgeBg}`}>
+                    {sectionTheme.badgeLabel}
+                  </span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-3.5 tracking-tight font-display">
+                  {title}
+                </h1>
+                <p className="text-base sm:text-lg text-gray-300 leading-relaxed font-normal max-w-3xl">
+                  {intro}
+                </p>
               </div>
 
               <div className="space-y-8 lg:space-y-12">
@@ -486,16 +568,16 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
             </div>
 
             {(prev || next) && (
-              <nav aria-label="Previous and next pages" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <nav aria-label="Previous and next pages" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {prev ? (
                   <Link
                     to={prev.path}
-                    className="group flex items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.03] hover:border-indigo-500/40 hover:bg-indigo-500/[0.06] transition-colors"
+                    className={`group flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm ${sectionTheme.borderHover} hover:bg-white/[0.06] transition-all duration-200`}
                   >
-                    <ChevronLeft className="w-5 h-5 text-gray-500 group-hover:text-indigo-400 shrink-0" />
+                    <ChevronLeft className={`w-5 h-5 text-gray-500 group-hover:${sectionTheme.text} shrink-0 transition-transform group-hover:-translate-x-1`} />
                     <span className="min-w-0">
-                      <span className="block text-[0.6875rem] uppercase tracking-wide text-gray-500">Previous</span>
-                      <span className="block text-sm font-semibold text-gray-200 truncate">{cleanName(prev.name)}</span>
+                      <span className="block text-[0.6875rem] uppercase tracking-wider text-gray-500 font-bold mb-0.5">Previous</span>
+                      <span className="block text-sm font-semibold text-gray-200 group-hover:text-white truncate transition-colors">{cleanName(prev.name)}</span>
                     </span>
                   </Link>
                 ) : (
@@ -504,13 +586,13 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
                 {next && (
                   <Link
                     to={next.path}
-                    className="group flex items-center justify-end gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.03] hover:border-indigo-500/40 hover:bg-indigo-500/[0.06] transition-colors text-right"
+                    className={`group flex items-center justify-end gap-3.5 p-4 sm:p-5 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm ${sectionTheme.borderHover} hover:bg-white/[0.06] transition-all duration-200 text-right`}
                   >
                     <span className="min-w-0">
-                      <span className="block text-[0.6875rem] uppercase tracking-wide text-gray-500">Next</span>
-                      <span className="block text-sm font-semibold text-gray-200 truncate">{cleanName(next.name)}</span>
+                      <span className="block text-[0.6875rem] uppercase tracking-wider text-gray-500 font-bold mb-0.5">Next</span>
+                      <span className="block text-sm font-semibold text-gray-200 group-hover:text-white truncate transition-colors">{cleanName(next.name)}</span>
                     </span>
-                    <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-indigo-400 shrink-0" />
+                    <ChevronRight className={`w-5 h-5 text-gray-500 group-hover:${sectionTheme.text} shrink-0 transition-transform group-hover:translate-x-1`} />
                   </Link>
                 )}
               </nav>
@@ -519,6 +601,85 @@ export default function GuideLayout({ title, intro, toc = [], children, onTocCli
         </main>
 
       </div>
+
+      {/* Mobile Floating Action Button for Table of Contents (Item 28) */}
+      {toc.length > 0 && (
+        <button
+          onClick={() => setMobileTocOpen(true)}
+          aria-label="Open Table of Contents"
+          className="lg:hidden fixed bottom-20 right-5 z-40 flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-[#161622]/95 backdrop-blur-md border border-white/20 shadow-2xl text-xs font-semibold text-white hover:border-indigo-400 transition-all cursor-pointer"
+        >
+          <ListOrdered className="w-4 h-4 text-indigo-400" />
+          <span>Contents</span>
+        </button>
+      )}
+
+      {/* Mobile Slide-up TOC Sheet (Item 28) */}
+      {mobileTocOpen && (
+        <div className="fixed inset-0 z-[100] lg:hidden animate-in fade-in duration-200">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMobileTocOpen(false)}
+          />
+          <div className="absolute inset-x-0 bottom-0 bg-[#121217] border-t border-white/15 rounded-t-3xl shadow-2xl p-6 max-h-[75vh] overflow-y-auto custom-scrollbar flex flex-col">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${sectionTheme.barColor}`} />
+                <span className="text-xs font-mono uppercase tracking-wider font-bold text-white">
+                  Table of Contents
+                </span>
+              </div>
+              <button
+                onClick={() => setMobileTocOpen(false)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-1.5 py-2">
+              {toc.map((item, i) => {
+                const id = ids[i];
+                const active = activeId === id;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setMobileTocOpen(false);
+                      onTocClick?.(id);
+                      requestAnimationFrame(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                      });
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-colors flex items-center justify-between ${
+                      item.indent ? "pl-6 text-[11px]" : ""
+                    } ${
+                      active
+                        ? `${sectionTheme.badgeBg} font-semibold`
+                        : "text-gray-300 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <span className="truncate">{item.label}</span>
+                    {active && <span className={`w-1.5 h-1.5 rounded-full ${sectionTheme.barColor}`} />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Back-to-Top Button (Item 20) */}
+      {showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+          className="fixed bottom-32 right-5 lg:bottom-8 lg:right-8 z-40 p-3 rounded-full bg-[#181822]/90 backdrop-blur-md border border-white/15 shadow-xl text-gray-300 hover:text-white hover:border-indigo-500/50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+        >
+          <ArrowUp className="w-4 h-4" />
+        </button>
+      )}
+
       <Footer />
     </div>
   );

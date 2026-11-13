@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, RotateCcw, Edit3, Eye, Loader2, X, Terminal, Image as ImageIcon } from 'lucide-react';
+import { Play, RotateCcw, Edit3, Eye, Loader2, X, Terminal, Image as ImageIcon, WrapText } from 'lucide-react';
 import { runPythonCode, isNativePythonAvailable } from '../lib/pythonRunner';
+import { highlightLine } from '../lib/syntaxHighlight';
 
 /** Shared clipboard write with a fallback for insecure contexts. */
 async function writeClipboard(text) {
@@ -91,6 +92,7 @@ export default function CodeBlock({
   const preRef = useRef(null);
   const textareaRef = useRef(null);
   const [copied, setCopied] = useState(false);
+  const [isWrapped, setIsWrapped] = useState(wrap);
 
   // Check if this block is runnable (defaults to true for python)
   const isPython = (language || '').toLowerCase().includes('python') || (language || '').toLowerCase() === 'py';
@@ -261,6 +263,22 @@ export default function CodeBlock({
             </>
           )}
 
+          {/* Soft-wrap toggle */}
+          <button
+            type="button"
+            onClick={() => setIsWrapped(!isWrapped)}
+            title={isWrapped ? "Disable line wrapping" : "Enable line wrapping"}
+            aria-label="Toggle line wrapping"
+            className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md border transition-colors ${
+              isWrapped
+                ? 'border-indigo-500/50 bg-indigo-500/15 text-indigo-300'
+                : 'border-gray-700 bg-white/5 text-gray-400 hover:text-white hover:border-gray-500'
+            }`}
+          >
+            <WrapText className="w-3 h-3" />
+            <span className="hidden sm:inline">Wrap</span>
+          </button>
+
           {/* Copy button */}
           <button
             type="button"
@@ -299,17 +317,37 @@ export default function CodeBlock({
           style={{ minHeight: '180px', maxHeight }}
         />
       ) : (
-        <pre
+        <div
           ref={preRef}
           onKeyDown={handleKeyDown}
           tabIndex={canRun ? 0 : undefined}
-          className={`p-4 font-mono text-sm text-gray-300 overflow-y-auto custom-scrollbar m-0 focus:outline-none ${
-            wrap ? 'whitespace-pre-wrap break-words' : 'overflow-x-auto'
-          }`}
+          className="p-3 sm:p-4 overflow-y-auto custom-scrollbar m-0 focus:outline-none"
           style={{ maxHeight }}
         >
-          {code != null ? <code>{code}</code> : children}
-        </pre>
+          {typeof (code ?? children) === 'string' ? (
+            <div className="flex text-xs sm:text-sm font-mono leading-relaxed">
+              {/* Line numbers column */}
+              <div className="select-none pr-3 text-right text-gray-600 border-r border-white/5 shrink-0 min-w-[2.2rem]">
+                {(code ?? children).replace(/\n$/, '').split('\n').map((_, idx) => (
+                  <div key={idx}>{idx + 1}</div>
+                ))}
+              </div>
+              {/* Code content */}
+              <div className={`pl-3.5 flex-1 min-w-0 ${isWrapped ? 'whitespace-pre-wrap break-words' : 'whitespace-pre overflow-x-auto'}`}>
+                {(code ?? children).replace(/\n$/, '').split('\n').map((line, idx) => (
+                  <div key={idx}>
+                    {highlightLine(line, language)}
+                    {line === '' && '\u00A0'}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <pre className={isWrapped ? 'whitespace-pre-wrap break-words' : 'overflow-x-auto'}>
+              {code != null ? <code>{code}</code> : children}
+            </pre>
+          )}
+        </div>
       )}
 
       {/* Output Console & Charts Drawer */}

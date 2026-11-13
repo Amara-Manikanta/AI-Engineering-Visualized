@@ -1,9 +1,30 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, ChevronRight, ArrowRight, Menu, X } from "lucide-react";
 import CommandPalette from "./CommandPalette";
 import ReadingSize from "./ReadingSize";
 import { NAV_LINKS } from "../config/navigation";
+import { getSectionTheme } from "../lib/sectionTheme";
+
+function groupSubLinks(subLinks) {
+  if (!subLinks) return [];
+  const groups = [];
+  let currentGroup = { title: "Overview", items: [] };
+  for (const item of subLinks) {
+    if (item.isHeader) {
+      if (currentGroup.items.length > 0) {
+        groups.push(currentGroup);
+      }
+      currentGroup = { title: item.name, items: [] };
+    } else {
+      currentGroup.items.push(item);
+    }
+  }
+  if (currentGroup.items.length > 0) {
+    groups.push(currentGroup);
+  }
+  return groups;
+}
 
 
 export default function GlobalHeader() {
@@ -47,9 +68,15 @@ export default function GlobalHeader() {
           {/* Logo */}
           {/* On phones the name may shrink and truncate so the menu button always fits;
               from sm up there is room and it keeps its full width. */}
-          <Link to="/" className="flex items-center gap-2 text-base sm:text-xl font-bold hover:opacity-80 transition-opacity min-w-0 sm:shrink-0">
-            <span className="text-2xl shrink-0">🧠</span>
-            <span className="truncate">AI Visualised <span className="text-indigo-400">Engineering</span></span>
+          <Link to="/" className="flex items-center gap-2.5 text-base sm:text-xl font-bold hover:opacity-90 transition-opacity min-w-0 sm:shrink-0 group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1.5px] shrink-0 shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-shadow">
+              <div className="w-full h-full bg-[#0a0a0f] rounded-[10px] flex items-center justify-center">
+                <svg className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </div>
+            </div>
+            <span className="truncate tracking-tight font-display">AI Visualised <span className="text-indigo-400">Engineering</span></span>
           </Link>
 
           {/* Desktop Nav */}
@@ -85,28 +112,86 @@ export default function GlobalHeader() {
                   </Link>
                 )}
 
-                {nav.subLinks && openDropdown === i && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-52 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-y-auto max-h-[80vh] py-2 custom-scrollbar">
-                    <div className="px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-white/5 mb-2 sticky top-0 bg-[#1a1a1a] z-10">
-                      {nav.name}
-                    </div>
-                    {nav.subLinks.map((sub, j) => (
-                      sub.isHeader ? (
-                        <div key={j} className="px-4 py-2 mt-2 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-white/5 bg-black/20">
-                          {sub.name}
+                {nav.subLinks && openDropdown === i && (() => {
+                  const groups = groupSubLinks(nav.subLinks);
+                  const theme = getSectionTheme(nav.path);
+                  const isMultiCol = groups.length > 1;
+                  return (
+                    <div
+                      className={`absolute top-full z-50 mt-1 bg-[#101015]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-2xl p-5 overflow-hidden transition-all duration-200 ${
+                        isMultiCol
+                          ? groups.length >= 4
+                            ? "w-[880px] max-w-[calc(100vw-32px)]"
+                            : "w-[640px] max-w-[calc(100vw-32px)]"
+                          : "w-64"
+                      } ${i > 4 ? "right-0" : i < 2 ? "left-0" : "left-1/2 -translate-x-1/2"}`}
+                    >
+                      <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2 h-2 rounded-full ${theme.barColor}`} />
+                          <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                            {nav.name}
+                          </span>
                         </div>
-                      ) : (
-                        <Link 
-                          key={j} 
-                          to={sub.path}
-                          className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                        <span className="text-[11px] text-gray-500 font-mono">
+                          {nav.subLinks.filter(s => !s.isHeader).length} topics
+                        </span>
+                      </div>
+
+                      <div
+                        className={`grid gap-5 max-h-[65vh] overflow-y-auto custom-scrollbar pr-1 ${
+                          isMultiCol
+                            ? groups.length >= 4
+                              ? "grid-cols-4"
+                              : groups.length === 3
+                              ? "grid-cols-3"
+                              : "grid-cols-2"
+                            : "grid-cols-1"
+                        }`}
+                      >
+                        {groups.map((grp, gIdx) => (
+                          <div key={gIdx} className="space-y-1">
+                            {isMultiCol && (
+                              <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400 mb-2 pb-1 border-b border-white/5 truncate">
+                                {grp.title}
+                              </div>
+                            )}
+                            <ul className="space-y-0.5">
+                              {grp.items.map((sub, j) => (
+                                <li key={j}>
+                                  <Link
+                                    to={sub.path}
+                                    className={`group/link block px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                                      location.pathname === sub.path
+                                        ? `${theme.badgeBg} font-semibold`
+                                        : "text-gray-300 hover:text-white hover:bg-white/5"
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <span className="truncate">{sub.name.replace(/^·\s*/, "")}</span>
+                                      <ChevronRight className="w-3 h-3 opacity-0 group-hover/link:opacity-60 transition-opacity shrink-0 ml-1" />
+                                    </div>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                        <span className="text-[11px] text-gray-500">Interactive guides & visualizers</span>
+                        <Link
+                          to={nav.path}
+                          className={`inline-flex items-center gap-1 text-xs font-semibold ${theme.text} hover:underline`}
                         >
-                          {sub.name}
+                          <span>Explore all in {nav.name}</span>
+                          <ArrowRight className="w-3 h-3" />
                         </Link>
-                      )
-                    ))}
-                  </div>
-                )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </nav>
@@ -144,9 +229,15 @@ export default function GlobalHeader() {
           <nav className="absolute top-0 left-0 right-0 bottom-0 bg-[#0e0e0e] overflow-y-auto flex flex-col">
             {/* Mobile header inside panel */}
             <div className="flex items-center justify-between px-4 h-16 border-b border-white/10 shrink-0">
-              <Link to="/" className="flex items-center gap-2 text-lg font-bold text-white">
-                <span className="text-2xl">🧠</span>
-                <span>Mani <span className="text-indigo-400">Notes</span></span>
+              <Link to="/" className="flex items-center gap-2.5 text-base font-bold text-white">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1px] shrink-0">
+                  <div className="w-full h-full bg-[#0a0a0f] rounded-[7px] flex items-center justify-center">
+                    <svg className="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                  </div>
+                </div>
+                <span>AI Visualised <span className="text-indigo-400">Engineering</span></span>
               </Link>
               <button 
                 className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white"

@@ -1,20 +1,24 @@
 @import "tailwindcss";
 
 
-/* Custom Scrollbar for Dropdowns */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+/* Custom Scrollbar for Dropdowns and Universal Theme (Item 35) */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
 }
 
 /* ---------------------------------------------------------------------------
@@ -66,4 +70,177 @@ html, body { overflow-x: clip; }
 :focus-visible {
   outline: 2px solid #818cf8;
   outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Selection & Brand Accent
+--------------------------------------------------------------------------- */
+::selection {
+  background-color: rgba(99, 102, 241, 0.35);
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+   Typography Scale & Prose Reading Constraint (Item 3)
+   Long text lines cap at ~70 characters for comfortable readability.
+--------------------------------------------------------------------------- */
+.prose-reading {
+  max-width: 70ch;
+}
+
+.prose-reading p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.75;
+  color: #d1d5db; /* text-gray-300 */
+}
+
+.prose-reading p:first-child {
+  margin-top: 0;
+}
+
+.prose-reading h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+}
+
+.prose-reading h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  letter-spacing: -0.02em;
+}
+
+.prose-reading ul, .prose-reading ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  line-height: 1.7;
+}
+
+.prose-reading li {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.prose-reading code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.15em 0.35em;
+  border-radius: 0.375rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f472b6; /* text-pink-400 */
+}
+
+.prose-reading pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+   Consistent Surface & Card Styling (Item 4)
+   Standard border, backdrop blur, radius and hover states.
+--------------------------------------------------------------------------- */
+.card-base {
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.card-base:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------------------------
+   Table Polish (Item 17)
+--------------------------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+thead th {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f3f4f6;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #d1d5db;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Print Stylesheet (Item 34)
+--------------------------------------------------------------------------- */
+@media print {
+  header,
+  footer,
+  aside,
+  nav,
+  button,
+  .no-print,
+  #guide-sidebar {
+    display: none !important;
+  }
+  body, html {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+  }
+  .prose-reading p,
+  .prose-reading li,
+  .text-gray-300,
+  .text-gray-200 {
+    color: #1f2937 !important;
+  }
+  .card-base,
+  .rounded-2xl {
+    border: 1px solid #e5e7eb !important;
+    background: #f9fafb !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  pre, code {
+    background: #f3f4f6 !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+  }
 }
